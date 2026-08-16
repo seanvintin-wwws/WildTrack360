@@ -53,11 +53,29 @@ function screenshotMiddleware() {
   return NextResponse.next();
 }
 
+function isAuthPath(pathname: string): boolean {
+  return (
+    pathname.startsWith('/sign-in') ||
+    pathname.startsWith('/sign-up') ||
+    pathname.startsWith('/portal/sign-in') ||
+    pathname.startsWith('/portal/sign-up')
+  );
+}
+
+function nextWithOptionalNoIndex(noindex: boolean) {
+  const response = NextResponse.next();
+  if (noindex) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
+  return response;
+}
+
 export default isScreenshotMode()
   ? screenshotMiddleware
   : clerkMiddleware(async (auth, request) => {
       const host = request.headers.get('host') ?? '';
       const subdomain = extractSubdomain(host, ROOT_DOMAIN);
+      const noindex = Boolean(subdomain) || isAuthPath(request.nextUrl.pathname);
 
       // No subdomain (root domain) — allow public routes, let Clerk handle auth for the rest
       if (!subdomain) {
@@ -70,7 +88,7 @@ export default isScreenshotMode()
             return NextResponse.redirect(new URL('/', request.url));
           }
         }
-        return;
+        return nextWithOptionalNoIndex(noindex);
       }
 
       // On a subdomain — allow public routes through (sign-in page must be accessible)
@@ -79,10 +97,12 @@ export default isScreenshotMode()
         if (request.nextUrl.pathname.startsWith('/unauthorized')) {
           const session = await auth();
           if (session?.sessionClaims?.org_url === subdomain) {
-            return NextResponse.redirect(new URL('/', request.url));
+            const redirect = NextResponse.redirect(new URL('/', request.url));
+            redirect.headers.set('X-Robots-Tag', 'noindex, nofollow');
+            return redirect;
           }
         }
-        return;
+        return nextWithOptionalNoIndex(true);
       }
 
       // Protected route on a subdomain — require auth and validate org_url
@@ -91,8 +111,12 @@ export default isScreenshotMode()
 
       if (!orgUrl || orgUrl !== subdomain) {
         const unauthorizedUrl = new URL('/unauthorized', request.url);
-        return NextResponse.redirect(unauthorizedUrl);
+        const redirect = NextResponse.redirect(unauthorizedUrl);
+        redirect.headers.set('X-Robots-Tag', 'noindex, nofollow');
+        return redirect;
       }
+
+      return nextWithOptionalNoIndex(true);
     });
 
 export const config = {
