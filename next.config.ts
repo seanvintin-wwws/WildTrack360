@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'app.wildtrack360.com.au' }],
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {

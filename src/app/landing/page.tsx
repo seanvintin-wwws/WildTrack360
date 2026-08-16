@@ -14,7 +14,6 @@ export default function LandingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // If user is already signed in, redirect to home
     if (isLoaded && isSignedIn) {
       router.push('/');
     }
@@ -42,13 +41,12 @@ export default function LandingPage() {
       </header>
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
         <div className="text-center py-16 space-y-8">
           <div className="flex justify-center px-4">
             <div className="relative h-36 w-72 sm:h-48 sm:w-96">
               <Image
                 src="/Brandmark-Text-Vert.svg"
-                alt="WildTrack360 Logo"
+                alt="WildTrack360 wildlife tracking"
                 fill
                 className="object-contain"
                 priority
@@ -58,14 +56,15 @@ export default function LandingPage() {
           
           <div className="max-w-4xl mx-auto space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold text-primary">
-              Wildlife Care Management
+              Wildlife rehabilitation management software
               <span className="block text-3xl lg:text-4xl mt-2 text-muted-foreground">
-                Made Simple
+                Animal tracking for Australian care organisations
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive wildlife rehabilitation tracking, compliance management, and care coordination 
-              for Australian wildlife organizations.
+              WildTrack360 is wildlife management software for rehabilitation teams.
+              Keep a wildlife tracking system in one place, from intake to release,
+              with the records Australian carers actually need.
             </p>
           </div>
           
@@ -79,11 +78,10 @@ export default function LandingPage() {
           </div>
           
           <p className="text-sm text-muted-foreground pt-4">
-            Contact your organization administrator for access
+            Contact your organisation administrator for access
           </p>
         </div>
         
-        {/* Trust Indicators */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 py-8 sm:py-12 max-w-4xl mx-auto">
           <div className="flex items-center justify-center sm:justify-start gap-3">
             <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
@@ -99,16 +97,15 @@ export default function LandingPage() {
           </div>
         </div>
         
-        {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 py-16">
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6 text-center space-y-4">
               <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                 <PawPrint className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Animal Tracking</h3>
+              <h3 className="text-xl font-semibold">Animal tracking Australia</h3>
               <p className="text-muted-foreground text-sm">
-                Track every animal from rescue to release with detailed medical records and care notes.
+                Track every animal from rescue to release with medical records and care notes.
               </p>
             </CardContent>
           </Card>
@@ -118,9 +115,9 @@ export default function LandingPage() {
               <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                 <Shield className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Compliance Ready</h3>
+              <h3 className="text-xl font-semibold">Compliance ready</h3>
               <p className="text-muted-foreground text-sm">
-                Built-in compliance tools for Australian wildlife codes of practice and regulations.
+                Built-in tools for Australian wildlife codes of practice and regulations.
               </p>
             </CardContent>
           </Card>
@@ -130,9 +127,9 @@ export default function LandingPage() {
               <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                 <Users className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Carer Management</h3>
+              <h3 className="text-xl font-semibold">Carer management</h3>
               <p className="text-muted-foreground text-sm">
-                Manage carers, track licenses, training, and coordinate care assignments efficiently.
+                Manage carers, track licences, training, and coordinate care assignments.
               </p>
             </CardContent>
           </Card>
@@ -142,9 +139,9 @@ export default function LandingPage() {
               <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                 <BarChart3 className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Analytics & Reports</h3>
+              <h3 className="text-xl font-semibold">Analytics and reports</h3>
               <p className="text-muted-foreground text-sm">
-                Generate compliance reports, track outcomes, and gain insights into your operations.
+                Generate compliance reports, track outcomes, and see how the operation is going.
               </p>
             </CardContent>
           </Card>
