@@ -518,151 +518,136 @@ const ringtailPossumMale = weightOnly(
 );
 
 // ─── Grey-headed Flying Fox (Pteropus poliocephalus) ────────────────────────
-// Divljan 2006, Hall & Richards 2000. Birth weight ~25g, forearm ~55mm.
-// Weaning ~120 days. Forearm is the primary measurement for age estimation.
+// Source: Victorian Wildlife Rehabilitation Guidelines, Part B Chapter 4,
+// Table 4.7 (DEECA 2023). Birth weight 85 g, forearm 57 mm. Hand-rearing
+// weaning at 12 weeks; wild maternal weaning is 5-6 months.
+//
+// CORRECTED 2026-08: this curve previously cited Divljan 2006 / Hall &
+// Richards 2000 and began at 25 g. That is not a plausible birth weight for
+// this species — flying foxes are born large — and it disagreed with DEECA's
+// own figure by 60 g. On the old curve a genuine 85 g newborn interpolated to
+// roughly 24 days old, so estimateBirthDate() placed its birth about three and
+// a half weeks too early, shifting feed schedules, age class and release
+// timing with it. Forearm lengths in the two sources agreed far more closely,
+// which is a further reason to prefer forearm for ageing flying foxes.
+//
+// DEECA publish ONE table for both sexes. Sexual size dimorphism in this
+// species emerges with sexual maturity at 24-36 months, long after the
+// hand-rearing period ends, so male and female entries below are deliberately
+// identical rather than invented. Adult dimorphism (male 842 g, female 675 g;
+// Welbergen 2010) is held separately in src/lib/deeca-flying-fox-care.ts.
 const greyHeadedFlyingFoxFemale = weightAndArm(
   'Grey-headed Flying Fox',
   'Female',
   [
     // [ageDays, weightGrams, armLengthMm (forearm)]
-    [0, 25, 55],
-    [3, 30, 57],
-    [7, 38, 60],
-    [10, 45, 63],
-    [14, 55, 67],
-    [17, 63, 70],
-    [21, 75, 74],
-    [24, 85, 77],
-    [28, 98, 81],
-    [31, 108, 84],
-    [35, 122, 88],
-    [38, 133, 91],
-    [42, 148, 95],
-    [45, 160, 98],
-    [49, 175, 102],
-    [52, 188, 105],
-    [56, 205, 108],
-    [60, 220, 112],
-    [63, 232, 114],
-    [70, 262, 120],
-    [77, 290, 126],
-    [84, 320, 131],
-    [91, 348, 136],
-    [98, 375, 140],
-    [105, 400, 144],
-    [112, 420, 147],
-    [120, 440, 150],
-    [135, 470, 154],
-    [150, 490, 157],
+    [0, 85, 57],
+    [7, 99, 69],
+    [14, 117, 79],
+    [21, 133, 87],
+    [28, 150, 93],
+    [35, 167, 99],
+    [42, 184, 104],
+    [49, 201, 109],
+    [56, 217, 114],
+    [63, 235, 118],
+    [70, 252, 122],
+    [77, 269, 125],
+    [84, 286, 129],
+    [91, 302, 132],
+    [98, 319, 136],
+    [105, 336, 139],
+    [112, 353, 143],
   ],
-  'Divljan 2006 / Hall & Richards 2000'
+  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.7 (2023)'
 );
 
 const greyHeadedFlyingFoxMale = weightAndArm(
   'Grey-headed Flying Fox',
   'Male',
   [
-    [0, 27, 56],
-    [3, 32, 58],
-    [7, 42, 61],
-    [10, 50, 64],
-    [14, 62, 68],
-    [17, 72, 72],
-    [21, 85, 76],
-    [24, 96, 79],
-    [28, 112, 83],
-    [31, 124, 87],
-    [35, 140, 91],
-    [38, 153, 94],
-    [42, 170, 98],
-    [45, 185, 102],
-    [49, 203, 106],
-    [52, 218, 109],
-    [56, 238, 113],
-    [60, 256, 116],
-    [63, 270, 119],
-    [70, 305, 125],
-    [77, 340, 131],
-    [84, 375, 137],
-    [91, 408, 142],
-    [98, 440, 147],
-    [105, 470, 151],
-    [112, 498, 155],
-    [120, 525, 158],
-    [135, 570, 163],
-    [150, 600, 166],
+    [0, 85, 57],
+    [7, 99, 69],
+    [14, 117, 79],
+    [21, 133, 87],
+    [28, 150, 93],
+    [35, 167, 99],
+    [42, 184, 104],
+    [49, 201, 109],
+    [56, 217, 114],
+    [63, 235, 118],
+    [70, 252, 122],
+    [77, 269, 125],
+    [84, 286, 129],
+    [91, 302, 132],
+    [98, 319, 136],
+    [105, 336, 139],
+    [112, 353, 143],
   ],
-  'Divljan 2006 / Hall & Richards 2000'
+  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.7 (2023)'
 );
 
 // ─── Little Red Flying-fox (Pteropus scapulatus) ────────────────────────────
-// Smaller than grey-headed. Birth weight ~18g. Weaning ~90-100 days.
+// Source: Victorian Wildlife Rehabilitation Guidelines, Part B Chapter 4,
+// Table 4.8 (DEECA 2023). Birth weight 41 g, forearm 45 mm.
+//
+// CORRECTED 2026-08: previously seeded from Hall & Richards 2000 starting at
+// 18 g, against DEECA's 41 g — the same class of error as the grey-headed
+// curve and in the same direction.
+//
+// Little reds are hand raised as for grey-headed flying foxes but take roughly
+// half the milk and fruit per feed (DEECA 4.8.2); no separate feeding table is
+// published for them. As with the grey-headed curve, DEECA give one unsexed
+// table, so male and female entries are identical rather than invented.
 const littleRedFlyingFoxFemale = weightAndArm(
   'Little Red Flying-fox',
   'Female',
   [
-    [0, 18, 42],
-    [3, 22, 44],
-    [7, 28, 47],
-    [10, 33, 49],
-    [14, 40, 52],
-    [17, 46, 55],
-    [21, 55, 58],
-    [24, 62, 61],
-    [28, 72, 65],
-    [31, 80, 68],
-    [35, 90, 71],
-    [38, 98, 74],
-    [42, 108, 77],
-    [45, 116, 80],
-    [49, 126, 83],
-    [52, 134, 85],
-    [56, 144, 88],
-    [60, 152, 91],
-    [63, 158, 93],
-    [70, 174, 97],
-    [77, 188, 101],
-    [84, 200, 104],
-    [91, 210, 107],
-    [98, 218, 110],
-    [105, 225, 112],
-    [120, 235, 116],
+    // [ageDays, weightGrams, armLengthMm (forearm)]
+    [0, 41, 45],
+    [7, 49, 50],
+    [14, 59, 55],
+    [21, 68, 61],
+    [28, 79, 66],
+    [35, 89, 71],
+    [42, 100, 75],
+    [49, 111, 80],
+    [56, 122, 83],
+    [63, 133, 87],
+    [70, 145, 90],
+    [77, 157, 93],
+    [84, 169, 96],
+    [91, 182, 98],
+    [98, 195, 100],
+    [105, 208, 101],
+    [112, 221, 103],
   ],
-  'Hall & Richards 2000'
+  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.8 (2023)'
 );
 
 const littleRedFlyingFoxMale = weightAndArm(
   'Little Red Flying-fox',
   'Male',
   [
-    [0, 20, 43],
-    [3, 24, 45],
-    [7, 30, 48],
-    [10, 36, 50],
-    [14, 44, 54],
-    [17, 50, 57],
-    [21, 60, 60],
-    [24, 68, 63],
-    [28, 78, 67],
-    [31, 87, 70],
-    [35, 98, 74],
-    [38, 107, 76],
-    [42, 118, 80],
-    [45, 127, 83],
-    [49, 138, 86],
-    [52, 147, 89],
-    [56, 158, 92],
-    [60, 168, 94],
-    [63, 175, 96],
-    [70, 192, 101],
-    [77, 208, 105],
-    [84, 222, 109],
-    [91, 234, 112],
-    [98, 244, 115],
-    [105, 252, 117],
-    [120, 265, 121],
+    [0, 41, 45],
+    [7, 49, 50],
+    [14, 59, 55],
+    [21, 68, 61],
+    [28, 79, 66],
+    [35, 89, 71],
+    [42, 100, 75],
+    [49, 111, 80],
+    [56, 122, 83],
+    [63, 133, 87],
+    [70, 145, 90],
+    [77, 157, 93],
+    [84, 169, 96],
+    [91, 182, 98],
+    [98, 195, 100],
+    [105, 208, 101],
+    [112, 221, 103],
   ],
-  'Hall & Richards 2000'
+  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.8 (2023)'
 );
 
 export const growthReferenceData: GrowthReferenceRow[] = [

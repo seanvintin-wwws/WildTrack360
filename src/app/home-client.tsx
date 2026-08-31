@@ -17,6 +17,11 @@ import { Animal } from '@prisma/client';
 
 // Local type for create-animal payload
 type CreateAnimalData = {
+  vicAgeCode?: string | null;
+  vicInjuryCode?: string | null;
+  vicCauseCode?: string | null;
+  vicFateCode?: string | null;
+  vicFoundRef?: string | null;
   name: string;
   species: string;
   status:

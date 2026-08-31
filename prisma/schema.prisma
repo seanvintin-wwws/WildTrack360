@@ -71,6 +71,19 @@ model Animal {
   sourceOrgAnimalId        String? @map("source_org_animal_id")
   interOrgTransferReceived Boolean @default(false) @map("inter_org_transfer_received")
 
+  // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
+  // Codes are defined in src/lib/vic-picklists.ts, transcribed from DEECA's
+  // "Species Code" sheet. Stored as the raw code (e.g. "A", "51", "80") so the
+  // export matches exactly what a Conservation Regulator Authorised Officer
+  // expects to see. Species code itself is derived at export time from the
+  // Wildlife Code Book rather than stored, so it stays correct if DEECA
+  // reissues the book.
+  vicAgeCode    String? @map("vic_age_code") // Age class: bird C/J/M, mammal P/D/S/A, reptile H/O
+  vicInjuryCode String? @map("vic_injury_code") // Single letter, most serious injury
+  vicCauseCode  String? @map("vic_cause_code") // Two-digit cause of injury
+  vicFateCode   String? @map("vic_fate_code") // Two-digit fate/status (died/released/transferred)
+  vicFoundRef   String? @map("vic_found_ref") // GPS coords or Melways map reference for FOUND column
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

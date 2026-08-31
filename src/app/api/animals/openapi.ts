@@ -51,6 +51,12 @@ export const AnimalSchema = z
     outcomeReason: z.string().nullable(),
     sourceOrgAnimalId: z.string().nullable(),
     interOrgTransferReceived: z.boolean(),
+    // VIC (DEECA) Wildlife Shelter Record Sheet codes
+    vicAgeCode: z.string().nullable(),
+    vicInjuryCode: z.string().nullable(),
+    vicCauseCode: z.string().nullable(),
+    vicFateCode: z.string().nullable(),
+    vicFoundRef: z.string().nullable(),
     createdAt: isoDate(),
     updatedAt: isoDate(),
     clerkUserId: z.string(),

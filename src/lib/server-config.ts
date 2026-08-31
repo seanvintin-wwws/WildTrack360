@@ -40,12 +40,13 @@ const JURISDICTION_CONFIGS: { [key: string]: JurisdictionConfig } = {
   VIC: {
     fullName: 'Victoria',
     shortName: 'VIC',
-    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog'],
+    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog', 'wildlifeRegister'],
     templates: ['VICRegister'],
     enforceReleaseDistance: true,
     requireVetSignOff: true,
     maxRetentionYears: 3,
-    codeOfPractice: 'Victorian Wildlife Act 1975',
+    codeOfPractice: 'Wildlife Rehabilitator Authorisation Guide (DEECA, June 2023) - Wildlife Act 1975 s.28A',
+    codeOfPracticeUrl: 'https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide',
   },
   QLD: {
     fullName: 'Queensland',

@@ -10,6 +10,7 @@ import { AlertTriangle, CalendarIcon, Camera, Loader2, Rocket, X } from "lucide-
 
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { VicCaseSheetFields } from "@/components/vic-case-sheet-fields"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -47,6 +48,11 @@ import { Animal } from '@prisma/client';
 import { getUserFriendlyErrorMessage } from "@/lib/user-friendly-error"
 
 type CreateAnimalData = {
+  vicAgeCode?: string | null;
+  vicInjuryCode?: string | null;
+  vicCauseCode?: string | null;
+  vicFateCode?: string | null;
+  vicFoundRef?: string | null;
   name: string;
   species: string;
   sex?: string | null;
@@ -151,6 +157,12 @@ const addAnimalSchema = z.object({
   speciesNotListedFullName: z.string().optional(),
   interOrgTransferReceived: z.boolean().optional(),
   sourceOrgAnimalId: z.string().optional(),
+  // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
+  vicAgeCode: z.string().optional(),
+  vicInjuryCode: z.string().optional(),
+  vicCauseCode: z.string().optional(),
+  vicFateCode: z.string().optional(),
+  vicFoundRef: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.species === SPECIES_NOT_LISTED) {
     const name = (data.speciesNotListedFullName ?? '').trim();
@@ -229,6 +241,7 @@ export function AddAnimalDialog({
 
   const jurisdiction = getCurrentJurisdiction();
   const isNSW = jurisdiction === 'NSW';
+  const isVIC = jurisdiction === 'VIC';
 
   const isEditMode = !!animalToEdit;
 
@@ -267,6 +280,12 @@ export function AddAnimalDialog({
         : '',
       interOrgTransferReceived: animalToEdit.interOrgTransferReceived ?? false,
       sourceOrgAnimalId: animalToEdit.sourceOrgAnimalId ?? '',
+      // VIC-specific fields (DEECA)
+      vicAgeCode: animalToEdit.vicAgeCode || undefined,
+      vicInjuryCode: animalToEdit.vicInjuryCode || undefined,
+      vicCauseCode: animalToEdit.vicCauseCode || undefined,
+      vicFateCode: animalToEdit.vicFateCode || undefined,
+      vicFoundRef: animalToEdit.vicFoundRef || '',
     } : {
       orgAnimalId: "",
       name: "",
@@ -294,6 +313,12 @@ export function AddAnimalDialog({
       speciesNotListedFullName: '',
       interOrgTransferReceived: false,
       sourceOrgAnimalId: '',
+      // VIC-specific fields (DEECA)
+      vicAgeCode: undefined,
+      vicInjuryCode: undefined,
+      vicCauseCode: undefined,
+      vicFateCode: undefined,
+      vicFoundRef: '',
     }
   })
 
@@ -356,6 +381,11 @@ export function AddAnimalDialog({
               : '',
             interOrgTransferReceived: animalToEdit.interOrgTransferReceived ?? false,
             sourceOrgAnimalId: animalToEdit.sourceOrgAnimalId ?? '',
+            vicAgeCode: animalToEdit.vicAgeCode || undefined,
+            vicInjuryCode: animalToEdit.vicInjuryCode || undefined,
+            vicCauseCode: animalToEdit.vicCauseCode || undefined,
+            vicFateCode: animalToEdit.vicFateCode || undefined,
+            vicFoundRef: animalToEdit.vicFoundRef || '',
         });
         const coords = animalToEdit.rescueCoordinates as { lat?: number; lng?: number } | null;
         setLocationData({
@@ -394,6 +424,11 @@ export function AddAnimalDialog({
             speciesNotListedFullName: '',
             interOrgTransferReceived: false,
             sourceOrgAnimalId: '',
+            vicAgeCode: undefined,
+            vicInjuryCode: undefined,
+            vicCauseCode: undefined,
+            vicFateCode: undefined,
+            vicFoundRef: '',
         });
         setLocationData({
           lat: -35.2809,
@@ -538,6 +573,12 @@ export function AddAnimalDialog({
       sourceOrgAnimalId: data.interOrgTransferReceived
         ? data.sourceOrgAnimalId?.trim() || null
         : null,
+      // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
+      vicAgeCode: data.vicAgeCode || null,
+      vicInjuryCode: data.vicInjuryCode || null,
+      vicCauseCode: data.vicCauseCode || null,
+      vicFateCode: data.vicFateCode || null,
+      vicFoundRef: data.vicFoundRef?.trim() || null,
       // Release location fields when status is RELEASED - use same location data
       ...(isReleased && {
         releaseLocation: locationData.address || null,
@@ -823,6 +864,13 @@ export function AddAnimalDialog({
                 </FormItem>
               )}
             />
+
+            {isVIC && (
+              <VicCaseSheetFields
+                control={form.control}
+                species={form.watch('species')}
+              />
+            )}
 
             {isNSW && !isEditMode && (() => {
               const aggregateRisk = isAggregateRiskIntake({
