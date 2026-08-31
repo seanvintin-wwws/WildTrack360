@@ -1,0 +1,4024 @@
+diff --git a/prisma/growth-reference-seed-data.ts b/prisma/growth-reference-seed-data.ts
+index 145e49d..8983583 100644
+--- a/prisma/growth-reference-seed-data.ts
++++ b/prisma/growth-reference-seed-data.ts
+@@ -518,151 +518,136 @@ const ringtailPossumMale = weightOnly(
+ );
+ 
+ // ─── Grey-headed Flying Fox (Pteropus poliocephalus) ────────────────────────
+-// Divljan 2006, Hall & Richards 2000. Birth weight ~25g, forearm ~55mm.
+-// Weaning ~120 days. Forearm is the primary measurement for age estimation.
++// Source: Victorian Wildlife Rehabilitation Guidelines, Part B Chapter 4,
++// Table 4.7 (DEECA 2023). Birth weight 85 g, forearm 57 mm. Hand-rearing
++// weaning at 12 weeks; wild maternal weaning is 5-6 months.
++//
++// CORRECTED 2026-08: this curve previously cited Divljan 2006 / Hall &
++// Richards 2000 and began at 25 g. That is not a plausible birth weight for
++// this species — flying foxes are born large — and it disagreed with DEECA's
++// own figure by 60 g. On the old curve a genuine 85 g newborn interpolated to
++// roughly 24 days old, so estimateBirthDate() placed its birth about three and
++// a half weeks too early, shifting feed schedules, age class and release
++// timing with it. Forearm lengths in the two sources agreed far more closely,
++// which is a further reason to prefer forearm for ageing flying foxes.
++//
++// DEECA publish ONE table for both sexes. Sexual size dimorphism in this
++// species emerges with sexual maturity at 24-36 months, long after the
++// hand-rearing period ends, so male and female entries below are deliberately
++// identical rather than invented. Adult dimorphism (male 842 g, female 675 g;
++// Welbergen 2010) is held separately in src/lib/deeca-flying-fox-care.ts.
+ const greyHeadedFlyingFoxFemale = weightAndArm(
+   'Grey-headed Flying Fox',
+   'Female',
+   [
+     // [ageDays, weightGrams, armLengthMm (forearm)]
+-    [0, 25, 55],
+-    [3, 30, 57],
+-    [7, 38, 60],
+-    [10, 45, 63],
+-    [14, 55, 67],
+-    [17, 63, 70],
+-    [21, 75, 74],
+-    [24, 85, 77],
+-    [28, 98, 81],
+-    [31, 108, 84],
+-    [35, 122, 88],
+-    [38, 133, 91],
+-    [42, 148, 95],
+-    [45, 160, 98],
+-    [49, 175, 102],
+-    [52, 188, 105],
+-    [56, 205, 108],
+-    [60, 220, 112],
+-    [63, 232, 114],
+-    [70, 262, 120],
+-    [77, 290, 126],
+-    [84, 320, 131],
+-    [91, 348, 136],
+-    [98, 375, 140],
+-    [105, 400, 144],
+-    [112, 420, 147],
+-    [120, 440, 150],
+-    [135, 470, 154],
+-    [150, 490, 157],
++    [0, 85, 57],
++    [7, 99, 69],
++    [14, 117, 79],
++    [21, 133, 87],
++    [28, 150, 93],
++    [35, 167, 99],
++    [42, 184, 104],
++    [49, 201, 109],
++    [56, 217, 114],
++    [63, 235, 118],
++    [70, 252, 122],
++    [77, 269, 125],
++    [84, 286, 129],
++    [91, 302, 132],
++    [98, 319, 136],
++    [105, 336, 139],
++    [112, 353, 143],
+   ],
+-  'Divljan 2006 / Hall & Richards 2000'
++  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.7 (2023)'
+ );
+ 
+ const greyHeadedFlyingFoxMale = weightAndArm(
+   'Grey-headed Flying Fox',
+   'Male',
+   [
+-    [0, 27, 56],
+-    [3, 32, 58],
+-    [7, 42, 61],
+-    [10, 50, 64],
+-    [14, 62, 68],
+-    [17, 72, 72],
+-    [21, 85, 76],
+-    [24, 96, 79],
+-    [28, 112, 83],
+-    [31, 124, 87],
+-    [35, 140, 91],
+-    [38, 153, 94],
+-    [42, 170, 98],
+-    [45, 185, 102],
+-    [49, 203, 106],
+-    [52, 218, 109],
+-    [56, 238, 113],
+-    [60, 256, 116],
+-    [63, 270, 119],
+-    [70, 305, 125],
+-    [77, 340, 131],
+-    [84, 375, 137],
+-    [91, 408, 142],
+-    [98, 440, 147],
+-    [105, 470, 151],
+-    [112, 498, 155],
+-    [120, 525, 158],
+-    [135, 570, 163],
+-    [150, 600, 166],
++    [0, 85, 57],
++    [7, 99, 69],
++    [14, 117, 79],
++    [21, 133, 87],
++    [28, 150, 93],
++    [35, 167, 99],
++    [42, 184, 104],
++    [49, 201, 109],
++    [56, 217, 114],
++    [63, 235, 118],
++    [70, 252, 122],
++    [77, 269, 125],
++    [84, 286, 129],
++    [91, 302, 132],
++    [98, 319, 136],
++    [105, 336, 139],
++    [112, 353, 143],
+   ],
+-  'Divljan 2006 / Hall & Richards 2000'
++  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.7 (2023)'
+ );
+ 
+ // ─── Little Red Flying-fox (Pteropus scapulatus) ────────────────────────────
+-// Smaller than grey-headed. Birth weight ~18g. Weaning ~90-100 days.
++// Source: Victorian Wildlife Rehabilitation Guidelines, Part B Chapter 4,
++// Table 4.8 (DEECA 2023). Birth weight 41 g, forearm 45 mm.
++//
++// CORRECTED 2026-08: previously seeded from Hall & Richards 2000 starting at
++// 18 g, against DEECA's 41 g — the same class of error as the grey-headed
++// curve and in the same direction.
++//
++// Little reds are hand raised as for grey-headed flying foxes but take roughly
++// half the milk and fruit per feed (DEECA 4.8.2); no separate feeding table is
++// published for them. As with the grey-headed curve, DEECA give one unsexed
++// table, so male and female entries are identical rather than invented.
+ const littleRedFlyingFoxFemale = weightAndArm(
+   'Little Red Flying-fox',
+   'Female',
+   [
+-    [0, 18, 42],
+-    [3, 22, 44],
+-    [7, 28, 47],
+-    [10, 33, 49],
+-    [14, 40, 52],
+-    [17, 46, 55],
+-    [21, 55, 58],
+-    [24, 62, 61],
+-    [28, 72, 65],
+-    [31, 80, 68],
+-    [35, 90, 71],
+-    [38, 98, 74],
+-    [42, 108, 77],
+-    [45, 116, 80],
+-    [49, 126, 83],
+-    [52, 134, 85],
+-    [56, 144, 88],
+-    [60, 152, 91],
+-    [63, 158, 93],
+-    [70, 174, 97],
+-    [77, 188, 101],
+-    [84, 200, 104],
+-    [91, 210, 107],
+-    [98, 218, 110],
+-    [105, 225, 112],
+-    [120, 235, 116],
++    // [ageDays, weightGrams, armLengthMm (forearm)]
++    [0, 41, 45],
++    [7, 49, 50],
++    [14, 59, 55],
++    [21, 68, 61],
++    [28, 79, 66],
++    [35, 89, 71],
++    [42, 100, 75],
++    [49, 111, 80],
++    [56, 122, 83],
++    [63, 133, 87],
++    [70, 145, 90],
++    [77, 157, 93],
++    [84, 169, 96],
++    [91, 182, 98],
++    [98, 195, 100],
++    [105, 208, 101],
++    [112, 221, 103],
+   ],
+-  'Hall & Richards 2000'
++  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.8 (2023)'
+ );
+ 
+ const littleRedFlyingFoxMale = weightAndArm(
+   'Little Red Flying-fox',
+   'Male',
+   [
+-    [0, 20, 43],
+-    [3, 24, 45],
+-    [7, 30, 48],
+-    [10, 36, 50],
+-    [14, 44, 54],
+-    [17, 50, 57],
+-    [21, 60, 60],
+-    [24, 68, 63],
+-    [28, 78, 67],
+-    [31, 87, 70],
+-    [35, 98, 74],
+-    [38, 107, 76],
+-    [42, 118, 80],
+-    [45, 127, 83],
+-    [49, 138, 86],
+-    [52, 147, 89],
+-    [56, 158, 92],
+-    [60, 168, 94],
+-    [63, 175, 96],
+-    [70, 192, 101],
+-    [77, 208, 105],
+-    [84, 222, 109],
+-    [91, 234, 112],
+-    [98, 244, 115],
+-    [105, 252, 117],
+-    [120, 265, 121],
++    [0, 41, 45],
++    [7, 49, 50],
++    [14, 59, 55],
++    [21, 68, 61],
++    [28, 79, 66],
++    [35, 89, 71],
++    [42, 100, 75],
++    [49, 111, 80],
++    [56, 122, 83],
++    [63, 133, 87],
++    [70, 145, 90],
++    [77, 157, 93],
++    [84, 169, 96],
++    [91, 182, 98],
++    [98, 195, 100],
++    [105, 208, 101],
++    [112, 221, 103],
+   ],
+-  'Hall & Richards 2000'
++  'DEECA Victorian Wildlife Rehabilitation Guidelines Part B Ch.4 Table 4.8 (2023)'
+ );
+ 
+ export const growthReferenceData: GrowthReferenceRow[] = [
+diff --git a/prisma/migrations/20260830000000_add_vic_deeca_case_sheet_fields/migration.sql b/prisma/migrations/20260830000000_add_vic_deeca_case_sheet_fields/migration.sql
+new file mode 100644
+index 0000000..edbe1bf
+--- /dev/null
++++ b/prisma/migrations/20260830000000_add_vic_deeca_case_sheet_fields/migration.sql
+@@ -0,0 +1,15 @@
++-- Add VIC (DEECA) Wildlife Shelter Record Sheet case-sheet fields.
++--
++-- These support Condition 23 of the Wildlife Rehabilitator Authorisation Guide,
++-- which requires shelters to record species, found date/location, condition,
++-- cause, and fate for every animal, retain those records for 3 years, and
++-- produce them to a Conservation Regulator Authorised Officer without delay.
++--
++-- All columns are nullable so existing records in other jurisdictions are
++-- unaffected and no backfill is required.
++
++ALTER TABLE "animals" ADD COLUMN "vic_age_code" TEXT;
++ALTER TABLE "animals" ADD COLUMN "vic_injury_code" TEXT;
++ALTER TABLE "animals" ADD COLUMN "vic_cause_code" TEXT;
++ALTER TABLE "animals" ADD COLUMN "vic_fate_code" TEXT;
++ALTER TABLE "animals" ADD COLUMN "vic_found_ref" TEXT;
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+index 7d663ab..f18d6d2 100644
+--- a/prisma/schema.prisma
++++ b/prisma/schema.prisma
+@@ -72,6 +72,19 @@ model Animal {
+   sourceOrgAnimalId        String? @map("source_org_animal_id")
+   interOrgTransferReceived Boolean @default(false) @map("inter_org_transfer_received")
+ 
++  // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
++  // Codes are defined in src/lib/vic-picklists.ts, transcribed from DEECA's
++  // "Species Code" sheet. Stored as the raw code (e.g. "A", "51", "80") so the
++  // export matches exactly what a Conservation Regulator Authorised Officer
++  // expects to see. Species code itself is derived at export time from the
++  // Wildlife Code Book rather than stored, so it stays correct if DEECA
++  // reissues the book.
++  vicAgeCode    String? @map("vic_age_code") // Age class: bird C/J/M, mammal P/D/S/A, reptile H/O
++  vicInjuryCode String? @map("vic_injury_code") // Single letter, most serious injury
++  vicCauseCode  String? @map("vic_cause_code") // Two-digit cause of injury
++  vicFateCode   String? @map("vic_fate_code") // Two-digit fate/status (died/released/transferred)
++  vicFoundRef   String? @map("vic_found_ref") // GPS coords or Melways map reference for FOUND column
++
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+ 
+diff --git a/src/app/api/animals/openapi.ts b/src/app/api/animals/openapi.ts
+index 1e757e2..4f92475 100644
+--- a/src/app/api/animals/openapi.ts
++++ b/src/app/api/animals/openapi.ts
+@@ -51,6 +51,12 @@ export const AnimalSchema = z
+     outcomeReason: z.string().nullable(),
+     sourceOrgAnimalId: z.string().nullable(),
+     interOrgTransferReceived: z.boolean(),
++    // VIC (DEECA) Wildlife Shelter Record Sheet codes
++    vicAgeCode: z.string().nullable(),
++    vicInjuryCode: z.string().nullable(),
++    vicCauseCode: z.string().nullable(),
++    vicFateCode: z.string().nullable(),
++    vicFoundRef: z.string().nullable(),
+     createdAt: isoDate(),
+     updatedAt: isoDate(),
+     clerkUserId: z.string(),
+diff --git a/src/app/api/compliance/vic-record-sheet/route.ts b/src/app/api/compliance/vic-record-sheet/route.ts
+new file mode 100644
+index 0000000..8040fa6
+--- /dev/null
++++ b/src/app/api/compliance/vic-record-sheet/route.ts
+@@ -0,0 +1,115 @@
++import { NextResponse } from 'next/server'
++import { auth } from '@/lib/clerk-server'
++import { prisma } from '@/lib/prisma'
++import { getUserRole, hasPermission } from '@/lib/rbac'
++import { logAudit } from '@/lib/audit'
++import { VicReportGenerator } from '@/lib/vic-report-generator'
++
++/**
++ * One-button DEECA Wildlife Shelter Record Sheet export.
++ *
++ * WHAT THIS DELIBERATELY LEAVES OUT
++ * An Authorised Officer inspecting under Condition 23 is entitled to the
++ * wildlife record: what came in, what happened to it, where it went. They are
++ * not asking for the animal's clinical history, and including it would hand
++ * over more than is required while burying the twelve columns they actually
++ * want to read.
++ *
++ * So this export is restricted to the columns on DEECA's own record sheet.
++ * Medications, treatments, subcutaneous fluids, vet notes, weights, growth
++ * measurements, carer rosters, feed logs and photographs are all excluded.
++ * They stay in the system and remain available to a vet, they are simply not
++ * part of this document.
++ *
++ * The one clinical detail that IS included is the injury and cause codes,
++ * because DEECA's record sheet asks for them by name.
++ */
++
++export const GET = async (request: Request) => {
++  const { userId, orgId } = await auth()
++  if (!userId || !orgId) {
++    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
++  }
++
++  const role = await getUserRole(userId, orgId)
++  if (!hasPermission(role, 'compliance:export_registers')) {
++    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
++  }
++
++  const url = new URL(request.url)
++  const startDateRaw = url.searchParams.get('startDate')
++  const endDateRaw = url.searchParams.get('endDate')
++
++  // Default to the three-year retention window, since that is the period an
++  // Authorised Officer can ask to see (Condition 23).
++  const endDate = endDateRaw ? new Date(endDateRaw) : new Date()
++  const startDate = startDateRaw
++    ? new Date(startDateRaw)
++    : new Date(new Date().setFullYear(endDate.getFullYear() - 3))
++
++  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
++    return NextResponse.json({ error: 'Invalid date range' }, { status: 400 })
++  }
++
++  try {
++    const organization = await prisma.organizationSettings
++      .findFirst({ where: { clerkOrganizationId: orgId } })
++      .catch(() => null)
++
++    const animals = await prisma.animal.findMany({
++      where: {
++        clerkOrganizationId: orgId,
++        OR: [
++          { dateFound: { gte: startDate, lte: endDate } },
++          { dateAdmitted: { gte: startDate, lte: endDate } },
++        ],
++      },
++      orderBy: [{ dateAdmitted: 'asc' }, { dateFound: 'asc' }],
++    })
++
++    const generator = new VicReportGenerator({
++      reportingPeriod: { startDate, endDate },
++      organization: {
++        name:
++          (organization as { organizationName?: string } | null)?.organizationName ??
++          'Wildlife Shelter',
++        authorisationNumber:
++          (organization as { authorisationNumber?: string } | null)
++            ?.authorisationNumber ?? '',
++        contactName: '',
++        contactEmail: '',
++        contactPhone: '',
++      },
++      records: VicReportGenerator.rowsFromAnimals(animals),
++    })
++
++    const workbook = generator.generateReport()
++    const buffer = await workbook.xlsx.writeBuffer()
++
++    const stamp = new Date().toISOString().split('T')[0]
++
++    logAudit({
++      userId,
++      orgId,
++      action: 'EXPORT',
++      entity: 'WildlifeShelterRecordSheet',
++      entityId: orgId,
++      metadata: {
++        recordCount: animals.length,
++        startDate: startDate.toISOString(),
++        endDate: endDate.toISOString(),
++      },
++    })
++
++    return new NextResponse(buffer as ArrayBuffer, {
++      headers: {
++        'Content-Type':
++          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
++        'Content-Disposition': `attachment; filename="wildlife-shelter-record-sheet-${stamp}.xlsx"`,
++      },
++    })
++  } catch (error) {
++    console.error('DEECA record sheet export failed', error)
++    return NextResponse.json({ error: 'Export failed' }, { status: 500 })
++  }
++}
+diff --git a/src/components/add-animal-dialog.tsx b/src/components/add-animal-dialog.tsx
+index 7ebef50..c0d3a4b 100644
+--- a/src/components/add-animal-dialog.tsx
++++ b/src/components/add-animal-dialog.tsx
+@@ -10,6 +10,7 @@ import { AlertTriangle, CalendarIcon, Camera, Loader2, Rocket, X } from "lucide-
+ 
+ import { useRouter } from "next/navigation"
+ import { cn } from "@/lib/utils"
++import { VicCaseSheetFields } from "@/components/vic-case-sheet-fields"
+ import { Button } from "@/components/ui/button"
+ import { Calendar } from "@/components/ui/calendar"
+ import {
+@@ -151,6 +152,12 @@ const addAnimalSchema = z.object({
+   speciesNotListedFullName: z.string().optional(),
+   interOrgTransferReceived: z.boolean().optional(),
+   sourceOrgAnimalId: z.string().optional(),
++  // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
++  vicAgeCode: z.string().optional(),
++  vicInjuryCode: z.string().optional(),
++  vicCauseCode: z.string().optional(),
++  vicFateCode: z.string().optional(),
++  vicFoundRef: z.string().optional(),
+ }).superRefine((data, ctx) => {
+   if (data.species === SPECIES_NOT_LISTED) {
+     const name = (data.speciesNotListedFullName ?? '').trim();
+@@ -229,6 +236,7 @@ export function AddAnimalDialog({
+ 
+   const jurisdiction = getCurrentJurisdiction();
+   const isNSW = jurisdiction === 'NSW';
++  const isVIC = jurisdiction === 'VIC';
+ 
+   const isEditMode = !!animalToEdit;
+ 
+@@ -267,6 +275,12 @@ export function AddAnimalDialog({
+         : '',
+       interOrgTransferReceived: animalToEdit.interOrgTransferReceived ?? false,
+       sourceOrgAnimalId: animalToEdit.sourceOrgAnimalId ?? '',
++      // VIC-specific fields (DEECA)
++      vicAgeCode: animalToEdit.vicAgeCode || undefined,
++      vicInjuryCode: animalToEdit.vicInjuryCode || undefined,
++      vicCauseCode: animalToEdit.vicCauseCode || undefined,
++      vicFateCode: animalToEdit.vicFateCode || undefined,
++      vicFoundRef: animalToEdit.vicFoundRef || '',
+     } : {
+       orgAnimalId: "",
+       name: "",
+@@ -294,6 +308,12 @@ export function AddAnimalDialog({
+       speciesNotListedFullName: '',
+       interOrgTransferReceived: false,
+       sourceOrgAnimalId: '',
++      // VIC-specific fields (DEECA)
++      vicAgeCode: undefined,
++      vicInjuryCode: undefined,
++      vicCauseCode: undefined,
++      vicFateCode: undefined,
++      vicFoundRef: '',
+     }
+   })
+ 
+@@ -356,6 +376,11 @@ export function AddAnimalDialog({
+               : '',
+             interOrgTransferReceived: animalToEdit.interOrgTransferReceived ?? false,
+             sourceOrgAnimalId: animalToEdit.sourceOrgAnimalId ?? '',
++            vicAgeCode: animalToEdit.vicAgeCode || undefined,
++            vicInjuryCode: animalToEdit.vicInjuryCode || undefined,
++            vicCauseCode: animalToEdit.vicCauseCode || undefined,
++            vicFateCode: animalToEdit.vicFateCode || undefined,
++            vicFoundRef: animalToEdit.vicFoundRef || '',
+         });
+         const coords = animalToEdit.rescueCoordinates as { lat?: number; lng?: number } | null;
+         setLocationData({
+@@ -394,6 +419,11 @@ export function AddAnimalDialog({
+             speciesNotListedFullName: '',
+             interOrgTransferReceived: false,
+             sourceOrgAnimalId: '',
++            vicAgeCode: undefined,
++            vicInjuryCode: undefined,
++            vicCauseCode: undefined,
++            vicFateCode: undefined,
++            vicFoundRef: '',
+         });
+         setLocationData({
+           lat: -35.2809,
+@@ -538,6 +568,12 @@ export function AddAnimalDialog({
+       sourceOrgAnimalId: data.interOrgTransferReceived
+         ? data.sourceOrgAnimalId?.trim() || null
+         : null,
++      // VIC-specific fields (DEECA Wildlife Shelter Record Sheet)
++      vicAgeCode: data.vicAgeCode || null,
++      vicInjuryCode: data.vicInjuryCode || null,
++      vicCauseCode: data.vicCauseCode || null,
++      vicFateCode: data.vicFateCode || null,
++      vicFoundRef: data.vicFoundRef?.trim() || null,
+       // Release location fields when status is RELEASED - use same location data
+       ...(isReleased && {
+         releaseLocation: locationData.address || null,
+@@ -824,6 +860,13 @@ export function AddAnimalDialog({
+               )}
+             />
+ 
++            {isVIC && (
++              <VicCaseSheetFields
++                control={form.control}
++                species={form.watch('species')}
++              />
++            )}
++
+             {isNSW && !isEditMode && (() => {
+               const aggregateRisk = isAggregateRiskIntake({
+                 species: form.watch('species'),
+diff --git a/src/components/growth/multi-animal-growth-chart.tsx b/src/components/growth/multi-animal-growth-chart.tsx
+new file mode 100644
+index 0000000..fefaa37
+--- /dev/null
++++ b/src/components/growth/multi-animal-growth-chart.tsx
+@@ -0,0 +1,225 @@
++"use client";
++
++import { useMemo } from "react";
++import { Info } from "lucide-react";
++import {
++  LineChart,
++  Line,
++  XAxis,
++  YAxis,
++  CartesianGrid,
++  Tooltip,
++  Legend,
++  ResponsiveContainer,
++} from "recharts";
++import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
++import {
++  type GrowthReferencePoint,
++  calculatePredictedWeight,
++} from "@/lib/growth-utils";
++import type { GrowthMeasurement } from "@prisma/client";
++import { differenceInDays } from "date-fns";
++
++/**
++ * Weight-for-age comparison across several animals of the same species.
++ *
++ * The single-animal GrowthChart answers "is this animal tracking?". This one
++ * answers "how is this cohort doing relative to each other and to the
++ * reference curve?" — useful when a shelter has taken in a group over one
++ * season and wants to spot the individual falling behind.
++ *
++ * Animals with no date of birth are excluded rather than guessed at: without
++ * a birth date there is no age axis to plot against, and inventing one would
++ * put a misleading line on a chart carers use to make care decisions.
++ */
++
++export interface CohortAnimal {
++  id: string;
++  name: string;
++  orgAnimalId?: string | null;
++  dateOfBirth: Date | null;
++  measurements: GrowthMeasurement[];
++}
++
++interface MultiAnimalGrowthChartProps {
++  animals: CohortAnimal[];
++  referenceData: GrowthReferencePoint[];
++  species: string;
++  /** Show the reference curve behind the animals. Defaults to true. */
++  showReference?: boolean;
++}
++
++/**
++ * Distinct, colour-blind-friendly hues. Deliberately not the app's status
++ * colours (green/amber/red), so a line colour is never mistaken for a
++ * judgement about that animal's condition.
++ */
++const SERIES_COLOURS = [
++  "#1f77b4",
++  "#8c564b",
++  "#9467bd",
++  "#17becf",
++  "#e377c2",
++  "#7f7f7f",
++  "#2ca02c",
++  "#bcbd22",
++];
++
++interface Row {
++  ageDays: number;
++  reference?: number;
++  [animalKey: string]: number | undefined;
++}
++
++export function MultiAnimalGrowthChart({
++  animals,
++  referenceData,
++  species,
++  showReference = true,
++}: MultiAnimalGrowthChartProps) {
++  const plottable = useMemo(
++    () =>
++      animals.filter(
++        (a) => a.dateOfBirth != null && a.measurements.some((m) => m.weightGrams != null)
++      ),
++    [animals]
++  );
++
++  const excludedCount = animals.length - plottable.length;
++
++  const { rows, seriesKeys } = useMemo(() => {
++    const byAge = new Map<number, Row>();
++
++    const ensure = (ageDays: number): Row => {
++      let row = byAge.get(ageDays);
++      if (!row) {
++        row = { ageDays };
++        byAge.set(ageDays, row);
++      }
++      return row;
++    };
++
++    const keys: { key: string; label: string }[] = [];
++
++    for (const animal of plottable) {
++      const key = `a_${animal.id}`;
++      keys.push({
++        key,
++        label: animal.orgAnimalId
++          ? `${animal.name} (${animal.orgAnimalId})`
++          : animal.name,
++      });
++
++      for (const m of animal.measurements) {
++        if (m.weightGrams == null) continue;
++        const ageDays = differenceInDays(
++          new Date(m.measuredAt),
++          new Date(animal.dateOfBirth as Date)
++        );
++        if (ageDays < 0) continue;
++        ensure(ageDays)[key] = m.weightGrams;
++      }
++    }
++
++    if (showReference && referenceData.length > 0) {
++      const maxAge = Math.max(0, ...Array.from(byAge.keys()));
++      for (let age = 0; age <= maxAge; age += Math.max(1, Math.round(maxAge / 40))) {
++        const predicted = calculatePredictedWeight(referenceData, age);
++        if (predicted != null) ensure(age).reference = predicted;
++      }
++    }
++
++    return {
++      rows: Array.from(byAge.values()).sort((a, b) => a.ageDays - b.ageDays),
++      seriesKeys: keys,
++    };
++  }, [plottable, referenceData, showReference]);
++
++  if (plottable.length === 0) {
++    return (
++      <Card>
++        <CardHeader>
++          <CardTitle>Weight for age — {species}</CardTitle>
++        </CardHeader>
++        <CardContent>
++          <p className="text-sm text-muted-foreground">
++            No animals in this selection can be plotted. A comparison needs at
++            least one animal with a date of birth and a recorded weight.
++          </p>
++        </CardContent>
++      </Card>
++    );
++  }
++
++  return (
++    <Card>
++      <CardHeader>
++        <CardTitle>
++          Weight for age — {species} ({plottable.length}{" "}
++          {plottable.length === 1 ? "animal" : "animals"})
++        </CardTitle>
++      </CardHeader>
++      <CardContent>
++        <ResponsiveContainer width="100%" height={380}>
++          <LineChart data={rows} margin={{ top: 8, right: 16, bottom: 24, left: 8 }}>
++            <CartesianGrid strokeDasharray="3 3" />
++            <XAxis
++              dataKey="ageDays"
++              type="number"
++              domain={["dataMin", "dataMax"]}
++              label={{ value: "Age (days)", position: "insideBottom", offset: -12 }}
++            />
++            <YAxis
++              label={{ value: "Weight (g)", angle: -90, position: "insideLeft" }}
++            />
++            <Tooltip
++              formatter={(value: number, name: string) => [`${value} g`, name]}
++              labelFormatter={(age) => `Day ${age}`}
++            />
++            <Legend verticalAlign="top" height={36} />
++
++            {showReference && (
++              <Line
++                type="monotone"
++                dataKey="reference"
++                name="Expected"
++                stroke="#6b7280"
++                strokeDasharray="5 4"
++                strokeWidth={2}
++                dot={false}
++                connectNulls
++                isAnimationActive={false}
++              />
++            )}
++
++            {seriesKeys.map(({ key, label }, i) => (
++              <Line
++                key={key}
++                type="monotone"
++                dataKey={key}
++                name={label}
++                stroke={SERIES_COLOURS[i % SERIES_COLOURS.length]}
++                strokeWidth={2}
++                dot={{ r: 3 }}
++                connectNulls
++                isAnimationActive={false}
++              />
++            ))}
++          </LineChart>
++        </ResponsiveContainer>
++
++        {excludedCount > 0 && (
++          <p className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground">
++            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
++            <span>
++              {excludedCount}{" "}
++              {excludedCount === 1 ? "animal is" : "animals are"} not shown —
++              a date of birth and at least one recorded weight are needed to
++              place an animal on the age axis.
++            </span>
++          </p>
++        )}
++      </CardContent>
++    </Card>
++  );
++}
+diff --git a/src/components/vic-case-sheet-fields.tsx b/src/components/vic-case-sheet-fields.tsx
+new file mode 100644
+index 0000000..d2b608c
+--- /dev/null
++++ b/src/components/vic-case-sheet-fields.tsx
+@@ -0,0 +1,272 @@
++"use client";
++
++import * as React from "react";
++import type { Control } from "react-hook-form";
++import { Info } from "lucide-react";
++import {
++  FormControl,
++  FormDescription,
++  FormField,
++  FormItem,
++  FormLabel,
++  FormMessage,
++} from "@/components/ui/form";
++import { Input } from "@/components/ui/input";
++import {
++  Select,
++  SelectContent,
++  SelectItem,
++  SelectTrigger,
++  SelectValue,
++} from "@/components/ui/select";
++import {
++  VIC_CAUSE_CODES,
++  VIC_FATE_CODES,
++  VIC_FATE_REQUIRES_APPROVAL,
++  VIC_INJURY_CODES,
++  getVicAgeCodesForGroup,
++  type VicAnimalGroup,
++} from "@/lib/vic-picklists";
++import { lookupVicSpeciesCode } from "@/lib/vic-species-codes";
++
++/**
++ * DEECA Wildlife Shelter Record Sheet fields for Victorian shelters.
++ *
++ * Renders the coded columns required by Condition 23 of the Wildlife
++ * Rehabilitator Authorisation Guide: AGE, INJURY, CAUSE, STATUS (fate), and
++ * the GPS/Melways reference that supplements the FOUND column.
++ *
++ * Other record sheet columns are already captured elsewhere on the animal
++ * form and are not duplicated here:
++ *   CASE NUMBER  -> orgAnimalId
++ *   COMMON NAME  -> species
++ *   SPECIES CODE -> derived from species at export time (Wildlife Code Book)
++ *   DATE IN      -> dateFound / dateAdmitted
++ *   SEX          -> sex
++ *   FOUND        -> rescueLocation / rescueAddress (+ vicFoundRef here)
++ *   DATE OUT     -> outcomeDate / dateReleased
++ *   NOTES        -> notes / releaseNotes
++ */
++
++interface VicCaseSheetFieldsProps {
++  // eslint-disable-next-line @typescript-eslint/no-explicit-any
++  control: Control<any>;
++  /** Current species value, used to preview the derived DEECA species code. */
++  species?: string;
++}
++
++/**
++ * DEECA uses different age-class code sets for birds, mammals, and
++ * reptiles/amphibians. Infer the group from the species' code range in the
++ * Wildlife Code Book: 1xxx = mammals, 2xxx/3xxx = reptiles & amphibians,
++ * and the remaining (low, 1-999) codes = birds.
++ */
++function inferAnimalGroup(species?: string): VicAnimalGroup | null {
++  if (!species) return null;
++  const code = lookupVicSpeciesCode(species);
++  if (!code) return null;
++  const numeric = parseInt(code, 10);
++  if (Number.isNaN(numeric)) return null;
++  if (numeric >= 1000 && numeric < 2000) return "mammal";
++  if (numeric >= 2000 && numeric < 4000) return "reptile-amphibian";
++  return "bird";
++}
++
++const GROUP_LABELS: Record<VicAnimalGroup, string> = {
++  bird: "bird",
++  mammal: "mammal",
++  "reptile-amphibian": "reptile/amphibian",
++};
++
++export function VicCaseSheetFields({ control, species }: VicCaseSheetFieldsProps) {
++  const group = inferAnimalGroup(species);
++  const speciesCode = species ? lookupVicSpeciesCode(species) : undefined;
++
++  // If we can't infer the group, offer every age code so the carer is never
++  // blocked from recording a value. Codes are unique across groups except
++  // where DEECA intends them to be.
++  const ageOptions = group
++    ? getVicAgeCodesForGroup(group)
++    : [
++        ...getVicAgeCodesForGroup("bird"),
++        ...getVicAgeCodesForGroup("mammal"),
++        ...getVicAgeCodesForGroup("reptile-amphibian"),
++      ];
++
++  return (
++    <div className="rounded-md border p-4 space-y-4">
++      <div>
++        <h4 className="font-medium">Wildlife Shelter Record Sheet (DEECA)</h4>
++        <p className="text-sm text-muted-foreground">
++          Codes required on your Victorian shelter record sheet. Records must be
++          kept for 3 years and produced to a Conservation Regulator Authorised
++          Officer on request.
++        </p>
++      </div>
++
++      {/* Derived species code preview - not an input, since it comes from the
++          Wildlife Code Book rather than carer entry. */}
++      <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
++        <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
++        {speciesCode ? (
++          <span>
++            DEECA species code for {species}: <strong>{speciesCode}</strong>
++            {group ? ` (${GROUP_LABELS[group]} age codes shown below)` : null}
++          </span>
++        ) : (
++          <span>
++            No DEECA species code matched
++            {species ? ` "${species}"` : ""}. The Species Code column will be
++            left blank on export, which is correct for unidentified species -
++            otherwise check the latest Wildlife Code Book.
++          </span>
++        )}
++      </div>
++
++      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
++        {/* AGE */}
++        <FormField
++          control={control}
++          name="vicAgeCode"
++          render={({ field }) => (
++            <FormItem>
++              <FormLabel>Age class</FormLabel>
++              <Select onValueChange={field.onChange} value={field.value ?? ""}>
++                <FormControl>
++                  <SelectTrigger>
++                    <SelectValue placeholder="Select age class" />
++                  </SelectTrigger>
++                </FormControl>
++                <SelectContent>
++                  {ageOptions.map((opt) => (
++                    <SelectItem key={`age-${opt.code}`} value={opt.code}>
++                      {opt.code} - {opt.label}
++                    </SelectItem>
++                  ))}
++                </SelectContent>
++              </Select>
++              <FormDescription>
++                If the animal has young, record the age of the parent only.
++              </FormDescription>
++              <FormMessage />
++            </FormItem>
++          )}
++        />
++
++        {/* INJURY */}
++        <FormField
++          control={control}
++          name="vicInjuryCode"
++          render={({ field }) => (
++            <FormItem>
++              <FormLabel>Injury</FormLabel>
++              <Select onValueChange={field.onChange} value={field.value ?? ""}>
++                <FormControl>
++                  <SelectTrigger>
++                    <SelectValue placeholder="Select major injury" />
++                  </SelectTrigger>
++                </FormControl>
++                <SelectContent>
++                  {VIC_INJURY_CODES.map((opt) => (
++                    <SelectItem key={`injury-${opt.code}`} value={opt.code}>
++                      {opt.code} - {opt.label}
++                    </SelectItem>
++                  ))}
++                </SelectContent>
++              </Select>
++              <FormDescription>
++                Record only the most serious injury if there is more than one.
++              </FormDescription>
++              <FormMessage />
++            </FormItem>
++          )}
++        />
++
++        {/* CAUSE */}
++        <FormField
++          control={control}
++          name="vicCauseCode"
++          render={({ field }) => (
++            <FormItem>
++              <FormLabel>Cause of injury</FormLabel>
++              <Select onValueChange={field.onChange} value={field.value ?? ""}>
++                <FormControl>
++                  <SelectTrigger>
++                    <SelectValue placeholder="Select cause" />
++                  </SelectTrigger>
++                </FormControl>
++                <SelectContent>
++                  {VIC_CAUSE_CODES.map((opt) => (
++                    <SelectItem key={`cause-${opt.code}`} value={opt.code}>
++                      {opt.code} - {opt.label}
++                    </SelectItem>
++                  ))}
++                </SelectContent>
++              </Select>
++              <FormMessage />
++            </FormItem>
++          )}
++        />
++
++        {/* FATE / STATUS */}
++        <FormField
++          control={control}
++          name="vicFateCode"
++          render={({ field }) => (
++            <FormItem>
++              <FormLabel>Fate / status</FormLabel>
++              <Select onValueChange={field.onChange} value={field.value ?? ""}>
++                <FormControl>
++                  <SelectTrigger>
++                    <SelectValue placeholder="Select outcome (once known)" />
++                  </SelectTrigger>
++                </FormControl>
++                <SelectContent>
++                  {VIC_FATE_CODES.map((opt) => (
++                    <SelectItem key={`fate-${opt.code}`} value={opt.code}>
++                      {opt.code} - {opt.label}
++                      {VIC_FATE_REQUIRES_APPROVAL.has(opt.code) ? " *" : ""}
++                    </SelectItem>
++                  ))}
++                </SelectContent>
++              </Select>
++              <FormDescription>
++                {field.value && VIC_FATE_REQUIRES_APPROVAL.has(field.value) ? (
++                  <span className="text-amber-700 dark:text-amber-500">
++                    * This transfer type requires prior DEECA approval.
++                  </span>
++                ) : (
++                  "Leave blank until the animal is permanently disposed of."
++                )}
++              </FormDescription>
++              <FormMessage />
++            </FormItem>
++          )}
++        />
++      </div>
++
++      {/* FOUND reference */}
++      <FormField
++        control={control}
++        name="vicFoundRef"
++        render={({ field }) => (
++          <FormItem>
++            <FormLabel>GPS coordinates or Melways reference</FormLabel>
++            <FormControl>
++              <Input
++                placeholder="e.g. -37.8136, 144.9631 or Melway 43 G7"
++                {...field}
++                value={field.value ?? ""}
++              />
++            </FormControl>
++            <FormDescription>
++              Recorded alongside the rescue location so the animal can be
++              released where it was found (Condition 21).
++            </FormDescription>
++            <FormMessage />
++          </FormItem>
++        )}
++      />
++    </div>
++  );
++}
+diff --git a/src/components/vic-record-sheet-export.tsx b/src/components/vic-record-sheet-export.tsx
+new file mode 100644
+index 0000000..2fb6023
+--- /dev/null
++++ b/src/components/vic-record-sheet-export.tsx
+@@ -0,0 +1,99 @@
++"use client";
++
++import { useState } from "react";
++import { Download, Loader2, ShieldCheck } from "lucide-react";
++import { Button } from "@/components/ui/button";
++import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
++
++/**
++ * One button that produces the DEECA Wildlife Shelter Record Sheet.
++ *
++ * The point of this component is that a carer facing an Authorised Officer
++ * should not have to assemble anything, choose a format, or decide what to
++ * include. They press one button and get the document DEECA asks for, covering
++ * the full three-year retention window by default.
++ */
++export function VicRecordSheetExport() {
++  const [busy, setBusy] = useState(false);
++  const [error, setError] = useState<string | null>(null);
++
++  async function handleExport() {
++    setBusy(true);
++    setError(null);
++    try {
++      const res = await fetch("/api/compliance/vic-record-sheet");
++      if (!res.ok) {
++        throw new Error(
++          res.status === 403
++            ? "You do not have permission to export compliance records."
++            : "The export could not be generated."
++        );
++      }
++      const blob = await res.blob();
++      const url = URL.createObjectURL(blob);
++      const a = document.createElement("a");
++      a.href = url;
++      a.download = `wildlife-shelter-record-sheet-${
++        new Date().toISOString().split("T")[0]
++      }.xlsx`;
++      a.click();
++      URL.revokeObjectURL(url);
++    } catch (e) {
++      setError(e instanceof Error ? e.message : "The export could not be generated.");
++    } finally {
++      setBusy(false);
++    }
++  }
++
++  return (
++    <Card>
++      <CardHeader>
++        <CardTitle className="flex items-center gap-2">
++          <ShieldCheck className="h-5 w-5" />
++          Wildlife Shelter Record Sheet
++        </CardTitle>
++      </CardHeader>
++      <CardContent className="space-y-4">
++        <p className="text-sm text-muted-foreground">
++          Produces the record DEECA asks for under Condition 23, covering the
++          last three years. Contains only the twelve columns on the
++          Conservation Regulator&rsquo;s record sheet — case number, species and
++          code, dates in and out, sex, age, injury, cause, where found, status
++          and notes.
++        </p>
++
++        <p className="text-sm text-muted-foreground">
++          Clinical detail is deliberately left out. Medications, subcutaneous
++          fluids, treatments, vet notes, weights and growth records are not
++          part of this document. They stay in the system for your vet.
++        </p>
++
++        <Button onClick={handleExport} disabled={busy} size="lg" className="w-full">
++          {busy ? (
++            <>
++              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
++              Preparing record sheet…
++            </>
++          ) : (
++            <>
++              <Download className="mr-2 h-4 w-4" />
++              Export record sheet for DEECA
++            </>
++          )}
++        </Button>
++
++        {error && (
++          <p className="text-sm text-destructive" role="alert">
++            {error}
++          </p>
++        )}
++
++        <p className="text-xs text-muted-foreground">
++          Records must be kept for three years and produced to an Authorised
++          Officer without delay. Annual submission to DEECA is no longer
++          required.
++        </p>
++      </CardContent>
++    </Card>
++  );
++}
+diff --git a/src/lib/biolac-feeding.test.ts b/src/lib/biolac-feeding.test.ts
+new file mode 100644
+index 0000000..4ef08e9
+--- /dev/null
++++ b/src/lib/biolac-feeding.test.ts
+@@ -0,0 +1,87 @@
++import { describe, expect, it } from 'vitest';
++import {
++  BIOLAC_FORMULAS,
++  calculateFeedPlan,
++  getBiolacFormula,
++  suggestedFormulaIds,
++} from './biolac-feeding';
++
++const flyingFox = getBiolacFormula('flying-fox')!;
++const starter = getBiolacFormula('starter-100')!;
++
++describe('Biolac feed plan', () => {
++  it("matches the manufacturer's own worked example for a 100g flying-fox pup", () => {
++    // Biolac state plainly that a 100g pup takes around 25mL per DAY.
++    // This is the single most important number in the module: the same figure
++    // mistaken for a per-feed volume would mean feeding 4-5x too much.
++    const plan = calculateFeedPlan(flyingFox, 100)!;
++    expect(plan.dailyVolumeMaxMl).toBe(25);
++    expect(plan.dailyVolumeMinMl).toBe(20);
++    expect(plan.perFeedMaxMl).toBe(5);
++  });
++
++  it('splits the daily total across feeds rather than repeating it', () => {
++    const plan = calculateFeedPlan(flyingFox, 200, 5)!;
++    expect(plan.dailyVolumeMaxMl).toBe(50);
++    expect(plan.perFeedMaxMl).toBe(10);
++    expect(plan.perFeedMaxMl * plan.feedsPerDay).toBeCloseTo(
++      plan.dailyVolumeMaxMl,
++      5
++    );
++  });
++
++  it('applies the published 13% rate and 6 feeds for Starter 100', () => {
++    const plan = calculateFeedPlan(starter, 500)!;
++    expect(plan.dailyVolumeMaxMl).toBe(65);
++    expect(plan.feedsPerDay).toBe(6);
++    expect(plan.perFeedMaxMl).toBeCloseTo(10.8, 1);
++  });
++
++  it('calculates powder at the published mixing ratio', () => {
++    // Flying fox: 14g powder made up to 70mL, so 25mL needs 5g.
++    const plan = calculateFeedPlan(flyingFox, 100)!;
++    expect(plan.powderForDayGrams).toBe(5);
++    // Starter 100: 16g to 100mL, so 65mL needs 10.4g.
++    const s = calculateFeedPlan(starter, 500)!;
++    expect(s.powderForDayGrams).toBeCloseTo(10.4, 1);
++  });
++
++  it('honours a carer-chosen feed frequency within the published range', () => {
++    const four = calculateFeedPlan(flyingFox, 100, 4)!;
++    const five = calculateFeedPlan(flyingFox, 100, 5)!;
++    expect(four.dailyVolumeMaxMl).toBe(five.dailyVolumeMaxMl);
++    expect(four.perFeedMaxMl).toBeGreaterThan(five.perFeedMaxMl);
++  });
++
++  it('rejects nonsense weights rather than returning a plausible number', () => {
++    expect(calculateFeedPlan(flyingFox, 0)).toBeNull();
++    expect(calculateFeedPlan(flyingFox, -50)).toBeNull();
++    expect(calculateFeedPlan(flyingFox, NaN)).toBeNull();
++    expect(calculateFeedPlan(flyingFox, 100, 0)).toBeNull();
++  });
++});
++
++describe('formula suggestions', () => {
++  it('points bats at the flying-fox formula', () => {
++    expect(suggestedFormulaIds('Grey-headed Flying-fox')).toEqual(['flying-fox']);
++    expect(suggestedFormulaIds("Gould's Wattled Bat")).toEqual(['flying-fox']);
++  });
++
++  it('points marsupials at the Stage 1 formulas', () => {
++    expect(suggestedFormulaIds('Common Ringtail Possum')).toContain('starter-100');
++    expect(suggestedFormulaIds('Eastern Grey Kangaroo')).toContain('starter-100');
++  });
++
++  it('returns nothing rather than guessing for species with no published basis', () => {
++    expect(suggestedFormulaIds('Tiger Snake')).toEqual([]);
++    expect(suggestedFormulaIds('Australian Magpie')).toEqual([]);
++  });
++});
++
++describe('published figures are cited', () => {
++  it('records a manufacturer source for every formula', () => {
++    for (const f of BIOLAC_FORMULAS) {
++      expect(f.source).toMatch(/biolac\.com\.au/);
++    }
++  });
++});
+diff --git a/src/lib/biolac-feeding.ts b/src/lib/biolac-feeding.ts
+new file mode 100644
+index 0000000..2489f19
+--- /dev/null
++++ b/src/lib/biolac-feeding.ts
+@@ -0,0 +1,174 @@
++/**
++ * Biolac milk replacer feeding calculations.
++ *
++ * Every figure here is transcribed from Biolac's own published product pages
++ * (biolac.com.au) and is cited per formula in `source` below. Nothing is
++ * estimated or interpolated by this module beyond multiplying the
++ * manufacturer's stated percentage of body weight by the animal's weight and
++ * dividing by the stated number of feeds.
++ *
++ * SAFETY NOTE FOR MAINTAINERS
++ * This module deliberately does NOT invent rates for formulas or species that
++ * the manufacturer has not published figures for. Feeding volumes have direct
++ * welfare consequences: overfeeding causes diarrhoea, bloat and aspiration.
++ * If you add a formula, cite the manufacturer page it came from. If a carer
++ * needs a figure that isn't published, the correct answer is to refer them to
++ * their species coordinator or vet, not to interpolate.
++ *
++ * Output is always presented as a starting guide to be checked against the
++ * animal's condition and appetite, never as a prescription.
++ */
++
++export interface BiolacFormula {
++  id: string;
++  name: string;
++  /** What the manufacturer says this formula is for. */
++  suitableFor: string;
++  /** Grams of powder ... */
++  powderGrams: number;
++  /** ... made up to this many mL of prepared formula. */
++  madeUpToMl: number;
++  /** Percentage of body weight fed per day, as published. */
++  percentBodyWeightMin: number;
++  percentBodyWeightMax: number;
++  /** Number of feeds per day, as published. */
++  feedsPerDayMin: number;
++  feedsPerDayMax: number;
++  /** Manufacturer page this was taken from. */
++  source: string;
++  notes?: string[];
++}
++
++export const BIOLAC_FORMULAS: BiolacFormula[] = [
++  {
++    id: 'flying-fox',
++    name: 'Biolac Flying Fox Formula',
++    suitableFor:
++      'Orphaned and rescued flying-foxes and bats. Developed from research on grey-headed flying-foxes.',
++    powderGrams: 14,
++    madeUpToMl: 70,
++    percentBodyWeightMin: 20,
++    percentBodyWeightMax: 25,
++    feedsPerDayMin: 4,
++    feedsPerDayMax: 5,
++    source: 'biolac.com.au/products/flying-fox-formula',
++    notes: [
++      'This is a CONCENTRATED formula. The daily total is split across the feeds — a 100g pup takes roughly 25mL per day, not per feed.',
++      'On arrival, transition gradually: 50:50 milk/water for the first feed, 75:25 for the second, full strength from the third onward.',
++      'Milk-dependent period runs from rescue to weaning at around 11-12 weeks.',
++      'Feed to the pup\u2019s appetite and condition. Never force-feed, and do not overfeed.',
++    ],
++  },
++  {
++    id: 'starter-100',
++    name: 'Biolac Starter 100 (formerly M100)',
++    suitableFor:
++      'Stage 1 marsupial milk replacer for stabilised joeys. Macropods from furless to velveted, wombats 300g-1.8kg, koalas in early rearing, and possums and gliders for their entire milk-dependent period.',
++    powderGrams: 16,
++    madeUpToMl: 100,
++    percentBodyWeightMin: 13,
++    percentBodyWeightMax: 13,
++    feedsPerDayMin: 6,
++    feedsPerDayMax: 6,
++    source: 'biolac.com.au/products/biolac-starter100-transition-milk',
++    notes: [
++      'Possums and gliders stay on Starter 100 through to weaning and do not progress to Stage 2 or 3.',
++      'Mix powder to a smooth paste with a little pre-boiled warm water first, then add the rest.',
++      'Warm in a water bath to about 32-35°C. Do not microwave.',
++      'Refrigerate unused formula and use within 24 hours.',
++    ],
++  },
++  {
++    id: 'starter-100-plus',
++    name: 'Biolac Starter 100 Plus (formerly M100 GOS)',
++    suitableFor:
++      'Stage 1 critical-care formula with added galacto-oligosaccharides (GOS) for gut health. Suited to furless joeys, neonatal possums, and animals in early stabilisation.',
++    powderGrams: 16,
++    madeUpToMl: 100,
++    percentBodyWeightMin: 13,
++    percentBodyWeightMax: 13,
++    feedsPerDayMin: 6,
++    feedsPerDayMax: 6,
++    source: 'biolac.com.au/products/biolac-starter100plus-formula',
++    notes: [
++      'Recommended for the first 24 hours of care, and until the animal\u2019s eyes are open and ears nearly erect.',
++      'Warm in a water bath to about 32-35°C. Do not microwave.',
++    ],
++  },
++];
++
++export interface FeedPlan {
++  formula: BiolacFormula;
++  bodyWeightGrams: number;
++  /** Daily total in mL, as a range where the manufacturer publishes one. */
++  dailyVolumeMinMl: number;
++  dailyVolumeMaxMl: number;
++  feedsPerDay: number;
++  perFeedMinMl: number;
++  perFeedMaxMl: number;
++  /** Powder and water needed to make the daily total. */
++  powderForDayGrams: number;
++}
++
++/**
++ * Work out a starting feed plan. Pure arithmetic on the manufacturer's own
++ * published percentages — no interpolation, no species-specific adjustment.
++ */
++export function calculateFeedPlan(
++  formula: BiolacFormula,
++  bodyWeightGrams: number,
++  feedsPerDay?: number
++): FeedPlan | null {
++  if (!Number.isFinite(bodyWeightGrams) || bodyWeightGrams <= 0) return null;
++
++  const feeds = feedsPerDay ?? formula.feedsPerDayMax;
++  if (feeds <= 0) return null;
++
++  const dailyMin = (bodyWeightGrams * formula.percentBodyWeightMin) / 100;
++  const dailyMax = (bodyWeightGrams * formula.percentBodyWeightMax) / 100;
++
++  const round = (n: number) => Math.round(n * 10) / 10;
++
++  return {
++    formula,
++    bodyWeightGrams,
++    dailyVolumeMinMl: round(dailyMin),
++    dailyVolumeMaxMl: round(dailyMax),
++    feedsPerDay: feeds,
++    perFeedMinMl: round(dailyMin / feeds),
++    perFeedMaxMl: round(dailyMax / feeds),
++    // Powder needed to make the day's maximum volume, at the published ratio.
++    powderForDayGrams: round(
++      (dailyMax / formula.madeUpToMl) * formula.powderGrams
++    ),
++  };
++}
++
++export function getBiolacFormula(id: string): BiolacFormula | undefined {
++  return BIOLAC_FORMULAS.find((f) => f.id === id);
++}
++
++/**
++ * Formulas the manufacturer indicates for a given species, based on the
++ * "suitable for" text they publish. Returns an empty array when we have no
++ * published basis — callers should show all formulas and let the carer pick
++ * rather than guessing.
++ */
++export function suggestedFormulaIds(species: string): string[] {
++  const s = species.toLowerCase();
++  if (s.includes('flying-fox') || s.includes('flying fox') || s.includes('bat')) {
++    return ['flying-fox'];
++  }
++  if (
++    s.includes('possum') ||
++    s.includes('glider') ||
++    s.includes('kangaroo') ||
++    s.includes('wallaby') ||
++    s.includes('wallaroo') ||
++    s.includes('wombat') ||
++    s.includes('koala')
++  ) {
++    return ['starter-100', 'starter-100-plus'];
++  }
++  return [];
++}
+diff --git a/src/lib/compliance-rules.ts b/src/lib/compliance-rules.ts
+index a75658e..5fd27ff 100644
+--- a/src/lib/compliance-rules.ts
++++ b/src/lib/compliance-rules.ts
+@@ -628,18 +628,197 @@ const NSW_COMPLIANCE_RULES: ComplianceSection[] = [
+ ];
+ 
+ // VIC Wildlife Rehabilitation Compliance Rules
++// Sourced from the DEECA Wildlife Rehabilitator Authorisation Guide (Conditions 1-25),
++// https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide/authorisation-conditions
+ const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
++  {
++    id: 'vic-assessment-quarantine',
++    title: 'Assessment & Quarantine',
++    description: 'Health assessment and quarantine requirements (Conditions 3-6)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-3',
++        section: 'Condition 3',
++        title: 'Health Assessment Within 48 Hours',
++        description: 'New wildlife must have its health assessed within 48 hours by a registered vet or experienced rehabilitator, and their advice recorded.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'incident-management',
++        formType: 'health-assessment'
++      },
++      {
++        id: 'vic-4-5',
++        section: 'Conditions 4-5',
++        title: 'Quarantine on Admission',
++        description: 'Wildlife must be isolated/quarantined from other wildlife on acquisition and prior to health assessment, and if showing signs of disease.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'hygiene'
++      },
++      {
++        id: 'vic-6',
++        section: 'Condition 6',
++        title: 'Vet Clearance Before Leaving Quarantine',
++        description: 'Wildlife must not leave quarantine until a vet, experienced rehabilitator, or Authorised Officer confirms it is safe to do so.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'hygiene'
++      }
++    ]
++  },
++  {
++    id: 'vic-experience',
++    title: 'Experience & Species Advice',
++    description: 'Requirement to seek advice for unfamiliar species (Condition 7)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-7',
++        section: 'Condition 7',
++        title: 'Advice for Unfamiliar Species Within 24 Hours',
++        description: 'For any species not previously cared for, advice must be sought within 24 hours from a vet, experienced rehabilitator, or Authorised Officer.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'incident-management'
++      }
++    ]
++  },
++  {
++    id: 'vic-euthanasia-disposal',
++    title: 'Euthanasia & Carcass Disposal',
++    description: 'Euthanasia criteria, methods, and carcass disposal requirements (Conditions 9-12)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-9-11',
++        section: 'Conditions 9-11',
++        title: 'Euthanasia Criteria and Approved Methods',
++        description: 'Wildlife meeting defined non-survivable criteria must be promptly euthanised by an approved method (never by CO2/CO, chloroform, drowning, hypothermia, air embolism, suffocation, or exsanguination alone).',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'incident-management',
++        formType: 'necropsy'
++      },
++      {
++        id: 'vic-12',
++        section: 'Condition 12',
++        title: 'Carcass Disposal',
++        description: 'Carcasses from barbiturate euthanasia, bats, or mange-infected animals must be incinerated or buried 60cm deep, at least 100m from any waterway.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      }
++    ]
++  },
++  {
++    id: 'vic-threatened-species',
++    title: 'Threatened Species Notification',
++    description: 'Notification requirements for threatened species (Condition 13)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-13',
++        section: 'Condition 13',
++        title: 'Notify Authorised Officer Within 48 Hours',
++        description: 'Any wildlife listed as threatened under the Flora and Fauna Guarantee Act 1988 must be reported to the local Conservation Regulator Authorised Officer within 48 hours of admission.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'incident-management'
++      }
++    ]
++  },
++  {
++    id: 'vic-enclosures',
++    title: 'Enclosure Standards',
++    description: 'Enclosure sizing, construction, and hygiene requirements (Conditions 14-19)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-14',
++        section: 'Condition 14',
++        title: 'Minimum Enclosure Sizes',
++        description: 'Enclosures must meet minimum floor area, height, and stocking density requirements set out for birds, reptiles, and mammals by species/size class.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      },
++      {
++        id: 'vic-15-18',
++        section: 'Conditions 15-18',
++        title: 'Enclosure Location, Construction & Hygiene',
++        description: 'Wildlife must be separated from domestic animals and human living spaces, prevent escape, minimise stress, and be cleaned/disinfected with daily waste removal.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'hygiene',
++        formType: 'hygiene-log'
++      },
++      {
++        id: 'vic-19',
++        section: 'Condition 19',
++        title: 'Food and Water',
++        description: 'Food and water provided must meet the species\' dietary/nutritional needs, be fresh, clean, and stored to prevent spoilage or contamination.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      }
++    ]
++  },
++  {
++    id: 'vic-display',
++    title: 'Display of Wildlife',
++    description: 'Restrictions on display and photography of wildlife in care (Condition 20)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-20',
++        section: 'Condition 20',
++        title: 'Display Restrictions',
++        description: 'Wildlife may only be shown to a vet or regular volunteer providing care. Any other display, including third-party filming, requires prior written approval from the Conservation Regulator.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      }
++    ]
++  },
++  {
++    id: 'vic-release',
++    title: 'Release Requirements',
++    description: 'Release location and readiness criteria, and euthanasia of non-releasable wildlife (Conditions 21-22)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-21',
++        section: 'Condition 21',
++        title: 'Release Within 24 Hours at a Suitable Location',
++        description: 'Wildlife must be released within 24 hours of being ready, at the location found if suitable, or the closest suitable location within its home range otherwise. Release outside the home range is not permitted.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'release',
++        formType: 'release-checklist'
++      },
++      {
++        id: 'vic-22',
++        section: 'Condition 22',
++        title: 'Euthanasia of Non-Releasable Wildlife',
++        description: 'Wildlife that cannot be released to a suitable location, or that is not fit for release, must be euthanised rather than released.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'release'
++      }
++    ]
++  },
+   {
+     id: 'vic-record-keeping',
+-    title: 'Record Keeping',
+-    description: 'Record keeping requirements for Victoria',
++    title: 'Wildlife Records',
++    description: 'Record keeping requirements for Victoria (Condition 23)',
+     jurisdictions: ['VIC'],
+     rules: [
+       {
+-        id: 'vic-1',
+-        section: 'VIC-1',
+-        title: 'Animal Records',
+-        description: 'Animal admission and outcome records',
++        id: 'vic-23',
++        section: 'Condition 23',
++        title: 'Wildlife Records',
++        description: 'Accurate records must be kept for every animal received, acquired, possessed, euthanised, or disposed of, on Conservation Regulator Wildlife Record Sheets (or an approved equivalent), including species, found location/date, condition, cause, vet advice, and fate/release details. Records must be kept for 3 years and produced to an Authorised Officer without delay. Annual submission to DEECA is no longer required.',
+         required: true,
+         jurisdictions: ['VIC'],
+         category: 'record-keeping',
+@@ -649,21 +828,36 @@ const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
+     ]
+   },
+   {
+-    id: 'vic-hygiene',
+-    title: 'Hygiene Requirements',
+-    description: 'Hygiene and biosecurity requirements for Victoria',
++    id: 'vic-other-licences',
++    title: 'Other Wildlife Licences',
++    description: 'Separation from wildlife held under other licences (Condition 24)',
+     jurisdictions: ['VIC'],
+     rules: [
+       {
+-        id: 'vic-2',
+-        section: 'VIC-2',
+-        title: 'Hygiene Logs',
+-        description: 'Daily hygiene and cleaning protocols',
++        id: 'vic-24',
++        section: 'Condition 24',
++        title: 'Physical Separation From Licensed Wildlife',
++        description: 'Wildlife held under this authorisation must be kept physically separate from wildlife held under any private or commercial wildlife licence.',
+         required: true,
+         jurisdictions: ['VIC'],
+-        category: 'hygiene',
+-        formType: 'hygiene-log',
+-        retentionYears: 3
++        category: 'general'
++      }
++    ]
++  },
++  {
++    id: 'vic-foster-carer-supervision',
++    title: 'Foster Carer Supervision',
++    description: 'Foster carer notification obligations to their supervising shelter (Condition 25)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-25',
++        section: 'Condition 25',
++        title: 'Notify Supervising Shelter Within 24 Hours',
++        description: 'Foster carers must notify their registered shelter operator within 24 hours of receiving or acquiring wildlife.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'carer-management'
+       }
+     ]
+   }
+@@ -730,12 +924,17 @@ export const JURISDICTION_COMPLIANCE_CONFIGS: { [key: string]: JurisdictionCompl
+     }
+   },
+   VIC: {
+-    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog'],
++    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog', 'wildlifeRegister'],
+     templates: ['VICRegister'],
++    // DEECA Condition 21: release at the location found if suitable, otherwise the
++    // closest suitable location within the animal's home range. There is no fixed
++    // distance cap like ACT's 10km - "enforced: true" here means the *rule* is
++    // enforced (home-range based), not that releaseDistance below is a hard limit.
+     enforceReleaseDistance: true,
+     requireVetSignOff: true,
+     maxRetentionYears: 3,
+-    codeOfPractice: 'Victorian Wildlife Rehabilitation Guidelines',
++    codeOfPractice: 'Wildlife Rehabilitator Authorisation Guide (DEECA, June 2023) - Wildlife Act 1975 s.28A',
++    codeOfPracticeUrl: 'https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide',
+     sections: VIC_COMPLIANCE_RULES,
+     retentionRequirements: {
+       animalRecords: 3,
+@@ -744,17 +943,28 @@ export const JURISDICTION_COMPLIANCE_CONFIGS: { [key: string]: JurisdictionCompl
+       releaseChecklists: 3,
+       carerRecords: 3
+     },
+-    mandatoryForms: ['wildlife-register', 'release-checklist', 'hygiene-log'],
+-    optionalForms: ['incident-report'],
++    // Condition 23 makes the wildlife-register mandatory; release-checklist supports
++    // Condition 21/22 fitness-for-release criteria; hygiene-log supports Conditions
++    // 4-6, 15-18 (quarantine and enclosure hygiene); incident-report captures the
++    // 24/48-hour notifications required by Conditions 7, 13, and 25.
++    mandatoryForms: ['wildlife-register', 'release-checklist', 'hygiene-log', 'incident-report'],
++    optionalForms: ['carer-licence'],
+     distanceRequirements: {
+-      releaseDistance: 5,
++      // No fixed km limit under DEECA - release must be at the found location if
++      // suitable, or the closest suitable site within the animal's home range
++      // (Condition 21). releaseDistance is left at 0 since it's not distance-capped;
++      // "enforced: true" flags that a location-suitability rule still applies.
++      releaseDistance: 0,
+       unit: 'km',
+       enforced: true
+     },
+     vetRequirements: {
++      // Condition 6: quarantine release sign-off; Condition 10: euthanasia by vet
++      // wherever practical; Condition 13: threatened (FFG Act) species need advice
++      // logged from a vet or experienced rehabilitator on assessment.
+       signOffRequired: true,
+-      forJuveniles: true,
+-      forSpecificSpecies: ['Endangered species']
++      forJuveniles: false,
++      forSpecificSpecies: ['FFG Act threatened species']
+     }
+   },
+   // National – no state-specific compliance rules but core platform features (release checklists) are enabled
+diff --git a/src/lib/config.ts b/src/lib/config.ts
+index 7b5c080..8b4882a 100644
+--- a/src/lib/config.ts
++++ b/src/lib/config.ts
+@@ -31,12 +31,13 @@ const DEFAULT_JURISDICTION_CONFIGS: { [key: string]: JurisdictionConfig } = {
+     codeOfPractice: 'NSW Wildlife Rehabilitation Policy',
+   },
+   VIC: {
+-    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog'],
++    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog', 'wildlifeRegister'],
+     templates: ['VICRegister'],
+     enforceReleaseDistance: true,
+     requireVetSignOff: true,
+     maxRetentionYears: 3,
+-    codeOfPractice: 'Victorian Wildlife Act 1975',
++    codeOfPractice: 'Wildlife Rehabilitator Authorisation Guide (DEECA, June 2023) - Wildlife Act 1975 s.28A',
++    codeOfPracticeUrl: 'https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide',
+   },
+   QLD: {
+     enabledForms: ['releaseChecklist', 'incidentLog', 'carerLicence'],
+diff --git a/src/lib/deeca-flying-fox-care.test.ts b/src/lib/deeca-flying-fox-care.test.ts
+new file mode 100644
+index 0000000..7573530
+--- /dev/null
++++ b/src/lib/deeca-flying-fox-care.test.ts
+@@ -0,0 +1,121 @@
++import { describe, expect, it } from 'vitest';
++import {
++  FLYING_FOX_MATURITY,
++  GHFF_CARE_TIMELINE,
++  LITTLE_RED_TIMELINE,
++  SOFT_RELEASE_REQUIREMENTS,
++  dailyMilkMl,
++  getCareStageForAge,
++} from './deeca-flying-fox-care';
++
++describe('DEECA Table 4.7 values', () => {
++  it('records a newborn at 85g and 57mm, not the 25g in the seeded curve', () => {
++    const newborn = GHFF_CARE_TIMELINE[0];
++    expect(newborn.weightGrams).toBe(85);
++    expect(newborn.forearmMm).toBe(57);
++  });
++
++  it('has weight and forearm rising monotonically', () => {
++    for (let i = 1; i < GHFF_CARE_TIMELINE.length; i++) {
++      expect(GHFF_CARE_TIMELINE[i].weightGrams).toBeGreaterThan(
++        GHFF_CARE_TIMELINE[i - 1].weightGrams
++      );
++      expect(GHFF_CARE_TIMELINE[i].forearmMm).toBeGreaterThan(
++        GHFF_CARE_TIMELINE[i - 1].forearmMm
++      );
++    }
++  });
++
++  it('covers every week from newborn to 16 weeks with no gaps', () => {
++    expect(GHFF_CARE_TIMELINE.map((s) => s.ageWeeks)).toEqual(
++      Array.from({ length: 17 }, (_, i) => i)
++    );
++    expect(LITTLE_RED_TIMELINE.map((s) => s.ageWeeks)).toEqual(
++      Array.from({ length: 17 }, (_, i) => i)
++    );
++  });
++});
++
++describe('temperature', () => {
++  it('starts newborns at 30-32°C', () => {
++    expect(getCareStageForAge(0)?.temperatureC).toBe('30–32');
++  });
++
++  it('drops to 28°C for older pups', () => {
++    expect(getCareStageForAge(14)?.temperatureC).toBe('28');
++  });
++
++  it('withdraws artificial heat from five weeks', () => {
++    expect(getCareStageForAge(35)?.temperatureC).toBeNull();
++    expect(getCareStageForAge(60)?.temperatureC).toBeNull();
++  });
++
++  it('carries the last set temperature forward between table rows', () => {
++    // Week 6 has no temperature of its own; heat was withdrawn at week 5.
++    expect(getCareStageForAge(42)?.temperatureC).toBeNull();
++  });
++});
++
++describe('feeding', () => {
++  it('gives 4mL five times a day for a newborn', () => {
++    const s = getCareStageForAge(0)!;
++    expect(s.milkMlPerFeed).toBe(4);
++    expect(s.feedsPerDayMax).toBe(5);
++    expect(dailyMilkMl(s)).toBe(20);
++  });
++
++  it('introduces solids at seven weeks', () => {
++    expect(getCareStageForAge(49)?.solids).toMatch(/steamed, peeled apple/i);
++    expect(getCareStageForAge(42)?.solids).toBeUndefined();
++  });
++
++  it('has no milk figure once weaned at twelve weeks', () => {
++    const weaned = getCareStageForAge(84)!;
++    expect(weaned.milkMlPerFeed).toBeUndefined();
++    expect(dailyMilkMl(weaned)).toBeNull();
++    expect(weaned.milestone).toMatch(/wean/i);
++  });
++});
++
++describe('sexual maturity and dimorphism', () => {
++  it('places sexual maturity far beyond the rearing window', () => {
++    const rearingWeeks = GHFF_CARE_TIMELINE[GHFF_CARE_TIMELINE.length - 1].ageWeeks;
++    const maturityWeeks = FLYING_FOX_MATURITY.greyHeaded.sexualMaturityMonthsMin * 4.35;
++    // The whole hand-rearing table ends long before dimorphism emerges, which
++    // is why DEECA publish it unsexed.
++    expect(maturityWeeks).toBeGreaterThan(rearingWeeks * 5);
++  });
++
++  it('records adult dimorphism with males heavier than females', () => {
++    const g = FLYING_FOX_MATURITY.greyHeaded;
++    expect(g.adultMaleMeanGrams).toBeGreaterThan(g.adultFemaleMeanGrams);
++    expect(g.adultMaleMeanGrams - g.adultFemaleMeanGrams).toBe(167);
++  });
++
++  it('cites Welbergen for the dimorphism figures', () => {
++    expect(FLYING_FOX_MATURITY.greyHeaded.dimorphismReference).toMatch(/Welbergen/);
++  });
++});
++
++describe('release', () => {
++  it('requires 15 weeks and three weeks in creche', () => {
++    expect(SOFT_RELEASE_REQUIREMENTS.minimumAgeWeeks).toBe(15);
++    expect(SOFT_RELEASE_REQUIREMENTS.minimumCrecheWeeks).toBe(3);
++  });
++
++  it('flags the earliest release age on the timeline itself', () => {
++    expect(getCareStageForAge(15 * 7)?.milestone).toMatch(/soft release/i);
++  });
++});
++
++describe('refusals', () => {
++  it('returns null for impossible ages', () => {
++    expect(getCareStageForAge(-1)).toBeNull();
++    expect(getCareStageForAge(NaN)).toBeNull();
++  });
++
++  it('holds at the last published stage beyond the table', () => {
++    const beyond = getCareStageForAge(365)!;
++    expect(beyond.ageWeeks).toBe(16);
++  });
++});
+diff --git a/src/lib/deeca-flying-fox-care.ts b/src/lib/deeca-flying-fox-care.ts
+new file mode 100644
+index 0000000..f50b3d7
+--- /dev/null
++++ b/src/lib/deeca-flying-fox-care.ts
+@@ -0,0 +1,251 @@
++/**
++ * Grey-headed and little red flying fox care timeline.
++ *
++ * SOURCE
++ * Victorian Wildlife Rehabilitation Guidelines, Part B Chapter 4 (Flying
++ * Foxes), DEECA 2023. Table 4.7 (grey-headed feeding and housing), Table 4.8
++ * (little red development), Table 4.1 (species profiles), Section 4.9
++ * (release protocol).
++ * https://www.wildlife.vic.gov.au/__data/assets/pdf_file/0025/671245/Part-B-Mammals-Chapter-4.pdf
++ *
++ * This is DEECA's own guidance for Victorian rehabilitators, so it is the
++ * authority for a Victorian shelter and should be preferred over any other
++ * growth reference in this codebase where the two disagree.
++ *
++ * KNOWN CONFLICT WITH THE SEEDED GROWTH REFERENCE DATA
++ * prisma/growth-reference-seed-data.ts cites Divljan 2006 / Hall & Richards
++ * 2000 and puts grey-headed flying fox birth weight at ~25 g. DEECA's Table
++ * 4.7 puts a newborn at 85 g, and 85 g is consistent with the published adult
++ * range and with flying foxes being born large. The seeded curve appears to be
++ * wrong for weight.
++ *
++ * The practical consequence: on the seeded curve an 85 g pup interpolates to
++ * roughly 24 days old, so a genuine newborn would be aged three and a half
++ * weeks too old, and its estimated birth date, feed schedule and release
++ * timing would all shift with it. Forearm lengths in the two sources agree far
++ * more closely, which is a further reason to prefer forearm for ageing
++ * flying foxes.
++ *
++ * Until the seed data is corrected, treat this module as authoritative for
++ * flying foxes.
++ */
++
++export interface FlyingFoxCareStage {
++  /** Weeks since birth. 0 = newborn. */
++  ageWeeks: number;
++  weightGrams: number;
++  forearmMm: number;
++  /** Millilitres of milk per feed, where still milk-dependent. */
++  milkMlPerFeed?: number;
++  feedsPerDayMin?: number;
++  feedsPerDayMax?: number;
++  /** Solid food guidance for this week, verbatim in substance from Table 4.7. */
++  solids?: string;
++  /** Brooder/heat-pad temperature in °C, or null once heat is withdrawn. */
++  temperatureC?: string | null;
++  housing?: string;
++  milestone?: string;
++}
++
++/**
++ * Table 4.7 — grey-headed flying fox. Note this table is NOT split by sex:
++ * DEECA give a single set of figures for the whole hand-rearing period,
++ * because sexual size dimorphism has not emerged at these ages (see
++ * FLYING_FOX_MATURITY below).
++ */
++export const GHFF_CARE_TIMELINE: FlyingFoxCareStage[] = [
++  {
++    ageWeeks: 0,
++    weightGrams: 85,
++    forearmMm: 57,
++    milkMlPerFeed: 4,
++    feedsPerDayMin: 5,
++    feedsPerDayMax: 5,
++    temperatureC: '30–32',
++    housing:
++      'Up to 4 orphans in 1 m x 0.5 m x 0.6 m Rio or cane basket. Wrapped in mumma wraps. Clean wings daily.',
++    milestone: 'Toilet after each feed until 4–6 weeks old.',
++  },
++  { ageWeeks: 1, weightGrams: 99, forearmMm: 69, milkMlPerFeed: 5, feedsPerDayMin: 5, feedsPerDayMax: 5, temperatureC: '30–32' },
++  { ageWeeks: 2, weightGrams: 117, forearmMm: 79, milkMlPerFeed: 6, feedsPerDayMin: 5, feedsPerDayMax: 5, temperatureC: '28' },
++  { ageWeeks: 3, weightGrams: 133, forearmMm: 87, milkMlPerFeed: 7, feedsPerDayMin: 4, feedsPerDayMax: 5, temperatureC: '28' },
++  {
++    ageWeeks: 4,
++    weightGrams: 150,
++    forearmMm: 93,
++    milkMlPerFeed: 10,
++    feedsPerDayMin: 4,
++    feedsPerDayMax: 4,
++    temperatureC: '28',
++    housing:
++      'Two pups in 1 m x 1 m x 1 m — large enough to hang, move and flap. Mesh dome tent, canvas carrier or dog crate. Offer natural enrichment; avoid plastic toys.',
++  },
++  {
++    ageWeeks: 5,
++    weightGrams: 167,
++    forearmMm: 99,
++    milkMlPerFeed: 11,
++    feedsPerDayMin: 4,
++    feedsPerDayMax: 4,
++    temperatureC: null,
++    milestone: 'No artificial heat from five weeks.',
++  },
++  { ageWeeks: 6, weightGrams: 184, forearmMm: 104, milkMlPerFeed: 12, feedsPerDayMin: 4, feedsPerDayMax: 4, temperatureC: null },
++  {
++    ageWeeks: 7,
++    weightGrams: 201,
++    forearmMm: 109,
++    milkMlPerFeed: 13,
++    feedsPerDayMin: 4,
++    feedsPerDayMax: 4,
++    solids: 'Introduce fruit — steamed, peeled apple, 2–4 pieces after feed.',
++    temperatureC: null,
++    milestone: 'First solids.',
++  },
++  { ageWeeks: 8, weightGrams: 217, forearmMm: 114, milkMlPerFeed: 13, feedsPerDayMin: 4, feedsPerDayMax: 4, solids: 'Steamed apple with peel on. Offer 50 g/day.', temperatureC: null },
++  { ageWeeks: 9, weightGrams: 235, forearmMm: 118, milkMlPerFeed: 14, feedsPerDayMin: 4, feedsPerDayMax: 4, solids: 'Up to 3 fruit types — 2/3 apple, 1/3 other. Eating 50–100 g/day.', temperatureC: null },
++  { ageWeeks: 10, weightGrams: 252, forearmMm: 122, milkMlPerFeed: 15, feedsPerDayMin: 3, feedsPerDayMax: 4, solids: 'Fruit ½ steamed, ½ raw. Increase by 25 g if eaten. Offer 100–200 g/day.', temperatureC: null },
++  { ageWeeks: 11, weightGrams: 269, forearmMm: 125, milkMlPerFeed: 15, feedsPerDayMin: 1, feedsPerDayMax: 2, temperatureC: null },
++  {
++    ageWeeks: 12,
++    weightGrams: 286,
++    forearmMm: 129,
++    solids: 'Offer more than 250 g fruit in the evening.',
++    temperatureC: null,
++    milestone: 'Wean. Place in crèche with other juveniles once making first attempts at independent flight.',
++  },
++  { ageWeeks: 13, weightGrams: 302, forearmMm: 132, solids: 'Offer 250–300 g fruit in the evening.', temperatureC: null, housing: 'Crèche: 10–20 young in 20 m² x 2 m; 20–50 young in 30 m² x 2 m. Minimum three weeks in crèche.' },
++  { ageWeeks: 14, weightGrams: 319, forearmMm: 136, temperatureC: null },
++  { ageWeeks: 15, weightGrams: 336, forearmMm: 139, solids: 'Offer 300–350 g fruit in the evening.', temperatureC: null, milestone: 'Earliest soft release age — must also have spent at least three weeks in a crèche.' },
++  { ageWeeks: 16, weightGrams: 353, forearmMm: 143, temperatureC: null },
++];
++
++/** Table 4.8 — little red flying fox. Weight and forearm only. */
++export const LITTLE_RED_TIMELINE: Pick<
++  FlyingFoxCareStage,
++  'ageWeeks' | 'weightGrams' | 'forearmMm'
++>[] = [
++  { ageWeeks: 0, weightGrams: 41, forearmMm: 45 },
++  { ageWeeks: 1, weightGrams: 49, forearmMm: 50 },
++  { ageWeeks: 2, weightGrams: 59, forearmMm: 55 },
++  { ageWeeks: 3, weightGrams: 68, forearmMm: 61 },
++  { ageWeeks: 4, weightGrams: 79, forearmMm: 66 },
++  { ageWeeks: 5, weightGrams: 89, forearmMm: 71 },
++  { ageWeeks: 6, weightGrams: 100, forearmMm: 75 },
++  { ageWeeks: 7, weightGrams: 111, forearmMm: 80 },
++  { ageWeeks: 8, weightGrams: 122, forearmMm: 83 },
++  { ageWeeks: 9, weightGrams: 133, forearmMm: 87 },
++  { ageWeeks: 10, weightGrams: 145, forearmMm: 90 },
++  { ageWeeks: 11, weightGrams: 157, forearmMm: 93 },
++  { ageWeeks: 12, weightGrams: 169, forearmMm: 96 },
++  { ageWeeks: 13, weightGrams: 182, forearmMm: 98 },
++  { ageWeeks: 14, weightGrams: 195, forearmMm: 100 },
++  { ageWeeks: 15, weightGrams: 208, forearmMm: 101 },
++  { ageWeeks: 16, weightGrams: 221, forearmMm: 103 },
++];
++
++/**
++ * Little reds are hand raised like grey-headed flying foxes but need roughly
++ * half the milk and fruit at each feed (DEECA Section 4.8.2). No separate
++ * feeding table is published for them.
++ */
++export const LITTLE_RED_FEED_FACTOR = 0.5;
++
++/**
++ * Sexual maturity and adult size dimorphism (Table 4.1).
++ *
++ * This is the answer to "when does sex start to matter for size": not during
++ * hand rearing. DEECA publish a single unsexed rearing table to 16 weeks
++ * precisely because dimorphism has not emerged by then. Sexual maturity is
++ * 24–36 months in grey-headed flying foxes — six times longer than the whole
++ * rearing period — so a chart covering the rearing window has no divergence
++ * point to draw.
++ *
++ * Where sex does matter is the adult target weight used at pre-release
++ * assessment, which is why the two are given separately below.
++ */
++export const FLYING_FOX_MATURITY = {
++  greyHeaded: {
++    sexualMaturityMonthsMin: 24,
++    sexualMaturityMonthsMax: 36,
++    weaningMonthsMin: 5,
++    weaningMonthsMax: 6,
++    adultMaleMeanGrams: 842,
++    adultMaleSdGrams: 11,
++    adultFemaleMeanGrams: 675,
++    adultFemaleSdGrams: 10,
++    adultWeightRangeGrams: [600, 1100] as [number, number],
++    adultForearmRangeMm: [138, 180] as [number, number],
++    longevityYearsCaptive: 25,
++    dimorphismReference:
++      'Welbergen, J.A. 2010. Growth, bimaturation, and sexual size dimorphism in wild grey-headed flying foxes. Journal of Mammalogy 91(1) 38-47',
++  },
++  littleRed: {
++    sexualMaturityMonthsMin: 18,
++    sexualMaturityMonthsMax: 24,
++    weaningMonthsMin: 5,
++    weaningMonthsMax: 6,
++    adultMaleWeightRangeGrams: [350, 604] as [number, number],
++    adultFemaleWeightRangeGrams: [310, 560] as [number, number],
++    adultMaleForearmRangeMm: [125, 156] as [number, number],
++    adultFemaleForearmRangeMm: [125, 148] as [number, number],
++    longevityYearsCaptive: 16,
++  },
++} as const;
++
++/**
++ * NOTE ON WEANING: DEECA's species table gives weaning as 5-6 months for wild
++ * flying foxes, while the hand-rearing table weans at 12 weeks. These describe
++ * different things — wild maternal dependency versus the hand-rearing
++ * schedule — and both are reproduced here rather than reconciled.
++ */
++
++/** Pre-release assessment checklist, Section 4.9.1. */
++export const FLYING_FOX_RELEASE_CHECKLIST = [
++  'Presenting injury or sickness is completely resolved — consider a pre-release veterinary check.',
++  'Within a healthy weight range and body condition for the species.',
++  'Actively forages for and consumes natural foods.',
++  'Completes a minimum of 10 laps of the pre-release enclosure without open-mouth breathing.',
++  'Can invert using thumbs to urinate and defaecate, and can climb a tree trunk vertically.',
++];
++
++/** Soft release requirements for hand-reared young, Section 4.9.3. */
++export const SOFT_RELEASE_REQUIREMENTS = {
++  minimumAgeWeeks: 15,
++  minimumCrecheWeeks: 3,
++  minimumProcessWeeks: 6,
++  confinementNightsBeforeHatchOpens: [7, 10] as [number, number],
++  note:
++    'Hand-reared pups will not survive a hard release. Soft release should happen as a group, from an enclosure within or adjacent to an occupied camp. Supplementary feeding is reduced gradually and stopped after 6-8 weeks if no animals return.',
++};
++
++/** Look up the care stage for a given age in days. */
++export function getCareStageForAge(ageDays: number): FlyingFoxCareStage | null {
++  if (!Number.isFinite(ageDays) || ageDays < 0) return null;
++  const weeks = Math.floor(ageDays / 7);
++  // Carry forward the most recent stage that has each field set, so a carer
++  // at week 6 still sees the housing set at week 4.
++  const upTo = GHFF_CARE_TIMELINE.filter((s) => s.ageWeeks <= weeks);
++  if (upTo.length === 0) return null;
++  const exact = GHFF_CARE_TIMELINE.find((s) => s.ageWeeks === weeks);
++  if (!exact) return upTo[upTo.length - 1];
++
++  const carry = <K extends keyof FlyingFoxCareStage>(key: K) => {
++    for (let i = upTo.length - 1; i >= 0; i--) {
++      if (upTo[i][key] !== undefined) return upTo[i][key];
++    }
++    return undefined;
++  };
++
++  return {
++    ...exact,
++    temperatureC: (carry('temperatureC') as string | null | undefined) ?? null,
++    housing: exact.housing ?? (carry('housing') as string | undefined),
++  };
++}
++
++/** Total millilitres of milk per day at a given stage. */
++export function dailyMilkMl(stage: FlyingFoxCareStage): number | null {
++  if (stage.milkMlPerFeed == null || stage.feedsPerDayMax == null) return null;
++  return stage.milkMlPerFeed * stage.feedsPerDayMax;
++}
+diff --git a/src/lib/ff-manual-milk-recipes.ts b/src/lib/ff-manual-milk-recipes.ts
+new file mode 100644
+index 0000000..4aed262
+--- /dev/null
++++ b/src/lib/ff-manual-milk-recipes.ts
+@@ -0,0 +1,227 @@
++/**
++ * Flying-fox milk replacer recipes and calcium supplementation.
++ *
++ * SOURCE
++ * Pinson, D. The Flying-fox Manual, section 3.021 "Milk Replacement Formulas"
++ * and section 3.024 "Feeding Charts". Nutritional comparison figures
++ * originally from Messer & Parry-Jones (1997) and Hood et al. (2001), with
++ * later additions by the author.
++ *
++ * The manual is copyright and asks for written consent before reproduction.
++ * What is encoded here is functional: ingredient quantities, the arithmetic
++ * for calcium supplementation, and published nutritional values. The author's
++ * discussion, recommendations and commentary are not reproduced — carers
++ * should read the manual itself for those.
++ *
++ * WHY CALCIUM IS THE CENTRAL PROBLEM
++ * Natural flying-fox milk carries about 155.7 mg calcium per 100 mL. Human
++ * infant formulas are built to match human breast milk at roughly 33 mg per
++ * 100 mL, because human babies do not grow a forearm at nearly a millimetre a
++ * day. Feeding an unsupplemented human formula to a flying-fox pup has caused
++ * low bone density, poor bone formation, curved long bones, and pups that had
++ * to be euthanased.
++ *
++ * The manual is emphatic that the answer is to add soluble calcium, never to
++ * add more powder: quadrupling S-26 powder to reach the right calcium would
++ * produce a slurry too thick for a teat, take carbohydrate to 29.2 g/100 mL
++ * and fat to 14.4 g/100 mL.
++ */
++
++/** Soluble calcium syrups the manual specifies by name. */
++export const CALCIUM_SYRUP = {
++  /** Both Troy and Novartis carry the same soluble calcium concentration. */
++  mgCalciumPerMl: 22,
++  /** The syrup is also 24% pure glucose, which is why the powdered cow's milk recipe adds no separate glucose. */
++  glucosePercent: 24,
++  brands: ['Troy Calcium Syrup', 'Novartis Calcium Syrup (for animal use)'],
++  note: 'Only fully soluble calcium is usable — calcium glubionate, gluconate, borogluconate or lactobionate. Many powdered calcium forms are insoluble, pass straight through the animal, and leave it deficient while appearing to be supplemented.',
++} as const;
++
++/** Calcium content of natural flying-fox milk, the supplementation target. */
++export const FLYING_FOX_MILK_CALCIUM_MG_PER_100ML = 155.7;
++
++export interface MilkComparison {
++  name: string;
++  energyKj: number;
++  proteinG: number;
++  carbsG: number;
++  fatG: number;
++  calciumMg: number;
++  /** True where the figures are for a made-up product rather than a raw milk. */
++  isReplacer: boolean;
++}
++
++/** Per 100 mL of natural or made-up product (manual section 3.021). */
++export const MILK_COMPARISON: MilkComparison[] = [
++  { name: 'Flying-fox milk', energyKj: 274, proteinG: 4.0, carbsG: 7.2, fatG: 2.42, calciumMg: 155.7, isReplacer: false },
++  { name: 'Biolac Flying Fox', energyKj: 450, proteinG: 4.33, carbsG: 7.17, fatG: 5.0, calciumMg: 200.0, isReplacer: true },
++  { name: "Cow's milk (full cream)", energyKj: 259, proteinG: 3.4, carbsG: 4.4, fatG: 3.4, calciumMg: 118.0, isReplacer: false },
++  { name: "Cow's milk + glucose", energyKj: 314, proteinG: 3.1, carbsG: 7.8, fatG: 3.5, calciumMg: 117.0, isReplacer: true },
++  { name: 'Diploma milk powder', energyKj: 283, proteinG: 3.1, carbsG: 5.2, fatG: 3.8, calciumMg: 124.0, isReplacer: true },
++  { name: 'Diploma + calcium syrup', energyKj: 292, proteinG: 3.1, carbsG: 6.3, fatG: 3.8, calciumMg: 174.0, isReplacer: true },
++  { name: 'Di-Vetelact (dilution B)', energyKj: 420, proteinG: 4.8, carbsG: 7.4, fatG: 6.0, calciumMg: 164.0, isReplacer: true },
++  { name: "Goat's milk", energyKj: 230, proteinG: 3.1, carbsG: 3.6, fatG: 3.0, calciumMg: 138.0, isReplacer: false },
++  { name: 'Human breast milk (comparison only)', energyKj: 315, proteinG: 1.1, carbsG: 7.1, fatG: 4.5, calciumMg: 33.0, isReplacer: false },
++  { name: 'Karicare 0-6 months', energyKj: 282, proteinG: 1.4, carbsG: 7.2, fatG: 3.5, calciumMg: 61.0, isReplacer: true },
++  { name: 'Nan 2 Comfort', energyKj: 281, proteinG: 1.5, carbsG: 8.4, fatG: 3.0, calciumMg: 78.0, isReplacer: true },
++  { name: "Paul's Zymil (no lactose)", energyKj: 270, proteinG: 3.4, carbsG: 4.7, fatG: 3.6, calciumMg: 125.0, isReplacer: false },
++  { name: 'S-26 Gold 0-6 months', energyKj: 280, proteinG: 1.3, carbsG: 7.3, fatG: 3.6, calciumMg: 45.0, isReplacer: true },
++  { name: 'Wombaroo Flying Fox', energyKj: 260, proteinG: 3.8, carbsG: 6.4, fatG: 2.4, calciumMg: 200.0, isReplacer: true },
++];
++
++export interface MilkRecipe {
++  id: string;
++  name: string;
++  ingredients: string[];
++  yieldMl: number | null;
++  storage: string;
++  notes?: string[];
++}
++
++export const MILK_RECIPES: MilkRecipe[] = [
++  {
++    id: 'goats-milk',
++    name: "Goat's milk with additives",
++    ingredients: [
++      "100 mL full cream goat's milk",
++      '3.5 g (1 level teaspoon) Glucodin powdered glucose',
++      '1 mL Troy or Novartis calcium syrup',
++    ],
++    yieldMl: 100,
++    storage: 'Store made up in the fridge until required. Draw up, warm and feed.',
++    notes: [
++      "More glucose is used than in the cow's milk recipe because goat's milk is lower in carbohydrate — 3.6 g/100 mL against 4.4 g in cow's milk.",
++      "Goat's milk is easier to digest and rarely causes lactose intolerance: smaller fat globules, more medium-chain fatty acids, and a softer curd in the stomach than cow's milk.",
++      'Commonly used as the fallback for pups intolerant of everything else.',
++    ],
++  },
++  {
++    id: 'fresh-cows-milk',
++    name: "Fresh cow's milk with additives",
++    ingredients: [
++      "100 mL fresh full cream cow's milk",
++      '1/2 level teaspoon Glucodin powdered glucose',
++      '2 mL Troy or Novartis calcium syrup',
++    ],
++    yieldMl: 100,
++    storage:
++      'Keep in a clean screw-top jar in the fridge, where it lasts as long as regular milk. Refrigerate, never freeze.',
++    notes: [
++      'Glucose both aids absorption and sweetens — human and flying-fox milk are both sweeter than cow\u2019s milk.',
++    ],
++  },
++  {
++    id: 'powdered-cows-milk',
++    name: "Powdered (dried) cow's milk with additives",
++    ingredients: [
++      '1 level tablespoon Diploma full cream powdered milk (or similar)',
++      '3 level tablespoons cooled pre-boiled water',
++      '1.5 mL Troy or Novartis calcium syrup',
++    ],
++    yieldMl: 60,
++    storage:
++      'Store in a clean screw-top jar in the fridge; discard unused after 24-48 hours. Refrigerate, never freeze.',
++    notes: [
++      'Yields about 60 mL against just over 100 mL for the fresh recipe, which is why less calcium syrup is added.',
++      'No separate glucose is added: the calcium syrup is already 24% glucose, and powdered milks taste sweeter than fresh.',
++    ],
++  },
++  {
++    id: 'biolac-flying-fox',
++    name: 'Biolac Flying Fox',
++    ingredients: ['14 g Biolac Flying Fox powder', '70 mL warm to hot pre-boiled water'],
++    yieldMl: 84,
++    storage:
++      'Refrigerate and discard unused made-up formula after 24 hours; do not freeze. Dry powder keeps refrigerated for up to a year, or frozen for 18 months.',
++    notes: [
++      'Mix 14 g powder with only 10 mL of the water first, to a smooth paste, then add the remaining 60 mL. Most mixing problems come from water that is too cool.',
++      'Jeweller\u2019s scales accurate to 0.1 g are recommended — many kitchen scales are not accurate enough at this weight.',
++      'Re-shake before drawing up: any sediment is the natural calcium component returning to suspension.',
++      'No supplements are needed; it is a complete replacer.',
++      'CONCENTRATION DISCREPANCY: this recipe adds 14 g to 70 mL of water for a yield of about 84 mL. Biolac\u2019s own product page instead describes 14 g made up TO 70 mL, which is a materially more concentrated mix. Confirm against the current packet before relying on either.',
++    ],
++  },
++];
++
++export function getRecipe(id: string): MilkRecipe | undefined {
++  return MILK_RECIPES.find((r) => r.id === id);
++}
++
++export function getMilkComparison(name: string): MilkComparison | undefined {
++  const n = name.toLowerCase().trim();
++  return MILK_COMPARISON.find((m) => m.name.toLowerCase() === n);
++}
++
++export interface CalciumSupplementation {
++  formulaName: string;
++  currentCalciumMg: number;
++  targetCalciumMg: number;
++  shortfallMg: number;
++  /** Millilitres of 22 mg/mL calcium syrup per 100 mL of made-up formula. */
++  syrupMlPer100Ml: number;
++  alreadyAdequate: boolean;
++}
++
++/**
++ * Work out the calcium syrup needed to bring a formula up to natural
++ * flying-fox milk. The manual's method: one millilitre of syrup for each
++ * 22 mg of missing calcium per 100 mL.
++ *
++ * Worked example from the manual — Karicare 0-6 months sits at 61 mg/100 mL,
++ * so the shortfall is 95 mg, and 95 / 22 gives 4.3 mL of syrup per 100 mL.
++ */
++export function calculateCalciumSupplement(
++  formulaName: string,
++  currentCalciumMgPer100Ml: number,
++  targetMgPer100Ml: number = FLYING_FOX_MILK_CALCIUM_MG_PER_100ML
++): CalciumSupplementation | null {
++  if (!Number.isFinite(currentCalciumMgPer100Ml) || currentCalciumMgPer100Ml < 0) {
++    return null;
++  }
++  const shortfall = targetMgPer100Ml - currentCalciumMgPer100Ml;
++  const round = (n: number) => Math.round(n * 10) / 10;
++
++  return {
++    formulaName,
++    currentCalciumMg: currentCalciumMgPer100Ml,
++    targetCalciumMg: targetMgPer100Ml,
++    shortfallMg: round(Math.max(0, shortfall)),
++    syrupMlPer100Ml:
++      shortfall <= 0 ? 0 : round(shortfall / CALCIUM_SYRUP.mgCalciumPerMl),
++    alreadyAdequate: shortfall <= 0,
++  };
++}
++
++/**
++ * Daily milk volume by the manual's charting method: total daily intake is
++ * 25% of optimal body weight for Biolac, divided into the day's feeds.
++ * Cow's milk and human replacer charts run proportionally higher because they
++ * are less concentrated.
++ *
++ * NOTE: the manual's actual feed charts are published as images and are not
++ * encoded here. This reproduces the stated basis only, and the manual is
++ * explicit that charts are a guide rather than something to follow to the
++ * letter. Volumes are milk-for-age, not milk-for-weight, with age determined
++ * by forearm length on intake.
++ */
++export const BIOLAC_DAILY_PERCENT_BODYWEIGHT = 25;
++
++export function biolacDailyVolumeMl(optimalBodyWeightGrams: number): number | null {
++  if (!Number.isFinite(optimalBodyWeightGrams) || optimalBodyWeightGrams <= 0) {
++    return null;
++  }
++  return Math.round(
++    (optimalBodyWeightGrams * BIOLAC_DAILY_PERCENT_BODYWEIGHT) / 100
++  );
++}
++
++export const FEED_CHART_PROVENANCE =
++  'Pinson D & Kerr C (2009) Milk Replacer Chart for Grey-headed & Black Flying-foxes. Graphed from 60 known-age pups, cross-referenced and refined against 270 hand-reared orphans, with 3-step polynomial regression applied to produce weight and forearm curves, tabulated to 20 weeks.';
++
++/**
++ * The manual notes no feed chart exists for little red flying-foxes. Several
++ * sources suggest ad lib feeding at up to 10% of body weight per feed — a
++ * 60 g pup would be OFFERED about 6 mL. The manual stresses "offered": do not
++ * force.
++ */
++export const LITTLE_RED_AD_LIB_PERCENT_PER_FEED = 10;
+diff --git a/src/lib/fluid-therapy-reference.test.ts b/src/lib/fluid-therapy-reference.test.ts
+new file mode 100644
+index 0000000..81b6271
+--- /dev/null
++++ b/src/lib/fluid-therapy-reference.test.ts
+@@ -0,0 +1,109 @@
++import { describe, expect, it } from 'vitest';
++import {
++  FLUID_PROFILES,
++  checkFluidAgainstConditions,
++  getCarerDefaultFluid,
++  getFluidProfile,
++  identifyFluid,
++} from './fluid-therapy-reference';
++
++describe('the carer default', () => {
++  it('is 0.9% saline and nothing else', () => {
++    const defaults = FLUID_PROFILES.filter((f) => f.carerSafeDefault);
++    expect(defaults).toHaveLength(1);
++    expect(defaults[0].id).toBe('normal-saline');
++    expect(getCarerDefaultFluid().name).toBe('0.9% sodium chloride');
++  });
++});
++
++describe('identifying a donated bag', () => {
++  it('recognises the abbreviations that appear on stock', () => {
++    expect(identifyFluid('LRS')?.id).toBe('lactated-ringers');
++    expect(identifyFluid('CSL')?.id).toBe('hartmanns');
++    expect(identifyFluid('D5W')?.id).toBe('dextrose-5-water');
++    expect(identifyFluid('normal saline')?.id).toBe('normal-saline');
++  });
++
++  it('distinguishes Hartmann\u2019s from Lactated Ringer\u2019s', () => {
++    // The paper is explicit that these are similar but not identical.
++    expect(identifyFluid('Hartmanns')?.id).toBe('hartmanns');
++    expect(identifyFluid("Ringer's lactate")?.id).toBe('lactated-ringers');
++    expect(getFluidProfile('hartmanns')).not.toEqual(getFluidProfile('lactated-ringers'));
++  });
++
++  it('does not resolve a longer name via a short abbreviation inside it', () => {
++    // Regression: "NS" is a substring of "hartmaNNS". Naive containment
++    // matching returned normal saline for Hartmann's — telling a carer they
++    // held the always-safe fluid when they did not.
++    expect(identifyFluid('Hartmanns')?.id).toBe('hartmanns');
++    expect(identifyFluid('Hartmanns')?.id).not.toBe('normal-saline');
++  });
++
++  it('returns nothing for an unrecognised label rather than guessing', () => {
++    expect(identifyFluid('some unlabelled bag')).toBeUndefined();
++    expect(identifyFluid('')).toBeUndefined();
++  });
++});
++
++describe('contraindications, which are the point of this module', () => {
++  it("blocks Lactated Ringer's in renal failure", () => {
++    const w = checkFluidAgainstConditions(getFluidProfile('lactated-ringers')!, [
++      'renal failure',
++    ]);
++    expect(w.some((x) => x.severity === 'do-not-use')).toBe(true);
++  });
++
++  it("blocks Lactated Ringer's with liver issues", () => {
++    const w = checkFluidAgainstConditions(getFluidProfile('lactated-ringers')!, [
++      'liver issues',
++    ]);
++    expect(w.some((x) => x.severity === 'do-not-use')).toBe(true);
++  });
++
++  it('blocks half normal saline in burns and trauma', () => {
++    const fluid = getFluidProfile('half-normal-saline')!;
++    expect(
++      checkFluidAgainstConditions(fluid, ['burns']).some((x) => x.severity === 'do-not-use')
++    ).toBe(true);
++    expect(
++      checkFluidAgainstConditions(fluid, ['trauma']).some((x) => x.severity === 'do-not-use')
++    ).toBe(true);
++  });
++
++  it('blocks D5W in resuscitation', () => {
++    const w = checkFluidAgainstConditions(getFluidProfile('dextrose-5-water')!, [
++      'resuscitation',
++    ]);
++    expect(w.some((x) => x.severity === 'do-not-use')).toBe(true);
++  });
++
++  it('blocks normal saline in congestive heart failure', () => {
++    const w = checkFluidAgainstConditions(getFluidProfile('normal-saline')!, [
++      'congestive heart failure',
++    ]);
++    expect(w.some((x) => x.severity === 'do-not-use')).toBe(true);
++  });
++
++  it('returns nothing when no condition matches', () => {
++    expect(
++      checkFluidAgainstConditions(getFluidProfile('normal-saline')!, ['orphaned'])
++    ).toEqual([]);
++  });
++});
++
++describe('scope', () => {
++  it('carries no doses, volumes or rates anywhere in the module', () => {
++    // The source paper contains none, so neither should this. A regression
++    // here would mean someone had added a figure the source does not support.
++    const serialised = JSON.stringify(FLUID_PROFILES);
++    expect(serialised).not.toMatch(/ml\/kg/i);
++    expect(serialised).not.toMatch(/\bml per\b/i);
++    expect(serialised).not.toMatch(/mg\/kg/i);
++  });
++
++  it('records tonicity for every fluid', () => {
++    for (const f of FLUID_PROFILES) {
++      expect(['isotonic', 'hypotonic', 'hypertonic']).toContain(f.tonicity);
++    }
++  });
++});
+diff --git a/src/lib/fluid-therapy-reference.ts b/src/lib/fluid-therapy-reference.ts
+new file mode 100644
+index 0000000..49e2749
+--- /dev/null
++++ b/src/lib/fluid-therapy-reference.ts
+@@ -0,0 +1,272 @@
++/**
++ * Rehydration fluid selection reference.
++ *
++ * SOURCE
++ * Thomas, M. "Getting to know rehydration therapies", Animalia Wildlife
++ * Shelter. Presented to the Australian Wildlife Rehabilitation Conference,
++ * South Australia, June 2010, with assistance and funding from the Department
++ * of Sustainability and Environment, Victoria.
++ *
++ * WHAT THIS IS, AND WHAT IT IS NOT
++ * This is a fluid SELECTION guide. The source paper contains no doses, no
++ * volumes and no infusion rates, so neither does this module. Nothing here
++ * tells a carer how much to give.
++ *
++ * The problem the paper addresses is a real and specific one: rehabilitators
++ * are donated bags of IV solutions by vets and hospitals, accept whatever is
++ * offered, and frequently do not know what the different solutions do. The
++ * consequences of choosing wrongly can be severe. So the useful thing to
++ * encode is which fluids are safe, and which are actively dangerous in which
++ * circumstances.
++ *
++ * The paper's own conclusion is the safety default this module leads with:
++ * in almost all cases the safest rehydration therapy is 0.9% saline, and for
++ * carers administering subcutaneous fluids it should be the only choice.
++ * Anything else needs a veterinarian, who can run serum and plasma
++ * biochemistry and advise on the results.
++ *
++ * CALIBRATION NOTE FOR MAINTAINERS
++ * This is a 2010 conference paper by an experienced shelter operator, drawing
++ * on a human nursing text. It is carer education, not a veterinary formulary,
++ * and the paper itself says to build a relationship with a vet who understands
++ * wildlife. Treat it accordingly: good for "should I be using this bag at
++ * all", not a substitute for veterinary direction.
++ */
++
++export type Tonicity = 'isotonic' | 'hypotonic' | 'hypertonic';
++
++export interface FluidProfile {
++  id: string;
++  name: string;
++  alsoKnownAs?: string[];
++  tonicity: Tonicity;
++  /** Situations the paper lists this fluid as being used for. */
++  indications: string[];
++  /** Situations the paper warns against. These are the reason this exists. */
++  cautions: string[];
++  /** Absolute "do not use" statements from the paper. */
++  doNotUse: string[];
++  /** True only for the fluid the paper nominates as the carer default. */
++  carerSafeDefault: boolean;
++  notes?: string[];
++}
++
++export const FLUID_PROFILES: FluidProfile[] = [
++  {
++    id: 'normal-saline',
++    name: '0.9% sodium chloride',
++    alsoKnownAs: ['Normal saline', 'NS'],
++    tonicity: 'isotonic',
++    indications: [
++      'Shock',
++      'Hyponatraemia',
++      'Blood transfusions',
++      'Resuscitation',
++      'Fluid challenges',
++      'Metabolic alkalosis',
++      'Hypocalcaemia',
++      'Fluid replacement in diabetic ketoacidosis',
++    ],
++    cautions: [],
++    doNotUse: [
++      'Congestive heart failure — replaces extracellular fluid and can lead to overload',
++      'Oedema',
++      'Hypernatraemia',
++    ],
++    carerSafeDefault: true,
++    notes: [
++      'The paper names this as the safest rehydration therapy in almost all cases, and the only choice for carers giving subcutaneous fluids.',
++    ],
++  },
++  {
++    id: 'dextrose-5-water',
++    name: '5% dextrose in water',
++    alsoKnownAs: ['D5W'],
++    tonicity: 'isotonic',
++    indications: ['Fluid loss and dehydration', 'Hypernatraemia'],
++    cautions: [
++      'Isotonic in the bag, but becomes hypotonic once the dextrose is metabolised',
++      'Use cautiously where renal failure or cardiac issues may be present — can cause fluid overload',
++      'Does not provide enough daily calories for prolonged use, and may eventually cause protein breakdown',
++    ],
++    doNotUse: ['Resuscitation — can cause hyperglycaemia'],
++    carerSafeDefault: false,
++  },
++  {
++    id: 'lactated-ringers',
++    name: "Lactated Ringer's solution",
++    alsoKnownAs: ['LR', 'RL', 'LRS', "Ringer's lactate"],
++    tonicity: 'isotonic',
++    indications: [
++      'Lower GI tract fluid loss',
++      'Acute blood loss',
++      'Hypovolaemia due to third spacing',
++    ],
++    cautions: [
++      'Electrolyte content is similar to serum but contains no magnesium',
++      'Contains potassium',
++      'Similar to but not identical to Hartmann\u2019s solution — the ionic concentrations differ',
++      'In burns patients, not for the first few days',
++    ],
++    doNotUse: [
++      'Renal failure, or anything expected to lead to it including severely dehydrated patients — can cause hypokalaemia',
++      'Liver issues — the patient cannot metabolise lactate, which a functioning liver converts to bicarbonate',
++    ],
++    carerSafeDefault: false,
++  },
++  {
++    id: 'hartmanns',
++    name: "Hartmann's solution",
++    alsoKnownAs: ['Compound sodium lactate', 'CSL'],
++    tonicity: 'isotonic',
++    indications: [
++      'Replacing body fluid and mineral salts lost for a variety of reasons',
++      'Especially where losses result in too much acid in the blood',
++    ],
++    cautions: [
++      'Similar to but not identical to Lactated Ringer\u2019s — the ionic concentrations differ',
++    ],
++    doNotUse: [],
++    carerSafeDefault: false,
++  },
++  {
++    id: 'half-normal-saline',
++    name: '0.45% sodium chloride',
++    alsoKnownAs: ['Half normal saline'],
++    tonicity: 'hypotonic',
++    indications: [
++      'Water replacement',
++      'Hypertonic dehydration',
++      'Sodium and chloride depletion',
++      'Gastric fluid loss from vomiting',
++    ],
++    cautions: [
++      'May cause cardiovascular collapse or increased intracranial pressure',
++    ],
++    doNotUse: ['Liver issues', 'Trauma', 'Burns'],
++    carerSafeDefault: false,
++  },
++  {
++    id: 'dextrose-5-half-normal-saline',
++    name: '5% dextrose in 0.45% sodium chloride',
++    tonicity: 'hypertonic',
++    indications: [
++      'Diabetic ketoacidosis, after initial treatment with normal saline and half normal saline',
++      'Preventing hypoglycaemia and cerebral oedema where serum osmolality would otherwise fall too rapidly',
++    ],
++    cautions: [
++      'Uses are quite specific and require close veterinary supervision',
++      'Refer to species-specific serum and plasma biochemistry values before use',
++    ],
++    doNotUse: [],
++    carerSafeDefault: false,
++  },
++  {
++    id: 'dextrose-5-normal-saline',
++    name: '5% dextrose in normal saline',
++    tonicity: 'hypertonic',
++    indications: [
++      'Hypotonic dehydration',
++      'Temporary treatment of circulatory insufficiency',
++      'Syndrome of inappropriate antidiuretic hormone',
++    ],
++    cautions: [],
++    doNotUse: [],
++    carerSafeDefault: false,
++  },
++];
++
++export const CARER_SUBCUT_GUIDANCE =
++  'In almost all cases the safest rehydration therapy is 0.9% saline, and for carers administering subcutaneous fluids it should be the only choice. Any other fluid needs veterinary direction — a vet can run serum and plasma biochemistry and advise from the results.';
++
++export const FLUID_REFERENCE_SOURCE =
++  'Thomas, M. "Getting to know rehydration therapies", Animalia Wildlife Shelter. Australian Wildlife Rehabilitation Conference, South Australia, June 2010.';
++
++export function getFluidProfile(id: string): FluidProfile | undefined {
++  return FLUID_PROFILES.find((f) => f.id === id);
++}
++
++/**
++ * Find a fluid by the name on the bag, including the abbreviations that
++ * appear on donated stock. Matching is forgiving about punctuation and case,
++ * because the point is helping a carer identify something handed to them.
++ *
++ * It is NOT forgiving about substrings of short abbreviations. Naive
++ * containment matching resolves "Hartmanns" to normal saline, because "NS" is
++ * a substring of "hartmaNNS" — which would tell a carer holding Hartmann's
++ * that they were holding the one fluid the paper nominates as always safe.
++ * Short abbreviations therefore require an exact match.
++ */
++function normaliseLabel(s: string): string {
++  return s
++    .toLowerCase()
++    // Strip apostrophes rather than spacing them, so "Hartmann's" and
++    // "Hartmanns" normalise identically. Carers type both.
++    .replace(/['\u2018\u2019]/g, '')
++    .replace(/[^a-z0-9%. ]/g, ' ')
++    .replace(/\s+/g, ' ')
++    .trim();
++}
++
++const ABBREVIATION_MAX_LENGTH = 4;
++
++export function identifyFluid(label: string): FluidProfile | undefined {
++  const q = normaliseLabel(label);
++  if (!q) return undefined;
++
++  const candidates = FLUID_PROFILES.map((f) => ({
++    fluid: f,
++    names: [f.name, ...(f.alsoKnownAs ?? [])].map(normaliseLabel),
++  }));
++
++  // Exact match on any name or abbreviation.
++  const exact = candidates.find((c) => c.names.includes(q));
++  if (exact) return exact.fluid;
++
++  // Otherwise allow containment, but only for names long enough that a
++  // coincidental substring is implausible.
++  const partial = candidates.find((c) =>
++    c.names.some(
++      (n) =>
++        n.length > ABBREVIATION_MAX_LENGTH &&
++        q.length > ABBREVIATION_MAX_LENGTH &&
++        (q.includes(n) || n.includes(q))
++    )
++  );
++  return partial?.fluid;
++}
++
++/** The fluid the paper nominates as the carer default. */
++export function getCarerDefaultFluid(): FluidProfile {
++  return FLUID_PROFILES.find((f) => f.carerSafeDefault)!;
++}
++
++/**
++ * Contraindication check. Returns any "do not use" and caution statements
++ * matching the patient's presenting conditions, so a carer holding a donated
++ * bag can see immediately whether it is the wrong one.
++ */
++export interface FluidWarning {
++  severity: 'do-not-use' | 'caution';
++  text: string;
++}
++
++export function checkFluidAgainstConditions(
++  fluid: FluidProfile,
++  conditions: string[]
++): FluidWarning[] {
++  const warnings: FluidWarning[] = [];
++  const normalised = conditions.map((c) => c.toLowerCase().trim()).filter(Boolean);
++
++  for (const statement of fluid.doNotUse) {
++    if (normalised.some((c) => statement.toLowerCase().includes(c))) {
++      warnings.push({ severity: 'do-not-use', text: statement });
++    }
++  }
++  for (const statement of fluid.cautions) {
++    if (normalised.some((c) => statement.toLowerCase().includes(c))) {
++      warnings.push({ severity: 'caution', text: statement });
++    }
++  }
++  return warnings;
++}
+diff --git a/src/lib/growth-seed-flying-fox.test.ts b/src/lib/growth-seed-flying-fox.test.ts
+new file mode 100644
+index 0000000..955217a
+--- /dev/null
++++ b/src/lib/growth-seed-flying-fox.test.ts
+@@ -0,0 +1,92 @@
++import { describe, expect, it } from 'vitest';
++import { growthReferenceData } from '../../prisma/growth-reference-seed-data';
++
++/**
++ * These pin the flying fox reference curves to DEECA's published tables.
++ *
++ * The curves previously started at 25 g (grey-headed) and 18 g (little red),
++ * roughly a third of DEECA's figures. Because ageing works by interpolating a
++ * measurement against this curve, a genuine 85 g newborn was aged at about 24
++ * days, and estimateBirthDate() placed its birth three and a half weeks early.
++ * Feed volumes, age class and release timing all follow from that date.
++ *
++ * A wrong number here is silent — nothing errors, the chart still draws, and
++ * the animal is simply managed to the wrong schedule. Hence these tests.
++ */
++
++const ghff = growthReferenceData
++  .filter((r) => r.speciesName === 'Grey-headed Flying Fox')
++  .sort((a, b) => a.ageDays - b.ageDays);
++
++const littleRed = growthReferenceData
++  .filter((r) => r.speciesName === 'Little Red Flying-fox')
++  .sort((a, b) => a.ageDays - b.ageDays);
++
++describe('grey-headed flying fox reference curve', () => {
++  it('starts at DEECA birth weight, not the old 25g', () => {
++    expect(ghff[0].weightGrams).toBe(85);
++    expect(ghff[0].armLengthMm).toBe(57);
++    expect(ghff[0].weightGrams).not.toBe(25);
++  });
++
++  it('matches DEECA Table 4.7 at four and twelve weeks', () => {
++    const at = (days: number) => ghff.find((r) => r.ageDays === days)!;
++    expect(at(28).weightGrams).toBe(150);
++    expect(at(28).armLengthMm).toBe(93);
++    expect(at(84).weightGrams).toBe(286);
++    expect(at(84).armLengthMm).toBe(129);
++  });
++
++  it('cites DEECA as the source', () => {
++    for (const row of ghff) {
++      expect(row.reference).toMatch(/DEECA/);
++      expect(row.reference).not.toMatch(/Divljan/);
++    }
++  });
++
++  it('gives identical male and female curves, because DEECA publish one table', () => {
++    // Sexual dimorphism emerges at 24-36 months, long after rearing ends.
++    // Any divergence here would be invented rather than sourced.
++    const f = ghff.filter((r) => r.sex === 'Female');
++    const m = ghff.filter((r) => r.sex === 'Male');
++    expect(f).toHaveLength(m.length);
++    for (let i = 0; i < f.length; i++) {
++      expect(f[i].weightGrams).toBe(m[i].weightGrams);
++      expect(f[i].armLengthMm).toBe(m[i].armLengthMm);
++    }
++  });
++});
++
++describe('little red flying fox reference curve', () => {
++  it('starts at DEECA birth weight, not the old 18g', () => {
++    expect(littleRed[0].weightGrams).toBe(41);
++    expect(littleRed[0].armLengthMm).toBe(45);
++  });
++
++  it('matches DEECA Table 4.8 at sixteen weeks', () => {
++    const at112 = littleRed.find((r) => r.ageDays === 112)!;
++    expect(at112.weightGrams).toBe(221);
++    expect(at112.armLengthMm).toBe(103);
++  });
++
++  it('stays smaller than the grey-headed at every shared age', () => {
++    for (const lr of littleRed.filter((r) => r.sex === 'Female')) {
++      const gh = ghff.find((r) => r.sex === 'Female' && r.ageDays === lr.ageDays);
++      if (gh) expect(lr.weightGrams!).toBeLessThan(gh.weightGrams!);
++    }
++  });
++});
++
++describe('curve integrity', () => {
++  it('rises monotonically in weight and forearm for both species', () => {
++    for (const set of [ghff, littleRed]) {
++      for (const sex of ['Female', 'Male']) {
++        const rows = set.filter((r) => r.sex === sex);
++        for (let i = 1; i < rows.length; i++) {
++          expect(rows[i].weightGrams!).toBeGreaterThan(rows[i - 1].weightGrams!);
++          expect(rows[i].armLengthMm!).toBeGreaterThan(rows[i - 1].armLengthMm!);
++        }
++      }
++    }
++  });
++});
+diff --git a/src/lib/server-config.ts b/src/lib/server-config.ts
+index ea6821e..fae7388 100644
+--- a/src/lib/server-config.ts
++++ b/src/lib/server-config.ts
+@@ -40,12 +40,13 @@ const JURISDICTION_CONFIGS: { [key: string]: JurisdictionConfig } = {
+   VIC: {
+     fullName: 'Victoria',
+     shortName: 'VIC',
+-    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog'],
++    enabledForms: ['releaseChecklist', 'incidentLog', 'hygieneLog', 'wildlifeRegister'],
+     templates: ['VICRegister'],
+     enforceReleaseDistance: true,
+     requireVetSignOff: true,
+     maxRetentionYears: 3,
+-    codeOfPractice: 'Victorian Wildlife Act 1975',
++    codeOfPractice: 'Wildlife Rehabilitator Authorisation Guide (DEECA, June 2023) - Wildlife Act 1975 s.28A',
++    codeOfPracticeUrl: 'https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide',
+   },
+   QLD: {
+     fullName: 'Queensland',
+diff --git a/src/lib/vic-age-class.test.ts b/src/lib/vic-age-class.test.ts
+new file mode 100644
+index 0000000..0423557
+--- /dev/null
++++ b/src/lib/vic-age-class.test.ts
+@@ -0,0 +1,100 @@
++import { describe, expect, it } from 'vitest';
++import { suggestAgeClass, getMilestones } from './vic-age-class';
++
++describe('species lookup across naming variants', () => {
++  // These spellings all occur in the codebase: the growth reference seed data
++  // says "Grey-headed Flying Fox" and "Common brushtail possum", while the
++  // DEECA code book and this module say "Grey-headed Flying-fox" and
++  // "Common Brushtail Possum". A lookup miss fails silently — the carer simply
++  // never sees a suggestion, with nothing to indicate why — so each variant is
++  // pinned here.
++  it('matches the growth reference spelling of the flying-fox', () => {
++    expect(getMilestones('Grey-headed Flying Fox')).toBeDefined();
++  });
++
++  it('matches the DEECA code book spelling of the flying-fox', () => {
++    expect(getMilestones('Grey-headed Flying-fox')).toBeDefined();
++  });
++
++  it('matches both brushtail spellings', () => {
++    expect(getMilestones('Common brushtail possum')).toBeDefined();
++    expect(getMilestones('Common Brushtail Possum')).toBeDefined();
++  });
++
++  it('still returns nothing for species with no published milestones', () => {
++    expect(getMilestones('Eastern Grey Kangaroo')).toBeUndefined();
++    expect(getMilestones('Tawny Frogmouth')).toBeUndefined();
++  });
++
++  it('suggests for the growth-data spelling, not just the module spelling', () => {
++    expect(suggestAgeClass('Grey-headed Flying Fox', 40)).not.toBeNull();
++    expect(suggestAgeClass('Common brushtail possum', 100)?.code).toBe('P');
++  });
++});
++
++
++describe('age class suggestion', () => {
++  it('suggests pouch young before pouch exit', () => {
++    const s = suggestAgeClass('Common Ringtail Possum', 90)!;
++    expect(s.code).toBe('P');
++    expect(s.ambiguous).toBe(false);
++    expect(s.source).toBe('How 1983');
++  });
++
++  it('suggests dependent young between pouch exit and weaning', () => {
++    const s = suggestAgeClass('Common Ringtail Possum', 150)!;
++    expect(s.code).toBe('D');
++    expect(s.ambiguous).toBe(false);
++  });
++
++  it('uses the right milestones per species', () => {
++    // 150 days is dependent-young for a ringtail but still pouch young
++    // for a brushtail, which stays in the pouch longer.
++    expect(suggestAgeClass('Common Ringtail Possum', 150)!.code).toBe('D');
++    expect(suggestAgeClass('Common Brushtail Possum', 149)!.code).toBe('P');
++  });
++
++  it('refuses to separate subadult from adult on age alone', () => {
++    const s = suggestAgeClass('Common Brushtail Possum', 400)!;
++    expect(s.code).toBeNull();
++    expect(s.ambiguous).toBe(true);
++    expect(s.label).toBe('Subadult or adult');
++  });
++
++  it('never suggests Adult, since no fully-grown age is published', () => {
++    for (const age of [200, 300, 500, 1000, 3000]) {
++      const s = suggestAgeClass('Common Ringtail Possum', age);
++      expect(s?.code).not.toBe('A');
++    }
++  });
++
++  it('cannot separate P from D for flying-foxes and says so', () => {
++    const s = suggestAgeClass('Grey-headed Flying-fox', 40)!;
++    expect(s.code).toBeNull();
++    expect(s.ambiguous).toBe(true);
++    expect(s.caveat).toContain('placental');
++  });
++
++  it('returns nothing for species with no published milestones', () => {
++    expect(suggestAgeClass('Eastern Grey Kangaroo', 100)).toBeNull();
++    expect(suggestAgeClass('Tiger Snake', 100)).toBeNull();
++    expect(suggestAgeClass('Australian Magpie', 30)).toBeNull();
++  });
++
++  it('rejects impossible ages', () => {
++    expect(suggestAgeClass('Common Ringtail Possum', -5)).toBeNull();
++    expect(suggestAgeClass('Common Ringtail Possum', NaN)).toBeNull();
++  });
++
++  it('cites a source on every suggestion it makes', () => {
++    const species = [
++      'Common Brushtail Possum',
++      'Common Ringtail Possum',
++      'Grey-headed Flying-fox',
++    ];
++    for (const sp of species) {
++      expect(getMilestones(sp)!.source.length).toBeGreaterThan(0);
++      expect(suggestAgeClass(sp, 100)!.source.length).toBeGreaterThan(0);
++    }
++  });
++});
+diff --git a/src/lib/vic-age-class.ts b/src/lib/vic-age-class.ts
+new file mode 100644
+index 0000000..6e3f5fc
+--- /dev/null
++++ b/src/lib/vic-age-class.ts
+@@ -0,0 +1,161 @@
++/**
++ * Suggest a DEECA age class from an estimated age.
++ *
++ * WHY THIS SUGGESTS RATHER THAN AUTO-FILLS
++ * The age class goes onto the Wildlife Shelter Record Sheet, which is a legal
++ * record under Condition 23 of the Wildlife Rehabilitator Authorisation and
++ * must be produced to an Authorised Officer on request. A wrong value there is
++ * a compliance problem, not just a data-quality one. So this module returns a
++ * suggestion with its reasoning and its source, for a carer to confirm — it
++ * never writes the field itself.
++ *
++ * WHY COVERAGE IS NARROW
++ * DEECA's classes are developmental, not size-based: "pouch young, not yet
++ * weaned", "dependent young, on back or at heel", "weaned, not fully grown".
++ * Turning a weight or forearm measurement into one of those requires knowing
++ * the age at which that species crosses each milestone. That is published for
++ * some species and not others. Where it isn't, this module returns nothing
++ * rather than a plausible guess.
++ *
++ * Note in particular that no species here has a published "fully grown" age,
++ * so this module never suggests Adult. An animal past weaning is reported as
++ * subadult-or-adult and left to the carer, who can see the animal.
++ */
++
++import type { VicAnimalGroup } from './vic-picklists';
++
++export interface DevelopmentalMilestones {
++  species: string;
++  group: VicAnimalGroup;
++  /** Age in days at which young leave the pouch, where published. */
++  pouchExitDays?: number;
++  /** Age in days at weaning, where published. */
++  weaningDays?: number;
++  source: string;
++  /**
++   * Set when DEECA's class definitions don't map cleanly onto this species'
++   * biology — surfaced to the carer instead of a suggestion.
++   */
++  caveat?: string;
++}
++
++export const DEVELOPMENTAL_MILESTONES: DevelopmentalMilestones[] = [
++  {
++    species: 'Common Brushtail Possum',
++    group: 'mammal',
++    pouchExitDays: 150,
++    weaningDays: 210,
++    source: 'Kerle 1984',
++  },
++  {
++    species: 'Common Ringtail Possum',
++    group: 'mammal',
++    pouchExitDays: 120,
++    weaningDays: 180,
++    source: 'How 1983',
++  },
++  {
++    species: 'Grey-headed Flying-fox',
++    group: 'mammal',
++    // Biolac put the milk-dependent period at roughly 11-12 weeks.
++    weaningDays: 84,
++    source: 'Biolac flying-fox formula guidance (weaning ~11-12 weeks)',
++    caveat:
++      "Flying-foxes are placental, so DEECA's pouch-young and at-heel classes " +
++      'do not map cleanly. Classify on whether the pup is still milk-dependent ' +
++      'and whether it is carried, creched or flying, and confirm with your ' +
++      'species coordinator.',
++  },
++];
++
++export interface AgeClassSuggestion {
++  /** DEECA age code, or null where no single code can be justified. */
++  code: string | null;
++  label: string;
++  /** Plain-English reasoning shown to the carer. */
++  reasoning: string;
++  source: string;
++  caveat?: string;
++  /** True when the carer must decide between two codes. */
++  ambiguous: boolean;
++}
++
++/**
++ * Species names are spelled inconsistently across the codebase and by carers:
++ * the growth reference data says "Grey-headed Flying Fox", the DEECA code book
++ * says "Grey-headed Flying-fox", and "Common brushtail possum" appears in mixed
++ * case. Matching on the raw string means the lookup fails silently and the
++ * carer simply never sees a suggestion, with nothing to indicate why. So
++ * normalise hyphens, spacing and case before comparing.
++ */
++function normaliseSpecies(name: string): string {
++  return name
++    .toLowerCase()
++    .replace(/[-_]/g, ' ')
++    .replace(/\s+/g, ' ')
++    .trim();
++}
++
++export function getMilestones(species: string): DevelopmentalMilestones | undefined {
++  const s = normaliseSpecies(species);
++  return DEVELOPMENTAL_MILESTONES.find((m) => normaliseSpecies(m.species) === s);
++}
++
++/**
++ * Suggest a DEECA age class for a mammal of known estimated age.
++ * Returns null when there is no published basis for this species.
++ */
++export function suggestAgeClass(
++  species: string,
++  estimatedAgeDays: number
++): AgeClassSuggestion | null {
++  const m = getMilestones(species);
++  if (!m) return null;
++  if (!Number.isFinite(estimatedAgeDays) || estimatedAgeDays < 0) return null;
++
++  const days = Math.round(estimatedAgeDays);
++
++  if (m.pouchExitDays != null && days < m.pouchExitDays) {
++    return {
++      code: 'P',
++      label: 'Pouch young',
++      reasoning: `Estimated ${days} days old, before pouch exit at about ${m.pouchExitDays} days.`,
++      source: m.source,
++      caveat: m.caveat,
++      ambiguous: false,
++    };
++  }
++
++  if (m.weaningDays != null && days < m.weaningDays) {
++    if (m.pouchExitDays != null) {
++      return {
++        code: 'D',
++        label: 'Dependent young',
++        reasoning: `Estimated ${days} days old — past pouch exit (~${m.pouchExitDays} days) but not yet weaned (~${m.weaningDays} days).`,
++        source: m.source,
++        caveat: m.caveat,
++        ambiguous: false,
++      };
++    }
++    // Weaning known but pouch exit isn't: can't separate P from D.
++    return {
++      code: null,
++      label: 'Pouch young or dependent young',
++      reasoning: `Estimated ${days} days old and still milk-dependent (weaning ~${m.weaningDays} days), but there is no published pouch-exit age for this species to separate P from D.`,
++      source: m.source,
++      caveat: m.caveat,
++      ambiguous: true,
++    };
++  }
++
++  // Past weaning. "Fully grown" age is not published for any species here,
++  // so S and A cannot be separated from age alone.
++  return {
++    code: null,
++    label: 'Subadult or adult',
++    reasoning: `Estimated ${days} days old, past weaning (~${m.weaningDays} days). Separating subadult from adult needs a judgement about whether the animal is fully grown, which cannot be read off age alone.`,
++    source: m.source,
++    caveat: m.caveat,
++    ambiguous: true,
++  };
++}
+diff --git a/src/lib/vic-picklists.ts b/src/lib/vic-picklists.ts
+new file mode 100644
+index 0000000..3cfb088
+--- /dev/null
++++ b/src/lib/vic-picklists.ts
+@@ -0,0 +1,134 @@
++/**
++ * DEECA Wildlife Shelter Record Sheet codes for Victoria.
++ *
++ * Source: "Species Code" document (age class, injury, cause of injury, and
++ * fate/status codes) published alongside the Wildlife Shelter Record Sheet at
++ * https://www.vic.gov.au/wildlife-rehabilitation-shelters-and-foster-carers
++ * (https://www.vic.gov.au/sites/default/files/2020-12/Species_Code.doc)
++ *
++ * These are the exact codes DEECA/Conservation Regulator officers expect to
++ * see on a Wildlife Shelter Record Sheet (Condition 23 of the Wildlife
++ * Rehabilitator Authorisation). Species codes themselves live in
++ * vic-species-codes.ts (sourced from the companion Wildlife Code Book).
++ */
++
++export type VicAnimalGroup = 'bird' | 'mammal' | 'reptile-amphibian';
++
++export interface VicCodeOption {
++  code: string;
++  label: string;
++  description?: string;
++}
++
++// ─── AGE CLASS ───────────────────────────────────────────────────────────
++// Codes differ by animal group.
++export const VIC_AGE_CODES: Record<VicAnimalGroup, VicCodeOption[]> = {
++  bird: [
++    { code: 'C', label: 'Chick', description: 'Young bird which cannot fly (nestling)' },
++    { code: 'J', label: 'Juvenile', description: 'Young bird, fully feathered (up to 12 months)' },
++    { code: 'M', label: 'Mature', description: 'Adult, or bird of unknown age' },
++  ],
++  mammal: [
++    { code: 'P', label: 'Pouch young', description: 'Not yet weaned' },
++    { code: 'D', label: 'Dependent young', description: 'On back or at heel, but not weaned' },
++    { code: 'S', label: 'Subadult', description: 'Weaned, not fully grown, still dependent' },
++    { code: 'A', label: 'Adult', description: 'Fully grown, or of unknown age' },
++  ],
++  'reptile-amphibian': [
++    { code: 'H', label: 'Hatchling', description: 'Young snake, turtle, or lizard' },
++    { code: 'O', label: 'Other', description: 'All other age classes - includes adults and unknowns' },
++  ],
++};
++
++// ─── INJURY (single letter code - most serious injury if multiple) ────────
++export const VIC_INJURY_CODES: VicCodeOption[] = [
++  { code: 'A', label: 'Abrasions/cuts; broken/damaged limb(s)' },
++  { code: 'B', label: 'Burnt / electrocuted' },
++  { code: 'C', label: 'Concussion' },
++  { code: 'D', label: 'Dead on arrival' },
++  { code: 'F', label: 'Paralysed / severe nerve damage' },
++  { code: 'K', label: 'Shock (capture myopathy or other stress)' },
++  { code: 'M', label: 'Malnourished / starving' },
++  { code: 'N', label: 'Not injured' },
++  { code: 'O', label: 'Orphaned' },
++  { code: 'P', label: 'Poisoning' },
++  { code: 'S', label: 'Sick / diseased' },
++  { code: 'U', label: 'Unknown' },
++  { code: 'W', label: 'Water logged / drowned' },
++  { code: 'X', label: 'None of the above' },
++];
++
++// ─── CAUSE OF INJURY (double-digit code) ──────────────────────────────────
++export const VIC_CAUSE_CODES: VicCodeOption[] = [
++  { code: '00', label: 'Unknown' },
++  { code: '01', label: 'Trapped in cage-trap (e.g. possum trap)' },
++  { code: '02', label: 'Caught accidentally (e.g. in chimney, building, drain, pool)' },
++  { code: '03', label: 'Caught in fishing line, tackle or plastics' },
++  { code: '04', label: 'Loss of habitat (e.g. due to logging)' },
++  { code: '05', label: 'Human interference (e.g. unnecessary rescue)' },
++  { code: '06', label: 'Human interference (e.g. cruelty)' },
++  { code: '07', label: 'Fire / lightning strike' },
++  { code: '08', label: 'Found (e.g. in produce box or plant pot)' },
++  { code: '09', label: 'Stranded (e.g. flood, fire, beach, stranding)' },
++  { code: '10', label: 'Attack by other or unknown animal' },
++  { code: '11', label: 'Attack by domestic or wild dog' },
++  { code: '12', label: 'Attack by domestic, stray or feral cat' },
++  { code: '13', label: 'Attack by fox' },
++  { code: '20', label: 'Contamination (e.g. oil spill, pollutants)' },
++  { code: '21', label: 'Poisoned - bait taken or unknown chemical' },
++  { code: '22', label: 'Infection, bacterial or viral (e.g. Chlamydia or botulism)' },
++  { code: '30', label: 'Found exhausted' },
++  { code: '31', label: 'Old age' },
++  { code: '40', label: 'Nestling / pouch young found out of nest or abandoned' },
++  { code: '41', label: 'Escapee (e.g. tame animal)' },
++  { code: '50', label: 'Collided with window' },
++  { code: '51', label: 'Collided with moving vehicle' },
++  { code: '52', label: 'Collided with pole, wire fence, overhead wires' },
++  { code: '53', label: 'Found adjacent to road (accident not observed)' },
++  { code: '60', label: 'Shot (firearms)' },
++  { code: '61', label: 'Shot (includes spears and arrows)' },
++  { code: '66', label: 'None of the above' },
++];
++
++// ─── FATE (STATUS) - grouped: died / transferred / released ───────────────
++export const VIC_FATE_CODES: VicCodeOption[] = [
++  { code: '70', label: 'Death by euthanasia' },
++  { code: '71', label: 'Death by injuries / other causes' },
++  { code: '80', label: 'Released alive at location found' },
++  { code: '81', label: 'Released alive, not at location found' },
++  { code: '82', label: 'Escaped / stolen' },
++  { code: '90', label: 'Transferred to other shelter' },
++  { code: '91', label: 'Transferred to government zoo', description: 'Requires prior DEECA approval' },
++  { code: '92', label: 'Transferred to captive breeding/study program', description: 'Requires prior DEECA approval' },
++  { code: '93', label: 'Transferred to wildlife licensee', description: 'Requires prior DEECA approval' },
++];
++
++export const VIC_FATE_CATEGORY: Record<string, 'died' | 'transferred' | 'released' | 'other'> = {
++  '70': 'died',
++  '71': 'died',
++  '80': 'released',
++  '81': 'released',
++  '82': 'other',
++  '90': 'transferred',
++  '91': 'transferred',
++  '92': 'transferred',
++  '93': 'transferred',
++};
++
++export const VIC_FATE_REQUIRES_APPROVAL = new Set(['91', '92', '93']);
++
++export function getVicAgeCodesForGroup(group: VicAnimalGroup): VicCodeOption[] {
++  return VIC_AGE_CODES[group];
++}
++
++export function lookupVicInjuryLabel(code: string): string | undefined {
++  return VIC_INJURY_CODES.find((c) => c.code === code)?.label;
++}
++
++export function lookupVicCauseLabel(code: string): string | undefined {
++  return VIC_CAUSE_CODES.find((c) => c.code === code)?.label;
++}
++
++export function lookupVicFateLabel(code: string): string | undefined {
++  return VIC_FATE_CODES.find((c) => c.code === code)?.label;
++}
+diff --git a/src/lib/vic-report-generator.test.ts b/src/lib/vic-report-generator.test.ts
+new file mode 100644
+index 0000000..66ef6e6
+--- /dev/null
++++ b/src/lib/vic-report-generator.test.ts
+@@ -0,0 +1,159 @@
++import { describe, expect, it } from 'vitest';
++import { VicReportGenerator } from './vic-report-generator';
++import { lookupVicSpeciesCode } from './vic-species-codes';
++import {
++  VIC_CAUSE_CODES,
++  VIC_FATE_CATEGORY,
++  VIC_FATE_REQUIRES_APPROVAL,
++  VIC_INJURY_CODES,
++  getVicAgeCodesForGroup,
++} from './vic-picklists';
++
++// Minimal Animal-shaped fixture. The generator only reads a handful of
++// columns, so we cast rather than construct the full Prisma model.
++// eslint-disable-next-line @typescript-eslint/no-explicit-any
++function animal(overrides: Record<string, unknown> = {}): any {
++  return {
++    id: 'cuid-1',
++    name: 'Joey',
++    species: 'Eastern Grey Kangaroo',
++    sex: 'Female',
++    orgAnimalId: '26/001',
++    dateFound: new Date('2026-03-12'),
++    dateAdmitted: null,
++    outcomeDate: null,
++    dateReleased: null,
++    rescueLocation: 'Yarra Bend Park',
++    rescueAddress: null,
++    releaseLocation: null,
++    releasePostcode: null,
++    notes: null,
++    vicAgeCode: 'P',
++    vicInjuryCode: 'O',
++    vicCauseCode: '40',
++    vicFateCode: null,
++    vicFoundRef: '-37.7930, 145.0100',
++    ...overrides,
++  };
++}
++
++describe('VIC species codes', () => {
++  it('resolves known species to their Wildlife Code Book code', () => {
++    expect(lookupVicSpeciesCode('Eastern Grey Kangaroo')).toBe('1265');
++    expect(lookupVicSpeciesCode('Common Ringtail Possum')).toBe('1129');
++    expect(lookupVicSpeciesCode('Grey-headed Flying-fox')).toBe('1280');
++    expect(lookupVicSpeciesCode('Tiger Snake')).toBe('2681');
++  });
++
++  it('is case and whitespace insensitive', () => {
++    expect(lookupVicSpeciesCode('  eastern grey kangaroo ')).toBe('1265');
++  });
++
++  it('returns undefined for species not in the code book', () => {
++    expect(lookupVicSpeciesCode('Bilby')).toBeUndefined();
++  });
++});
++
++describe('VIC picklists', () => {
++  it('uses different age code sets per animal group', () => {
++    expect(getVicAgeCodesForGroup('bird').map((c) => c.code)).toEqual([
++      'C',
++      'J',
++      'M',
++    ]);
++    expect(getVicAgeCodesForGroup('mammal').map((c) => c.code)).toEqual([
++      'P',
++      'D',
++      'S',
++      'A',
++    ]);
++    expect(getVicAgeCodesForGroup('reptile-amphibian').map((c) => c.code)).toEqual(
++      ['H', 'O']
++    );
++  });
++
++  it('flags only the transfer fates that need prior DEECA approval', () => {
++    expect(VIC_FATE_REQUIRES_APPROVAL.has('91')).toBe(true);
++    expect(VIC_FATE_REQUIRES_APPROVAL.has('92')).toBe(true);
++    expect(VIC_FATE_REQUIRES_APPROVAL.has('93')).toBe(true);
++    expect(VIC_FATE_REQUIRES_APPROVAL.has('90')).toBe(false);
++    expect(VIC_FATE_REQUIRES_APPROVAL.has('80')).toBe(false);
++  });
++
++  it('groups fate codes into died/released/transferred', () => {
++    expect(VIC_FATE_CATEGORY['70']).toBe('died');
++    expect(VIC_FATE_CATEGORY['80']).toBe('released');
++    expect(VIC_FATE_CATEGORY['90']).toBe('transferred');
++  });
++
++  it('uses two-digit cause codes and single-letter injury codes', () => {
++    expect(VIC_CAUSE_CODES.every((c) => /^\d{2}$/.test(c.code))).toBe(true);
++    expect(VIC_INJURY_CODES.every((c) => /^[A-Z]$/.test(c.code))).toBe(true);
++  });
++});
++
++describe('VicReportGenerator.rowsFromAnimals', () => {
++  it('maps stored DEECA codes onto record sheet rows', () => {
++    const [row] = VicReportGenerator.rowsFromAnimals([animal()]);
++    expect(row.caseNumber).toBe('26/001');
++    expect(row.sex).toBe('F');
++    expect(row.ageCode).toBe('P');
++    expect(row.injuryCode).toBe('O');
++    expect(row.causeCode).toBe('40');
++    expect(row.foundLocation).toBe('Yarra Bend Park');
++    expect(row.foundGpsOrMelways).toBe('-37.7930, 145.0100');
++  });
++
++  it('normalises sex to M/F/U', () => {
++    const rows = VicReportGenerator.rowsFromAnimals([
++      animal({ sex: 'Male' }),
++      animal({ sex: 'female' }),
++      animal({ sex: null }),
++      animal({ sex: 'Unknown' }),
++    ]);
++    expect(rows.map((r) => r.sex)).toEqual(['M', 'F', 'U', 'U']);
++  });
++
++  it('prefers dateAdmitted over dateFound for DATE IN', () => {
++    const [row] = VicReportGenerator.rowsFromAnimals([
++      animal({ dateAdmitted: new Date('2026-03-14') }),
++    ]);
++    expect(row.dateIn).toEqual(new Date('2026-03-14'));
++  });
++
++  it('falls back to the internal id when no case number is assigned', () => {
++    const [row] = VicReportGenerator.rowsFromAnimals([
++      animal({ orgAnimalId: null }),
++    ]);
++    expect(row.caseNumber).toBe('cuid-1');
++  });
++
++  it('puts release location and postcode in NOTES for released animals', () => {
++    const [row] = VicReportGenerator.rowsFromAnimals([
++      animal({
++        vicFateCode: '80',
++        releaseLocation: 'Yarra Bend Park',
++        releasePostcode: '3078',
++        outcomeDate: new Date('2026-06-01'),
++      }),
++    ]);
++    expect(row.fateCode).toBe('80');
++    expect(row.notes).toBe('Yarra Bend Park 3078');
++    expect(row.dateOut).toEqual(new Date('2026-06-01'));
++  });
++
++  it('still emits a row when coded fields are missing, so gaps stay visible', () => {
++    const [row] = VicReportGenerator.rowsFromAnimals([
++      animal({
++        vicAgeCode: null,
++        vicInjuryCode: null,
++        vicCauseCode: null,
++        vicFoundRef: null,
++      }),
++    ]);
++    expect(row.ageCode).toBe('');
++    expect(row.injuryCode).toBe('');
++    expect(row.causeCode).toBe('');
++    expect(row.foundGpsOrMelways).toBeUndefined();
++  });
++});
+diff --git a/src/lib/vic-report-generator.ts b/src/lib/vic-report-generator.ts
+new file mode 100644
+index 0000000..3504392
+--- /dev/null
++++ b/src/lib/vic-report-generator.ts
+@@ -0,0 +1,194 @@
++import { Animal } from '@prisma/client';
++import ExcelJS from 'exceljs';
++import { format } from 'date-fns';
++import { lookupVicSpeciesCode } from './vic-species-codes';
++
++/**
++ * Generates the DEECA Wildlife Shelter Record Sheet export for Victoria.
++ *
++ * Column layout and field definitions are taken directly from "How to
++ * complete your record sheet" at
++ * https://www.vic.gov.au/wildlife-rehabilitation-shelters-and-foster-carers
++ * and the accompanying Electronic Wildlife Shelter Record Sheet Template
++ * (https://www.vic.gov.au/sites/default/files/2020-12/Electronic-Wildlife-Shelter-Record-Sheet-Template.xls).
++ *
++ * IMPORTANT: Since 2023, DEECA no longer requires annual submission of these
++ * records (Condition 23 of the Wildlife Rehabilitator Authorisation Guide).
++ * Instead, this export exists so records can be:
++ *   - kept for the mandatory 3-year retention period, and
++ *   - produced to a Conservation Regulator Authorised Officer "without delay"
++ *     if requested during an inspection.
++ * This is a genuine difference from the NSW generator, which produces an
++ * annual return - the VIC equivalent is an on-demand inspection-ready export.
++ */
++
++export interface VicShelterRecordRow {
++  caseNumber: string;
++  animal: Animal;
++  dateIn: Date;
++  sex: 'M' | 'F' | 'U';
++  ageCode: string;
++  injuryCode: string;
++  causeCode: string;
++  foundLocation: string;
++  foundGpsOrMelways?: string;
++  dateOut?: Date;
++  fateCode?: string;
++  notes?: string;
++}
++
++export interface VicReportData {
++  reportingPeriod: {
++    startDate: Date;
++    endDate: Date;
++  };
++  organization: {
++    name: string;
++    authorisationNumber: string;
++    contactName: string;
++    contactEmail: string;
++    contactPhone: string;
++  };
++  records: VicShelterRecordRow[];
++}
++
++export class VicReportGenerator {
++  private data: VicReportData;
++
++  constructor(data: VicReportData) {
++    this.data = data;
++  }
++
++  /**
++   * Build record-sheet rows straight from Animal records, mapping the stored
++   * DEECA codes and reusing the general-purpose columns the animal form
++   * already captures. Animals with no coded fields set still appear, so gaps
++   * are visible rather than silently omitted from an inspection export.
++   */
++  static rowsFromAnimals(animals: Animal[]): VicShelterRecordRow[] {
++    return animals.map((animal) => {
++      const rawSex = (animal.sex ?? '').trim().toUpperCase();
++      const sex: 'M' | 'F' | 'U' =
++        rawSex.startsWith('M') ? 'M' : rawSex.startsWith('F') ? 'F' : 'U';
++
++      return {
++        // DEECA lets shelters choose their own case numbering (e.g. 16/001);
++        // orgAnimalId is WildTrack360's per-organisation identifier, so it is
++        // the natural fit. Fall back to the internal id if unset.
++        caseNumber: animal.orgAnimalId ?? animal.id,
++        animal,
++        dateIn: animal.dateAdmitted ?? animal.dateFound,
++        sex,
++        ageCode: animal.vicAgeCode ?? '',
++        injuryCode: animal.vicInjuryCode ?? '',
++        causeCode: animal.vicCauseCode ?? '',
++        foundLocation: animal.rescueLocation ?? animal.rescueAddress ?? '',
++        foundGpsOrMelways: animal.vicFoundRef ?? undefined,
++        dateOut: animal.outcomeDate ?? animal.dateReleased ?? undefined,
++        fateCode: animal.vicFateCode ?? undefined,
++        // For released animals DEECA asks for the release location and
++        // postcode in NOTES.
++        notes:
++          [animal.releaseLocation, animal.releasePostcode]
++            .filter(Boolean)
++            .join(' ') || animal.notes || undefined,
++      };
++    });
++  }
++
++  private addRowsToSheet(ws: ExcelJS.Worksheet, rows: (string | number | undefined)[][]) {
++    for (const row of rows) {
++      ws.addRow(row.length === 0 ? [''] : row);
++    }
++  }
++
++  private setColumnWidths(ws: ExcelJS.Worksheet, widths: number[]) {
++    ws.columns = widths.map((width) => ({ width }));
++  }
++
++  generateReport(): ExcelJS.Workbook {
++    const wb = new ExcelJS.Workbook();
++    this.addCoverSheet(wb);
++    this.addWildlifeShelterRecordSheet(wb);
++    return wb;
++  }
++
++  private addCoverSheet(wb: ExcelJS.Workbook) {
++    const sheetData = [
++      ['Wildlife Shelter Record Sheet Export'],
++      [`Records covering: ${format(this.data.reportingPeriod.startDate, 'do MMMM yyyy')} to ${format(this.data.reportingPeriod.endDate, 'do MMMM yyyy')}`],
++      [],
++      [
++        'This export is not an annual return - DEECA no longer requires annual ' +
++        'submission of wildlife shelter records (Wildlife Rehabilitator ' +
++        'Authorisation Guide, Condition 23). It is a record-keeping export ' +
++        'intended to be produced to a Conservation Regulator Authorised ' +
++        'Officer on request, and must be retained for at least 3 years.',
++      ],
++      [],
++      [`Organisation: ${this.data.organization.name}`],
++      [`Authorisation number: ${this.data.organization.authorisationNumber}`],
++      [`Contact: ${this.data.organization.contactName} (${this.data.organization.contactEmail}, ${this.data.organization.contactPhone})`],
++      [`Export generated: ${format(new Date(), 'dd/MM/yyyy')}`],
++    ];
++    const ws = wb.addWorksheet('Cover');
++    this.addRowsToSheet(ws, sheetData);
++    this.setColumnWidths(ws, [110]);
++  }
++
++  private addWildlifeShelterRecordSheet(wb: ExcelJS.Workbook) {
++    const headers = [
++      ['WILDLIFE SHELTER RECORD SHEET'],
++      ['Refer to the Wildlife Code Book and Species Code sheet for code definitions.'],
++      [],
++      [
++        'CASE NUMBER',
++        'COMMON NAME',
++        'SPECIES CODE',
++        'DATE IN',
++        'SEX',
++        'AGE',
++        'INJURY',
++        'CAUSE',
++        'FOUND (location, incl. GPS/Melways where possible)',
++        'DATE OUT',
++        'STATUS',
++        'NOTES (release location/postcode if released)',
++      ],
++    ];
++
++    const dataRows = this.data.records.map((r) => {
++      const speciesCode = lookupVicSpeciesCode(r.animal.species ?? '') ?? '';
++      return [
++        r.caseNumber,
++        r.animal.species ?? '',
++        speciesCode,
++        format(r.dateIn, 'dd/MM/yyyy'),
++        r.sex,
++        r.ageCode,
++        r.injuryCode,
++        r.causeCode,
++        [r.foundLocation, r.foundGpsOrMelways].filter(Boolean).join(' - '),
++        r.dateOut ? format(r.dateOut, 'dd/MM/yyyy') : '',
++        r.fateCode ?? '',
++        r.notes ?? '',
++      ];
++    });
++
++    const ws = wb.addWorksheet('Wildlife Shelter Record Sheet');
++    this.addRowsToSheet(ws, [...headers, ...dataRows]);
++    this.setColumnWidths(ws, [14, 24, 12, 12, 6, 6, 8, 8, 34, 12, 8, 34]);
++
++    // Flag any row missing a species code so it can be reconciled against the
++    // latest Wildlife Code Book before being shown to an Authorised Officer.
++    const missingCodeRows = this.data.records
++      .map((r, i) => ({ r, i }))
++      .filter(({ r }) => !lookupVicSpeciesCode(r.animal.species ?? ''));
++    if (missingCodeRows.length > 0) {
++      const warnRow = ws.addRow([]);
++      warnRow.getCell(1).value =
++        `Note: ${missingCodeRows.length} record(s) above have no matching DEECA species code in this build - ` +
++        `verify against the latest Wildlife Code Book (species not yet in vic-species-codes.ts, or genuinely unidentified).`;
++    }
++  }
++}
+diff --git a/src/lib/vic-species-codes.ts b/src/lib/vic-species-codes.ts
+new file mode 100644
+index 0000000..5ea4747
+--- /dev/null
++++ b/src/lib/vic-species-codes.ts
+@@ -0,0 +1,345 @@
++/**
++ * DEECA Wildlife Code Book - species name to numeric species code mapping,
++ * for use on Wildlife Shelter Record Sheets in Victoria.
++ *
++ * Source: https://www.vic.gov.au/sites/default/files/2020-12/Wildlife_Code_Book.doc
++ * (linked from https://www.vic.gov.au/wildlife-rehabilitation-shelters-and-foster-carers)
++ *
++ * NOTE: This is transcribed from the published Wildlife Code Book and covers
++ * mammals, a substantial common-species subset of birds, and reptiles &
++ * amphibians. The book is periodically updated by DEECA - species not found
++ * here should be entered with the WildTrack360 species name as-is and the
++ * DEECA species code left blank (per the Code Book's own instructions for
++ * unidentified/uncertain species), then reconciled against the latest Code
++ * Book download before an annual/audit export.
++ */
++
++export interface VicSpeciesCodeEntry {
++  commonName: string;
++  code: string;
++  group: 'mammal' | 'bird' | 'reptile-amphibian';
++}
++
++export const VIC_SPECIES_CODES: VicSpeciesCodeEntry[] = [
++  // ─── Mammals: Monotremes ──────────────────────────────────────────────
++  { commonName: 'Platypus', code: '1001', group: 'mammal' },
++  { commonName: 'Short-beaked Echidna', code: '1003', group: 'mammal' },
++
++  // ─── Mammals: Dasyurids ───────────────────────────────────────────────
++  { commonName: 'Antechinus, Brown', code: '1028', group: 'mammal' },
++  { commonName: 'Antechinus, Dusky', code: '1033', group: 'mammal' },
++  { commonName: 'Antechinus, Swamp', code: '1034', group: 'mammal' },
++  { commonName: 'Antechinus, Yellow-footed', code: '1027', group: 'mammal' },
++  { commonName: 'Dunnart, Common', code: '1061', group: 'mammal' },
++  { commonName: 'Dunnart, Fat-tailed', code: '1072', group: 'mammal' },
++  { commonName: 'Dunnart, White-footed', code: '1069', group: 'mammal' },
++  { commonName: 'Ningaui, Mallee', code: '1055', group: 'mammal' },
++  { commonName: 'Paucident Planigale', code: '1050', group: 'mammal' },
++  { commonName: 'Phascogale, Brush-tailed', code: '1017', group: 'mammal' },
++  { commonName: 'Quoll, Eastern', code: '1009', group: 'mammal' },
++  { commonName: 'Quoll, Tiger', code: '1008', group: 'mammal' },
++  { commonName: 'Unidentified Antechinus', code: '1817', group: 'mammal' },
++  { commonName: 'Unidentified Sminthopsis', code: '1800', group: 'mammal' },
++  { commonName: 'Unidentified Quoll', code: '1824', group: 'mammal' },
++
++  // ─── Mammals: Bandicoots ──────────────────────────────────────────────
++  { commonName: 'Eastern Barred Bandicoot', code: '1098', group: 'mammal' },
++  { commonName: 'Southern Brown Bandicoot', code: '1092', group: 'mammal' },
++  { commonName: 'Long-nosed Bandicoot', code: '1097', group: 'mammal' },
++  { commonName: 'Unidentified Bandicoot', code: '1801', group: 'mammal' },
++
++  // ─── Mammals: Rat Kangaroos ───────────────────────────────────────────
++  { commonName: 'Long-footed Potoroo', code: '1179', group: 'mammal' },
++  { commonName: 'Long-nosed Potoroo', code: '1175', group: 'mammal' },
++  { commonName: 'Unidentified Potoroo', code: '1806', group: 'mammal' },
++
++  // ─── Mammals: Kangaroos and Wallabies ─────────────────────────────────
++  { commonName: 'Brush-tailed Rock-wallaby', code: '1215', group: 'mammal' },
++  { commonName: 'Common Wallaroo', code: '1266', group: 'mammal' },
++  { commonName: 'Eastern Grey Kangaroo', code: '1265', group: 'mammal' },
++  { commonName: 'Red Kangaroo', code: '1275', group: 'mammal' },
++  { commonName: 'Red-necked Wallaby', code: '1261', group: 'mammal' },
++  { commonName: 'Swamp Wallaby', code: '1242', group: 'mammal' },
++  { commonName: 'Western Grey Kangaroo', code: '1263', group: 'mammal' },
++  { commonName: 'Unidentified Kangaroo', code: '1805', group: 'mammal' },
++
++  // ─── Mammals: Koala & Wombats ─────────────────────────────────────────
++  { commonName: 'Common Wombat', code: '1165', group: 'mammal' },
++  { commonName: 'Koala', code: '1162', group: 'mammal' },
++
++  // ─── Mammals: Flying-foxes ────────────────────────────────────────────
++  { commonName: 'Grey-headed Flying-fox', code: '1280', group: 'mammal' },
++  { commonName: 'Little Red Flying-fox', code: '1281', group: 'mammal' },
++  { commonName: 'Unidentified Flying-fox', code: '1807', group: 'mammal' },
++
++  // ─── Mammals: Bats ────────────────────────────────────────────────────
++  { commonName: 'Eastern Horseshoe-bat', code: '1303', group: 'mammal' },
++  { commonName: 'Yellow-bellied Sheathtail-bat', code: '1321', group: 'mammal' },
++  { commonName: 'Little Mastiff-bat', code: '1326', group: 'mammal' },
++  { commonName: 'Unidentified Mastiff-bat', code: '1815', group: 'mammal' },
++  { commonName: "Mormopterus sp. (big penis)", code: '1808', group: 'mammal' },
++  { commonName: "Mormopterus sp. (little penis)", code: '1809', group: 'mammal' },
++  { commonName: 'White-striped Mastiff-bat', code: '1324', group: 'mammal' },
++  { commonName: 'Chocolate Wattled Bat', code: '1351', group: 'mammal' },
++  { commonName: "Gould's Wattled Bat", code: '1349', group: 'mammal' },
++  { commonName: 'Unidentified Wattled Bat', code: '1325', group: 'mammal' },
++  { commonName: 'Common Bent-wing Bat', code: '1341', group: 'mammal' },
++  { commonName: 'Eptesicus baverstocki', code: '1819', group: 'mammal' },
++  { commonName: 'King River Eptesicus', code: '1378', group: 'mammal' },
++  { commonName: "Large-footed Myotis", code: '1357', group: 'mammal' },
++  { commonName: 'Large Forest Eptesicus', code: '1381', group: 'mammal' },
++  { commonName: 'Little Forest Eptesicus', code: '1379', group: 'mammal' },
++  { commonName: 'Unidentified Eptesicus', code: '1810', group: 'mammal' },
++  { commonName: 'Eastern Broad-nosed Bat', code: '1811', group: 'mammal' },
++  { commonName: "Gould's Long-eared Bat", code: '1334', group: 'mammal' },
++  { commonName: 'Greater Long-eared Bat', code: '1332', group: 'mammal' },
++  { commonName: 'Great Pipistrelle', code: '1372', group: 'mammal' },
++  { commonName: 'Lesser Long-eared Bat', code: '1335', group: 'mammal' },
++  { commonName: 'Western Broad-nosed Bat', code: '1364', group: 'mammal' },
++  { commonName: 'Unidentified Broad-nosed Bat', code: '1812', group: 'mammal' },
++  { commonName: 'Unidentified Long-eared Bat', code: '1816', group: 'mammal' },
++
++  // ─── Mammals: Brushtail Possums ───────────────────────────────────────
++  { commonName: 'Common Brushtail Possum', code: '1113', group: 'mammal' },
++  { commonName: 'Mountain Brushtail Possum', code: '1115', group: 'mammal' },
++  { commonName: 'Unidentified Brushtail Possum', code: '1802', group: 'mammal' },
++
++  // ─── Mammals: Pygmy-possums ───────────────────────────────────────────
++  { commonName: 'Eastern Pygmy-possum', code: '1150', group: 'mammal' },
++  { commonName: 'Feathertail Glider', code: '1147', group: 'mammal' },
++  { commonName: 'Little Pygmy-possum', code: '1152', group: 'mammal' },
++  { commonName: 'Mountain Pygmy-possum', code: '1156', group: 'mammal' },
++  { commonName: 'Western Pygmy-possum', code: '1151', group: 'mammal' },
++  { commonName: 'Unidentified Pygmy-possum', code: '1803', group: 'mammal' },
++
++  // ─── Mammals: Gliders and Ringtails ───────────────────────────────────
++  { commonName: 'Common Ringtail Possum', code: '1129', group: 'mammal' },
++  { commonName: 'Greater Glider', code: '1133', group: 'mammal' },
++  { commonName: "Leadbeater's Possum", code: '1141', group: 'mammal' },
++  { commonName: 'Squirrel Glider', code: '1137', group: 'mammal' },
++  { commonName: 'Sugar Glider', code: '1138', group: 'mammal' },
++  { commonName: 'Yellow-bellied Glider', code: '1136', group: 'mammal' },
++  { commonName: 'Unidentified Glider', code: '1804', group: 'mammal' },
++
++  // ─── Mammals: Rats and Mice ───────────────────────────────────────────
++  { commonName: 'Black Rat', code: '1408', group: 'mammal' },
++  { commonName: 'Broad-toothed Rat', code: '1438', group: 'mammal' },
++  { commonName: 'Brown Rat', code: '1409', group: 'mammal' },
++  { commonName: 'Bush Rat', code: '1395', group: 'mammal' },
++  { commonName: 'House Mouse', code: '1412', group: 'mammal' },
++  { commonName: 'Heath Mouse', code: '1468', group: 'mammal' },
++  { commonName: "Mitchell's Hopping-mouse", code: '1480', group: 'mammal' },
++  { commonName: 'New Holland Mouse', code: '1455', group: 'mammal' },
++  { commonName: 'Silky Mouse', code: '1457', group: 'mammal' },
++  { commonName: 'Smoky Mouse', code: '1458', group: 'mammal' },
++  { commonName: 'Swamp Rat', code: '1398', group: 'mammal' },
++  { commonName: 'Water Rat', code: '1415', group: 'mammal' },
++  { commonName: 'Unidentified Pseudomys', code: '1813', group: 'mammal' },
++  { commonName: 'Unidentified Rattus', code: '1818', group: 'mammal' },
++  { commonName: 'Unidentified Small Rodent', code: '1820', group: 'mammal' },
++
++  // ─── Mammals: Introduced Herbivores & Marine Mammals ─────────────────
++  { commonName: 'Fallow Deer', code: '1523', group: 'mammal' },
++  { commonName: 'Red Deer', code: '1526', group: 'mammal' },
++  { commonName: 'Hog Deer', code: '1525', group: 'mammal' },
++  { commonName: 'Sambar', code: '1527', group: 'mammal' },
++  { commonName: 'Unidentified Deer', code: '1814', group: 'mammal' },
++  { commonName: 'Australian Fur-Seal', code: '1542', group: 'mammal' },
++  { commonName: 'Australian Sea-lion', code: '1539', group: 'mammal' },
++  { commonName: 'New Zealand Fur-Seal', code: '1543', group: 'mammal' },
++  { commonName: 'Crab-eater Seal', code: '1555', group: 'mammal' },
++  { commonName: 'Leopard Seal', code: '1549', group: 'mammal' },
++  { commonName: 'Southern Elephant Seal', code: '1546', group: 'mammal' },
++  { commonName: 'Bottlenose Dolphin', code: '1612', group: 'mammal' },
++  { commonName: 'Common Dolphin', code: '1616', group: 'mammal' },
++  { commonName: 'False Killer Whale', code: '1603', group: 'mammal' },
++  { commonName: "Fraser's Dolphin", code: '1624', group: 'mammal' },
++  { commonName: 'Killer Whale', code: '1600', group: 'mammal' },
++  { commonName: 'Long-finned Pilot Whale', code: '1606', group: 'mammal' },
++  { commonName: "Risso's Dolphin", code: '1609', group: 'mammal' },
++
++  // ─── Birds (common-species subset) ────────────────────────────────────
++  { commonName: 'Emu', code: '1', group: 'bird' },
++  { commonName: 'Malleefowl', code: '7', group: 'bird' },
++  { commonName: 'Little Penguin', code: '5', group: 'bird' },
++  { commonName: 'Australian Wood Duck (Maned Duck)', code: '202', group: 'bird' },
++  { commonName: 'Pacific Black Duck', code: '208', group: 'bird' },
++  { commonName: 'Musk Duck', code: '217', group: 'bird' },
++  { commonName: 'Australian Shelduck', code: '207', group: 'bird' },
++  { commonName: 'Cape Barren Goose', code: '198', group: 'bird' },
++  { commonName: 'Black Swan', code: '203', group: 'bird' },
++  { commonName: 'Australian White Ibis (Sacred Ibis)', code: '179', group: 'bird' },
++  { commonName: 'Straw-necked Ibis', code: '180', group: 'bird' },
++  { commonName: 'Royal Spoonbill', code: '181', group: 'bird' },
++  { commonName: 'Great Egret', code: '187', group: 'bird' },
++  { commonName: 'White-faced Heron', code: '188', group: 'bird' },
++  { commonName: 'Pacific Heron', code: '189', group: 'bird' },
++  { commonName: 'Nankeen Night Heron (Rufous Night Heron)', code: '192', group: 'bird' },
++  { commonName: 'Australian Pelican', code: '106', group: 'bird' },
++  { commonName: 'Great Cormorant', code: '96', group: 'bird' },
++  { commonName: 'Little Black Cormorant', code: '97', group: 'bird' },
++  { commonName: 'Little Pied Cormorant', code: '100', group: 'bird' },
++  { commonName: 'Pied Cormorant', code: '99', group: 'bird' },
++  { commonName: 'Darter', code: '101', group: 'bird' },
++  { commonName: 'Wedge-tailed Eagle', code: '224', group: 'bird' },
++  { commonName: 'Little Eagle', code: '225', group: 'bird' },
++  { commonName: 'White-bellied Sea-Eagle', code: '226', group: 'bird' },
++  { commonName: 'Brown Goshawk', code: '221', group: 'bird' },
++  { commonName: 'Grey Goshawk', code: '220', group: 'bird' },
++  { commonName: 'Collared Sparrowhawk', code: '222', group: 'bird' },
++  { commonName: 'Black Kite', code: '229', group: 'bird' },
++  { commonName: 'Black-shouldered Kite', code: '232', group: 'bird' },
++  { commonName: 'Whistling Kite', code: '228', group: 'bird' },
++  { commonName: 'Swamp Harrier', code: '219', group: 'bird' },
++  { commonName: 'Spotted Harrier', code: '218', group: 'bird' },
++  { commonName: 'Nankeen Kestrel (Australian Kestrel)', code: '240', group: 'bird' },
++  { commonName: 'Brown Falcon', code: '239', group: 'bird' },
++  { commonName: 'Peregrine Falcon', code: '237', group: 'bird' },
++  { commonName: 'Australian Hobby', code: '235', group: 'bird' },
++  { commonName: 'Southern Boobook', code: '242', group: 'bird' },
++  { commonName: 'Barn Owl', code: '249', group: 'bird' },
++  { commonName: 'Masked Owl', code: '250', group: 'bird' },
++  { commonName: 'Powerful Owl', code: '248', group: 'bird' },
++  { commonName: 'Sooty Owl', code: '253', group: 'bird' },
++  { commonName: 'Tawny Frogmouth', code: '313', group: 'bird' },
++  { commonName: 'Australian Owlet-nightjar', code: '317', group: 'bird' },
++  { commonName: 'Sulphur-crested Cockatoo', code: '269', group: 'bird' },
++  { commonName: 'Galah', code: '273', group: 'bird' },
++  { commonName: 'Gang-gang Cockatoo', code: '268', group: 'bird' },
++  { commonName: 'Long-billed Corella', code: '272', group: 'bird' },
++  { commonName: 'Little Corella', code: '271', group: 'bird' },
++  { commonName: 'Yellow-tailed Black-Cockatoo', code: '267', group: 'bird' },
++  { commonName: 'Rainbow Lorikeet', code: '254', group: 'bird' },
++  { commonName: 'Musk Lorikeet', code: '258', group: 'bird' },
++  { commonName: 'Little Lorikeet', code: '260', group: 'bird' },
++  { commonName: 'Purple-crowned Lorikeet', code: '259', group: 'bird' },
++  { commonName: 'Australian King-Parrot', code: '281', group: 'bird' },
++  { commonName: 'Crimson Rosella', code: '282', group: 'bird' },
++  { commonName: 'Eastern Rosella', code: '288', group: 'bird' },
++  { commonName: 'Yellow Rosella', code: '284', group: 'bird' },
++  { commonName: 'Red-rumped Parrot', code: '295', group: 'bird' },
++  { commonName: 'Blue Bonnet', code: '297', group: 'bird' },
++  { commonName: 'Superb Parrot', code: '277', group: 'bird' },
++  { commonName: 'Laughing Kookaburra', code: '322', group: 'bird' },
++  { commonName: 'Sacred Kingfisher', code: '326', group: 'bird' },
++  { commonName: 'Azure Kingfisher', code: '319', group: 'bird' },
++  { commonName: 'Rainbow Bee-eater', code: '329', group: 'bird' },
++  { commonName: 'Superb Lyrebird', code: '350', group: 'bird' },
++  { commonName: 'Welcome Swallow', code: '357', group: 'bird' },
++  { commonName: 'Tree Martin', code: '359', group: 'bird' },
++  { commonName: 'Fairy Martin', code: '360', group: 'bird' },
++  { commonName: 'Grey Fantail', code: '361', group: 'bird' },
++  { commonName: 'Rufous Fantail', code: '362', group: 'bird' },
++  { commonName: 'Willie Wagtail', code: '364', group: 'bird' },
++  { commonName: 'Golden Whistler', code: '398', group: 'bird' },
++  { commonName: 'Rufous Whistler', code: '401', group: 'bird' },
++  { commonName: 'Grey Shrike-thrush', code: '408', group: 'bird' },
++  { commonName: 'Australian Magpie-lark', code: '415', group: 'bird' },
++  { commonName: 'Crested Shrike-tit', code: '416', group: 'bird' },
++  { commonName: 'Eastern Whipbird', code: '421', group: 'bird' },
++  { commonName: 'Black-faced Cuckoo-shrike', code: '424', group: 'bird' },
++  { commonName: 'White-winged Chough', code: '693', group: 'bird' },
++  { commonName: 'Australian Raven', code: '930', group: 'bird' },
++  { commonName: 'Little Raven', code: '954', group: 'bird' },
++  { commonName: 'Forest Raven', code: '868', group: 'bird' },
++  { commonName: 'Australian Magpie', code: '705', group: 'bird' },
++  { commonName: 'Grey Butcherbird', code: '702', group: 'bird' },
++  { commonName: 'Pied Butcherbird', code: '700', group: 'bird' },
++  { commonName: 'Pied Currawong', code: '694', group: 'bird' },
++  { commonName: 'Grey Currawong', code: '697', group: 'bird' },
++  { commonName: 'Little Crow', code: '691', group: 'bird' },
++  { commonName: 'Noisy Miner', code: '634', group: 'bird' },
++  { commonName: 'Bell Miner', code: '633', group: 'bird' },
++  { commonName: 'New Holland Honeyeater', code: '631', group: 'bird' },
++  { commonName: 'White-plumed Honeyeater', code: '625', group: 'bird' },
++  { commonName: 'Red Wattlebird', code: '638', group: 'bird' },
++  { commonName: 'Little Wattlebird', code: '637', group: 'bird' },
++  { commonName: 'Noisy Friarbird', code: '645', group: 'bird' },
++  { commonName: 'Silvereye', code: '574', group: 'bird' },
++  { commonName: 'Superb Fairy-wren', code: '529', group: 'bird' },
++  { commonName: 'Splendid Fairy-wren', code: '532', group: 'bird' },
++  { commonName: 'Spotted Pardalote', code: '565', group: 'bird' },
++  { commonName: 'Striated Pardalote', code: '976', group: 'bird' },
++  { commonName: 'Common Starling', code: '999', group: 'bird' },
++  { commonName: 'Mistletoebird', code: '564', group: 'bird' },
++  { commonName: 'Eastern Yellow Robin', code: '392', group: 'bird' },
++  { commonName: 'Scarlet Robin', code: '380', group: 'bird' },
++  { commonName: 'Flame Robin', code: '382', group: 'bird' },
++  { commonName: 'Zebra Finch', code: '653', group: 'bird' },
++  { commonName: 'Red-browed Finch', code: '662', group: 'bird' },
++  { commonName: 'Diamond Firetail', code: '652', group: 'bird' },
++  { commonName: 'Satin Bowerbird', code: '679', group: 'bird' },
++  { commonName: 'Australasian Grebe', code: '61', group: 'bird' },
++  { commonName: 'Hoary-headed Grebe', code: '62', group: 'bird' },
++  { commonName: 'Great Crested Grebe', code: '60', group: 'bird' },
++  { commonName: 'Eurasian Coot', code: '59', group: 'bird' },
++  { commonName: 'Purple Swamphen', code: '58', group: 'bird' },
++  { commonName: 'Dusky Moorhen', code: '56', group: 'bird' },
++  { commonName: 'Black-tailed Native-hen', code: '55', group: 'bird' },
++  { commonName: 'Brolga', code: '177', group: 'bird' },
++  { commonName: 'Australian Bustard', code: '176', group: 'bird' },
++  { commonName: 'Masked Lapwing', code: '133', group: 'bird' },
++  { commonName: 'Silver Gull', code: '125', group: 'bird' },
++  { commonName: 'Pacific Gull', code: '126', group: 'bird' },
++  { commonName: 'Kelp Gull', code: '981', group: 'bird' },
++  { commonName: 'Crested Tern', code: '115', group: 'bird' },
++  { commonName: 'Common Bronzewing', code: '34', group: 'bird' },
++  { commonName: 'Brush Bronzewing', code: '35', group: 'bird' },
++  { commonName: 'Crested Pigeon', code: '43', group: 'bird' },
++  { commonName: 'Spotted Dove', code: '30', group: 'bird' },
++  { commonName: 'Peaceful Dove', code: '30', group: 'bird' },
++  { commonName: 'Wonga Pigeon', code: '44', group: 'bird' },
++
++  // ─── Reptiles & Amphibians ─────────────────────────────────────────────
++  { commonName: 'Alpine Tree Frog', code: '3307', group: 'reptile-amphibian' },
++  { commonName: 'Green and Golden Grass Frog', code: '3166', group: 'reptile-amphibian' },
++  { commonName: 'Growling Grass Frog', code: '3207', group: 'reptile-amphibian' },
++  { commonName: 'Peron\'s Tree Frog', code: '3204', group: 'reptile-amphibian' },
++  { commonName: 'Southern Brown Tree Frog', code: '3182', group: 'reptile-amphibian' },
++  { commonName: 'Common Froglet', code: '3134', group: 'reptile-amphibian' },
++  { commonName: 'Spotted Marsh Frog', code: '3063', group: 'reptile-amphibian' },
++  { commonName: 'Striped Marsh Frog', code: '3061', group: 'reptile-amphibian' },
++  { commonName: 'Broad-shelled Tortoise', code: '2016', group: 'reptile-amphibian' },
++  { commonName: 'Common Long-necked Tortoise', code: '2017', group: 'reptile-amphibian' },
++  { commonName: 'Murray River Tortoise', code: '2034', group: 'reptile-amphibian' },
++  { commonName: 'Marbled Gecko', code: '2126', group: 'reptile-amphibian' },
++  { commonName: 'Central Bearded Dragon', code: '2204', group: 'reptile-amphibian' },
++  { commonName: 'Eastern Bearded Dragon', code: '2177', group: 'reptile-amphibian' },
++  { commonName: "Gippsland Water Dragon", code: '2919', group: 'reptile-amphibian' },
++  { commonName: 'Mountain Dragon', code: '2182', group: 'reptile-amphibian' },
++  { commonName: 'Sand Goanna', code: '2271', group: 'reptile-amphibian' },
++  { commonName: "Rosenberg's Goanna", code: '2287', group: 'reptile-amphibian' },
++  { commonName: 'Tree Goanna', code: '2283', group: 'reptile-amphibian' },
++  { commonName: 'Blotched Blue-tongued Lizard', code: '2578', group: 'reptile-amphibian' },
++  { commonName: 'Common Blue-tongued Lizard', code: '2580', group: 'reptile-amphibian' },
++  { commonName: 'Eastern Water Skink', code: '2557', group: 'reptile-amphibian' },
++  { commonName: 'Garden Skink', code: '2451', group: 'reptile-amphibian' },
++  { commonName: 'Stumpy-tailed Lizard (Shingleback)', code: '2583', group: 'reptile-amphibian' },
++  { commonName: 'Carpet Python', code: '2969', group: 'reptile-amphibian' },
++  { commonName: 'Common Death Adder', code: '2640', group: 'reptile-amphibian' },
++  { commonName: 'Highland Copperhead', code: '2972', group: 'reptile-amphibian' },
++  { commonName: 'Lowland Copperhead', code: '2973', group: 'reptile-amphibian' },
++  { commonName: 'Red-bellied Black Snake', code: '2693', group: 'reptile-amphibian' },
++  { commonName: 'Tiger Snake', code: '2681', group: 'reptile-amphibian' },
++  { commonName: 'Eastern Brown Snake', code: '2699', group: 'reptile-amphibian' },
++  { commonName: 'Western Brown Snake', code: '2698', group: 'reptile-amphibian' },
++  { commonName: 'White-lipped Snake', code: '2665', group: 'reptile-amphibian' },
++  { commonName: 'Yellow-faced Whip Snake', code: '2655', group: 'reptile-amphibian' },
++  { commonName: 'Green Turtle', code: '2007', group: 'reptile-amphibian' },
++  { commonName: 'Leathery Turtle', code: '2013', group: 'reptile-amphibian' },
++  { commonName: 'Loggerhead Turtle', code: '2004', group: 'reptile-amphibian' },
++];
++
++const codeByName = new Map(
++  VIC_SPECIES_CODES.map((entry) => [entry.commonName.toLowerCase(), entry.code])
++);
++
++/**
++ * Look up the DEECA species code for a WildTrack360 species common name.
++ * Returns undefined if not found - per the Wildlife Code Book's own guidance,
++ * leave the Species Code field blank on the record sheet in that case and
++ * use the common name with a "sp." qualifier if identification is uncertain.
++ */
++export function lookupVicSpeciesCode(commonName: string): string | undefined {
++  return codeByName.get(commonName.trim().toLowerCase());
++}
