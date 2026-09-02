@@ -32,6 +32,11 @@ const ANIMAL_SAFE_FIELDS = [
 	'dateAdmitted', 'orgAnimalId', 'outcomeReason',
 	'sourceOrgAnimalId', 'interOrgTransferReceived',
 	'carerId',
+	// VIC / DEECA case sheet codes. These populate the Wildlife Shelter Record
+	// Sheet required by Condition 23. Omitted from this allowlist they were
+	// silently dropped on save - the API returned 200 and the value never
+	// persisted, so the export column came out blank.
+	'vicAgeCode', 'vicInjuryCode', 'vicCauseCode', 'vicFateCode', 'vicFoundRef',
 ] as const;
 
 function pickAnimalFields(data: Record<string, unknown>): Record<string, unknown> {
