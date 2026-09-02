@@ -1,0 +1,175 @@
+diff --git a/src/lib/compliance-rules.test.ts b/src/lib/compliance-rules.test.ts
+new file mode 100644
+index 0000000..c3c5e0e
+--- /dev/null
++++ b/src/lib/compliance-rules.test.ts
+@@ -0,0 +1,104 @@
++import { describe, expect, it } from 'vitest';
++import {
++  getComplianceRuleById,
++  getComplianceRulesForJurisdiction,
++} from './compliance-rules';
++
++/**
++ * Coverage check against an issued DEECA Shelter Authorisation.
++ *
++ * The authorisation carries 25 numbered standard conditions. The rule set here
++ * previously covered 22 of them: Conditions 1 (species not covered by the
++ * authorisation), 2 (directions from Authorised Officers) and 8 (no surgical
++ * treatment, scheduled poisons only on advice) were absent, with nothing to
++ * surface the gap.
++ *
++ * Some rules deliberately cover a span of conditions — Conditions 4-5 and 9-11
++ * are each a single rule, because they are one obligation expressed over
++ * several paragraphs. This test asserts every condition number is accounted
++ * for somewhere, not that there is one rule per number.
++ */
++
++const VIC_RULES = getComplianceRulesForJurisdiction('VIC');
++
++/** Condition numbers named in each rule's `section` string, e.g. "Conditions 4-5". */
++function coveredConditionNumbers(): Set<number> {
++  const covered = new Set<number>();
++
++  for (const rule of VIC_RULES) {
++    const range = rule.section.match(/Conditions\s+(\d+)\s*-\s*(\d+)/i);
++    if (range) {
++      for (let n = Number(range[1]); n <= Number(range[2]); n++) covered.add(n);
++      continue;
++    }
++    const single = rule.section.match(/Condition\s+(\d+)/i);
++    if (single) covered.add(Number(single[1]));
++  }
++
++  return covered;
++}
++
++describe('VIC compliance rules — authorisation coverage', () => {
++  it('covers all 25 standard conditions', () => {
++    const covered = coveredConditionNumbers();
++    const missing = Array.from({ length: 25 }, (_, i) => i + 1).filter(
++      (n) => !covered.has(n)
++    );
++    expect(missing).toEqual([]);
++  });
++
++  it('does not claim conditions beyond the 25 that exist', () => {
++    const beyond = Array.from(coveredConditionNumbers()).filter(
++      (n) => n < 1 || n > 25
++    );
++    expect(beyond).toEqual([]);
++  });
++
++  it('lists every species excluded by Condition 1', () => {
++    const rule = getComplianceRuleById('vic-1', 'VIC');
++    expect(rule).toBeDefined();
++
++    // Checked individually so a partial edit to the list fails loudly. An
++    // omission here would silently permit an intake the authorisation forbids.
++    for (const species of [
++      'whales',
++      'dolphins',
++      'seals',
++      'marine turtles',
++      'platypus',
++      'fish',
++      'deer',
++      'quail',
++      'pheasants',
++      'partridges',
++    ]) {
++      expect(rule!.description.toLowerCase()).toContain(species);
++    }
++  });
++
++  it('marks Condition 8 as prohibiting surgery outright', () => {
++    const rule = getComplianceRuleById('vic-8', 'VIC');
++    expect(rule).toBeDefined();
++    expect(rule!.description.toLowerCase()).toContain('surgical');
++    expect(rule!.required).toBe(true);
++  });
++
++  it('keeps every VIC rule required and scoped to VIC', () => {
++    for (const rule of VIC_RULES) {
++      expect(rule.jurisdictions).toContain('VIC');
++    }
++    for (const id of ['vic-1', 'vic-2', 'vic-8']) {
++      expect(getComplianceRuleById(id, 'VIC')!.required).toBe(true);
++    }
++  });
++
++  it('does not leak the new VIC rules into other jurisdictions', () => {
++    for (const jurisdiction of ['ACT', 'NSW']) {
++      const ids = getComplianceRulesForJurisdiction(jurisdiction).map(
++        (r) => r.id
++      );
++      expect(ids).not.toContain('vic-1');
++      expect(ids).not.toContain('vic-8');
++    }
++  });
++});
+diff --git a/src/lib/compliance-rules.ts b/src/lib/compliance-rules.ts
+index 5fd27ff..e2e0e32 100644
+--- a/src/lib/compliance-rules.ts
++++ b/src/lib/compliance-rules.ts
+@@ -631,6 +631,36 @@ const NSW_COMPLIANCE_RULES: ComplianceSection[] = [
+ // Sourced from the DEECA Wildlife Rehabilitator Authorisation Guide (Conditions 1-25),
+ // https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide/authorisation-conditions
+ const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
++  {
++    id: 'vic-scope-of-authorisation',
++    title: 'Scope of Authorisation',
++    description: 'Species excluded from the authorisation, and the standing of directions from Authorised Officers (Conditions 1-2)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-1',
++        section: 'Condition 1',
++        title: 'Species Not Covered by the Authorisation',
++        // Verbatim species list taken from an issued Shelter Authorisation.
++        // This is the only condition in the set that can be checked
++        // mechanically at admission, so keep the list exact — an omission here
++        // silently permits an intake the authorisation forbids.
++        description: 'The authorisation does not permit acquiring, receiving, possessing, euthanasing or disposing of: whales, dolphins, seals, marine turtles, platypus, fish, deer, non-indigenous quail, pheasants and partridges.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      },
++      {
++        id: 'vic-2',
++        section: 'Condition 2',
++        title: 'Directions from Authorised Officers',
++        description: 'Any verbal or written direction from a DEECA Authorised Officer relating to wildlife held under the authorisation must be followed.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'general'
++      }
++    ]
++  },
+   {
+     id: 'vic-assessment-quarantine',
+     title: 'Assessment & Quarantine',
+@@ -684,6 +714,23 @@ const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
+       }
+     ]
+   },
++  {
++    id: 'vic-surgical-treatment',
++    title: 'Surgical Treatment & Medication',
++    description: 'Limits on surgery and on the administration of scheduled poisons (Condition 8)',
++    jurisdictions: ['VIC'],
++    rules: [
++      {
++        id: 'vic-8',
++        section: 'Condition 8',
++        title: 'No Surgery; Scheduled Medicines Only on Advice',
++        description: 'Surgical treatment must not be undertaken — only registered veterinary practitioners may do so. Schedule 4, 8 or 9 poisons may only be administered subject to Condition 3 (i.e. on veterinary or experienced-carer advice) and in accordance with the Drugs, Poisons and Controlled Substances Regulations.',
++        required: true,
++        jurisdictions: ['VIC'],
++        category: 'incident-management'
++      }
++    ]
++  },
+   {
+     id: 'vic-euthanasia-disposal',
+     title: 'Euthanasia & Carcass Disposal',

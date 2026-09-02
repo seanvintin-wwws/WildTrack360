@@ -1,0 +1,198 @@
+diff --git a/src/app/landing/page.tsx b/src/app/landing/page.tsx
+index 9eed167..0e5b95e 100644
+--- a/src/app/landing/page.tsx
++++ b/src/app/landing/page.tsx
+@@ -8,6 +8,7 @@ import Link from "next/link";
+ import { useRouter } from "next/navigation";
+ import { useEffect } from "react";
+ import { PawPrint, Shield, BarChart3, Users, CheckCircle, LogIn } from "lucide-react";
++import { SITE_BRANDING } from "@/lib/site-branding";
+ 
+ export default function LandingPage() {
+   const { isSignedIn, isLoaded } = useAuth();
+@@ -26,9 +27,14 @@ export default function LandingPage() {
+           <div className="flex items-center justify-between h-20">
+             <div className="flex items-center gap-3">
+               <PawPrint className="h-8 w-8 text-primary" />
+-              <h1 className="text-3xl font-bold font-headline text-primary">
+-                WildTrack360
+-              </h1>
++              <div>
++                <h1 className="text-2xl sm:text-3xl font-bold font-headline text-primary leading-tight">
++                  {SITE_BRANDING.organisationShortName}
++                </h1>
++                <p className="text-xs text-muted-foreground">
++                  Wildlife Shelter Authorisation {SITE_BRANDING.authorisationNumber}
++                </p>
++              </div>
+             </div>
+             <Link href="/sign-in">
+               <Button size="lg">
+@@ -45,8 +51,8 @@ export default function LandingPage() {
+           <div className="flex justify-center px-4">
+             <div className="relative h-36 w-72 sm:h-48 sm:w-96">
+               <Image
+-                src="/Brandmark-Text-Vert.svg"
+-                alt="WildTrack360 wildlife tracking"
++                src={SITE_BRANDING.logoPath}
++                alt={SITE_BRANDING.organisationName}
+                 fill
+                 className="object-contain"
+                 priority
+@@ -56,15 +62,15 @@ export default function LandingPage() {
+           
+           <div className="max-w-4xl mx-auto space-y-6">
+             <h1 className="text-5xl lg:text-6xl font-bold text-primary">
+-              Wildlife rehabilitation management software
++              {SITE_BRANDING.organisationName}
+               <span className="block text-3xl lg:text-4xl mt-2 text-muted-foreground">
+-                Animal tracking for Australian care organisations
++                Licensed wildlife rehabilitation in the Macedon Ranges
+               </span>
+             </h1>
+             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+-              WildTrack360 is wildlife management software for rehabilitation teams.
+-              Keep a wildlife tracking system in one place, from intake to release,
+-              with the records Australian carers actually need.
++              We care for sick, injured and orphaned native wildlife under a
++              Victorian shelter authorisation. This site is where our carers
++              record the animals in their care, from intake through to release.
+             </p>
+           </div>
+           
+@@ -150,7 +156,17 @@ export default function LandingPage() {
+       
+       <footer className="text-center py-8 text-muted-foreground border-t mt-16">
+         <div className="container mx-auto px-4">
+-          <p>&copy; {new Date().getFullYear()} WildTrack360. All rights reserved.</p>
++          <p>
++            &copy; {new Date().getFullYear()} {SITE_BRANDING.organisationName}
++            {' '}({SITE_BRANDING.registrationNumber})
++          </p>
++          <p className="text-sm mt-1">
++            Wildlife Shelter Authorisation {SITE_BRANDING.authorisationNumber},
++            issued under the Wildlife Act 1975 (Vic).
++          </p>
++          <p className="text-sm mt-3">
++            Running on {SITE_BRANDING.productName}.
++          </p>
+         </div>
+       </footer>
+     </div>
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index e579275..dff9705 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -13,10 +13,14 @@ import { WorkspaceShell } from '@/components/workspace-shell';
+ import { getUserRole } from '@/lib/rbac';
+ import { isFeatureEnabled } from '@/lib/features';
+ import { filterCommandItemsForRole } from '@/lib/workspace-navigation';
++import { SITE_BRANDING } from '@/lib/site-branding';
+ 
+ export const metadata: Metadata = {
+-  title: 'WildTrack360',
+-  description: 'Wildlife Career Management App',
++  title: SITE_BRANDING.organisationName,
++  description:
++    'Wildlife rehabilitation records for ' +
++    `${SITE_BRANDING.organisationName}, operating under Victorian ` +
++    `Wildlife Shelter Authorisation ${SITE_BRANDING.authorisationNumber}.`,
+ };
+ 
+ const staticNavigationItems: CommandItem[] = [
+diff --git a/src/lib/site-branding.test.ts b/src/lib/site-branding.test.ts
+new file mode 100644
+index 0000000..e982be6
+--- /dev/null
++++ b/src/lib/site-branding.test.ts
+@@ -0,0 +1,37 @@
++import { describe, expect, it } from 'vitest';
++import { SITE_BRANDING } from './site-branding';
++
++/**
++ * These values appear on the public landing page and in the browser tab. They
++ * are not the source of truth for the DEECA record sheet — that comes from
++ * OrganisationSettings — but if the two disagree, one of them is wrong.
++ */
++describe('SITE_BRANDING', () => {
++  it('names the shelter and its registration', () => {
++    expect(SITE_BRANDING.organisationName).toBe(
++      'Wings and Whiskers Wildlife Shelter Inc'
++    );
++    expect(SITE_BRANDING.registrationNumber).toBe('A0121232N');
++  });
++
++  it('carries the shelter authorisation number', () => {
++    expect(SITE_BRANDING.authorisationNumber).toBe('15528618');
++  });
++
++  it('keeps the product name distinct from the shelter name', () => {
++    // The software is a fork of an MPL-2.0 project. Collapsing the two names
++    // would misattribute the software to the shelter.
++    expect(SITE_BRANDING.productName).toBe('WildTrack360');
++    expect(SITE_BRANDING.productName).not.toBe(SITE_BRANDING.organisationName);
++  });
++
++  it('has no blank fields', () => {
++    for (const [key, value] of Object.entries(SITE_BRANDING)) {
++      expect(value.trim(), `${key} is empty`).not.toBe('');
++    }
++  });
++
++  it('points the logo at a file served from public/', () => {
++    expect(SITE_BRANDING.logoPath.startsWith('/')).toBe(true);
++  });
++});
+diff --git a/src/lib/site-branding.ts b/src/lib/site-branding.ts
+new file mode 100644
+index 0000000..17beae6
+--- /dev/null
++++ b/src/lib/site-branding.ts
+@@ -0,0 +1,47 @@
++/**
++ * Identity of the organisation operating this deployment.
++ *
++ * WHY THIS IS SEPARATE FROM THE PRODUCT NAME
++ * WildTrack360 is the software — a fork of an open-source project under
++ * MPL-2.0. Wings and Whiskers Wildlife Shelter Inc is the shelter running it.
++ * They are different things and shouldn't be conflated in the interface: the
++ * public-facing pages belong to the shelter, while "WildTrack360" stays as the
++ * name of the tool.
++ *
++ * WHY THIS IS NOT AN ENVIRONMENT VARIABLE
++ * It could be, but every NEXT_PUBLIC_ variable is another value that silently
++ * falls back to something wrong when it isn't set — the failure mode that put
++ * localhost into the invitation emails. This is one shelter and one file. Edit
++ * it here.
++ *
++ * NOTE: this is display only. The authorisation number that appears on the
++ * DEECA record sheet export is read from OrganisationSettings in the database,
++ * not from here, so that the export reflects what is actually stored. The copy
++ * below exists so the two can be checked against each other.
++ */
++export const SITE_BRANDING = {
++  /** Registered name of the incorporated association. */
++  organisationName: 'Wings and Whiskers Wildlife Shelter Inc',
++
++  /** Short form for headers and other tight spaces. */
++  organisationShortName: 'Wings and Whiskers',
++
++  /** Consumer Affairs Victoria incorporated association number. */
++  registrationNumber: 'A0121232N',
++
++  /**
++   * DEECA Shelter Authorisation number, issued under s28A of the Wildlife Act
++   * 1975. Kept here for display and cross-checking only — see the note above.
++   */
++  authorisationNumber: '15528618',
++
++  /** The software. Do not replace with the shelter name. */
++  productName: 'WildTrack360',
++
++  /**
++   * Logo shown on the landing page, served from `public/`. To use the
++   * shelter's own mark, drop the file into `public/` and change this path.
++   * SVG is preferred; a transparent PNG at roughly 800px wide also works.
++   */
++  logoPath: '/Brandmark-Text-Vert.svg',
++} as const;

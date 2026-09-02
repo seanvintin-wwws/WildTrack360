@@ -1,0 +1,132 @@
+diff --git a/src/app/home-client.tsx b/src/app/home-client.tsx
+index 3dd1546..25690c0 100644
+--- a/src/app/home-client.tsx
++++ b/src/app/home-client.tsx
+@@ -53,9 +53,7 @@ import ReleasesVsAdmissionsChart from '@/components/releases-vs-admissions-chart
+ import { QueryResultChart } from '@/components/custom-query/query-result-chart';
+ import { TrainingExpiryAlerts } from '@/components/training-expiry-alerts';
+ import { AdminComplianceChecklist } from '@/components/admin-compliance-checklist';
+-import { CallLogDashboard } from '@/components/call-log-dashboard';
+ import { FeedRosterSummaryCarer } from '@/components/feed-roster-summary-carer';
+-import { FeedRosterSummaryOrg } from '@/components/feed-roster-summary-org';
+ import { NSWReportingReminderBanner } from '@/components/nsw-reporting-reminder-banner';
+ import DraggableSections, { type DashboardSection } from '@/components/draggable-sections';
+ import { Skeleton } from '@/components/ui/skeleton';
+@@ -373,12 +371,34 @@ function AdminCoordinatorView({
+   // localStorage via DraggableSections.
+   const dashboardSections: DashboardSection[] = useMemo(
+     () => [
+-      { id: 'call-log', title: 'Call Log', node: <CallLogDashboard /> },
+-      {
+-        id: 'feed-roster',
+-        title: 'Feed Roster',
+-        node: <FeedRosterSummaryOrg items={feedRosterItems} />,
+-      },
++      // Order here is the DEFAULT only — a browser with a saved order in
++      // localStorage keeps its own arrangement (see reconcileOrder), and new
++      // widgets get appended to it. Feeding leads because it is the daily
++      // task.
++      //
++      // The Call Log widget was removed from this dashboard. The feature is
++      // untouched: /compliance/call-logs and its nav item still work, and no
++      // call data is affected. To bring the widget back, restore the
++      // CallLogDashboard import and add
++      //   { id: 'call-log', title: 'Call Log', node: <CallLogDashboard /> }
++      // to this array. Note that browsers which saw the widget before will
++      // have 'call-log' in their stored order; reconcileOrder drops IDs that
++      // no longer exist, so nothing breaks for them.
++      // The Feed Roster summary was removed from this dashboard: it surfaced
++      // an overdue/unrecorded count on every page load, which turned a care
++      // tool into a nag. The feature is untouched — /tools/feed-roster, its
++      // nav item and the API still work, and the per-carer summary further up
++      // this file is unaffected. To restore, add
++      //   { id: 'feed-roster', title: 'Feed Roster',
++      //     node: <FeedRosterSummaryOrg items={feedRosterItems} /> }
++      // back to this array.
++      //
++      // Worth recording why this is safe: DEECA Condition 23 lists what must
++      // be recorded — species, when and where found, injuries, cause, fate,
++      // release details and veterinary advice. Feeding is not on that list.
++      // Condition 19 requires that food and water be PROVIDED, not that every
++      // feed be logged. So none of this affects the Wildlife Shelter Record
++      // Sheet or an Authorised Officer's inspection.
+       { id: 'stats', title: 'Key Stats', node: <DashboardStats animals={animals} /> },
+       { id: 'training-alerts', title: 'Training Alerts', node: <TrainingExpiryAlerts /> },
+       {
+@@ -440,17 +460,9 @@ function AdminCoordinatorView({
+ 
+   return (
+     <>
+-      {/* Admin Compliance Checklist */}
+-      {userRole === 'ADMIN' && (
+-        <AdminComplianceChecklist
+-          carers={carersList}
+-          animals={animals}
+-          organization={organization}
+-          jurisdiction={jurisdiction}
+-        />
+-      )}
+-
+-      {/* Action Bar */}
++      {/* Action Bar — kept first so Add New Animal is the first thing on the
++          page. It is the most-used control in day-to-day shelter work, and it
++          previously sat below a long admin-only checklist. */}
+       <div className="flex flex-col sm:flex-row gap-4 mb-8">
+         <div className="flex-1">
+           <Button onClick={onAddNew} className="w-full sm:w-auto">
+@@ -479,6 +491,18 @@ function AdminCoordinatorView({
+         </div>
+       </div>
+ 
++      {/* Admin Compliance Checklist — below the action bar, but deliberately
++          still above the dashboard widgets. It tracks whether records would
++          stand up to an inspection, so it stays visible without scrolling. */}
++      {userRole === 'ADMIN' && (
++        <AdminComplianceChecklist
++          carers={carersList}
++          animals={animals}
++          organization={organization}
++          jurisdiction={jurisdiction}
++        />
++      )}
++
+       {/* Draggable dashboard widgets */}
+       <DraggableSections
+         sections={dashboardSections}
+@@ -646,6 +670,26 @@ export default function HomeClient({
+   const router = useRouter();
+ 
+   const [animals, setAnimals] = useState<Animal[]>(initialAnimals);
++
++  // Species this shelter has actually admitted, most recent first. A Victorian
++  // shelter sees a handful of species over and over, so floating these to the
++  // top of the picker turns most admissions into one tap instead of a scroll
++  // through 700+ options. Ordering only — it never restricts what can be
++  // chosen, and the full list is always one keystroke away.
++  const recentSpeciesNames = useMemo(() => {
++    const seen: string[] = [];
++    const byNewest = [...animals].sort(
++      (a, b) =>
++        new Date(b.createdAt ?? b.dateFound ?? 0).getTime() -
++        new Date(a.createdAt ?? a.dateFound ?? 0).getTime()
++    );
++    for (const animal of byNewest) {
++      const name = (animal.species ?? '').trim();
++      if (name !== '' && !seen.includes(name)) seen.push(name);
++      if (seen.length >= 12) break;
++    }
++    return seen;
++  }, [animals]);
+   const [speciesList, setSpeciesList] = useState(species || []);
+   const [carersList, setCarersList] = useState(carers || []);
+   const [feedRosterItems, setFeedRosterItems] = useState<FeedRosterItem[]>(
+@@ -881,7 +925,9 @@ export default function HomeClient({
+         species={(speciesList || []).map((s: any) => ({
+           value: s.name,
+           label: s.name,
++          type: s.type ?? null,
+         }))}
++        recentSpecies={recentSpeciesNames}
+         carers={(carersList || [])
+           .filter((c: any) => c.hasProfile)
+           .map((c: any) => ({
