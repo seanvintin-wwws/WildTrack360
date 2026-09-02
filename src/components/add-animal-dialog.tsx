@@ -223,17 +223,19 @@ export function AddAnimalDialog({
   const [isUploadingPhoto, setIsUploadingPhoto] = React.useState(false)
   const photoInputRef = React.useRef<HTMLInputElement>(null)
   const [locationData, setLocationData] = React.useState<{
-    lat: number;
-    lng: number;
+    // Nullable: with the map gone there is no default position, and an unset
+    // location must stay unset rather than defaulting somewhere plausible.
+    lat: number | null;
+    lng: number | null;
     address: string;
     streetAddress?: string;
     suburb?: string;
     postcode?: string;
     state?: string;
   }>({
-    lat: -35.2809,
-    lng: 149.1300,
-    address: 'Canberra ACT, Australia'
+    lat: null,
+    lng: null,
+    address: ''
   });
   
   // Track whether the orgAnimalId was auto-generated (not manually edited)
@@ -270,8 +272,8 @@ export function AddAnimalDialog({
       carer: animalToEdit.carerId || '',
       status: animalToEdit.status,
       dateFound: new Date(animalToEdit.dateFound),
-      rescueLocation: animalToEdit.rescueLocation || 'Canberra ACT, Australia',
-      rescueCoordinates: (animalToEdit.rescueCoordinates as { lat: number; lng: number }) || { lat: -35.2809, lng: 149.1300 },
+      rescueLocation: animalToEdit.rescueLocation || '',
+      rescueCoordinates: (animalToEdit.rescueCoordinates as { lat: number; lng: number } | undefined),
       rescueAddress: animalToEdit.rescueAddress || '',
       rescueSuburb: animalToEdit.rescueSuburb || '',
       rescuePostcode: animalToEdit.rescuePostcode || '',
@@ -303,10 +305,10 @@ export function AddAnimalDialog({
       age: undefined,
       dateOfBirth: undefined,
       carer: "",
-      status: "ADMITTED",
+      status: "IN_CARE",
       dateFound: new Date(),
-      rescueLocation: "Canberra ACT, Australia",
-      rescueCoordinates: { lat: -35.2809, lng: 149.1300 },
+      rescueLocation: "",
+      rescueCoordinates: undefined,
       rescueAddress: "",
       rescueSuburb: "",
       rescuePostcode: "",
@@ -371,8 +373,8 @@ export function AddAnimalDialog({
             carer: carerValue,
             status: animalToEdit.status,
             dateFound: new Date(animalToEdit.dateFound),
-            rescueLocation: animalToEdit.rescueLocation || 'Canberra ACT, Australia',
-            rescueCoordinates: (animalToEdit.rescueCoordinates as { lat: number; lng: number }) || { lat: -35.2809, lng: 149.1300 },
+            rescueLocation: animalToEdit.rescueLocation || '',
+            rescueCoordinates: (animalToEdit.rescueCoordinates as { lat: number; lng: number } | undefined),
             rescueAddress: animalToEdit.rescueAddress || '',
             rescueSuburb: animalToEdit.rescueSuburb || '',
             rescuePostcode: animalToEdit.rescuePostcode || '',
@@ -397,9 +399,9 @@ export function AddAnimalDialog({
         });
         const coords = animalToEdit.rescueCoordinates as { lat?: number; lng?: number } | null;
         setLocationData({
-          lat: coords?.lat ?? -35.2809,
-          lng: coords?.lng ?? 149.1300,
-          address: animalToEdit.rescueLocation || 'Canberra ACT, Australia'
+          lat: coords?.lat ?? null,
+          lng: coords?.lng ?? null,
+          address: animalToEdit.rescueLocation || ''
         });
     } else {
         setExistingPhotoKey(null)
@@ -414,10 +416,10 @@ export function AddAnimalDialog({
             age: undefined,
             dateOfBirth: undefined,
             carer: "",
-            status: "ADMITTED",
+            status: "IN_CARE",
             dateFound: new Date(),
-            rescueLocation: "Canberra ACT, Australia",
-            rescueCoordinates: { lat: -35.2809, lng: 149.1300 },
+            rescueLocation: "",
+            rescueCoordinates: undefined,
             rescueAddress: "",
             rescueSuburb: "",
             rescuePostcode: "",
@@ -439,9 +441,9 @@ export function AddAnimalDialog({
             vicFoundRef: '',
         });
         setLocationData({
-          lat: -35.2809,
-          lng: 149.1300,
-          address: 'Canberra ACT, Australia'
+          lat: null,
+          lng: null,
+          address: ''
         });
         // Fetch a preview animal ID for new animals
         const dateFound = form.getValues('dateFound')
@@ -475,7 +477,9 @@ export function AddAnimalDialog({
         form.setValue('rescuePostcode', locationData.postcode);
       }
       form.setValue('rescueLocation', locationData.address);
-      form.setValue('rescueCoordinates', { lat: locationData.lat, lng: locationData.lng });
+      if (locationData.lat !== null && locationData.lng !== null) {
+        form.setValue('rescueCoordinates', { lat: locationData.lat, lng: locationData.lng });
+      }
     }
   }, [locationData, form]);
 
@@ -563,7 +567,7 @@ export function AddAnimalDialog({
         userNotes: null,
       }),
       rescueLocation: data.rescueLocation || locationData.address || null,
-      rescueCoordinates: data.rescueCoordinates || (locationData ? { lat: locationData.lat, lng: locationData.lng } : null),
+      rescueCoordinates: data.rescueCoordinates || (locationData.lat !== null && locationData.lng !== null ? { lat: locationData.lat, lng: locationData.lng } : null),
       // Detailed address fields - these are now auto-populated from map selection
       rescueAddress: data.rescueAddress || null,
       rescueSuburb: data.rescueSuburb || null,
@@ -590,7 +594,7 @@ export function AddAnimalDialog({
       // Release location fields when status is RELEASED - use same location data
       ...(isReleased && {
         releaseLocation: locationData.address || null,
-        releaseCoordinates: locationData ? { lat: locationData.lat, lng: locationData.lng } : null,
+        releaseCoordinates: locationData.lat !== null && locationData.lng !== null ? { lat: locationData.lat, lng: locationData.lng } : null,
         releaseAddress: locationData.streetAddress || null,
         releaseSuburb: locationData.suburb || null,
         releasePostcode: locationData.postcode || null,
@@ -681,7 +685,9 @@ export function AddAnimalDialog({
   }
 
   const allStatusOptions = [
-    { value: "ADMITTED", label: "Admitted" },
+    // "Admitted" deliberately omitted: this shelter treats admitted and in care
+    // as the same state. The ADMITTED enum value remains valid in the database
+    // so historical records still load.
     { value: "IN_CARE", label: "In Care" },
     { value: "READY_FOR_RELEASE", label: "Ready for Release" },
     { value: "RELEASED", label: "Released" },
@@ -1348,10 +1354,10 @@ export function AddAnimalDialog({
               name="tagBandColourNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tag / Band colour and number</FormLabel>
+                  <FormLabel>Tag / band / nail colour and number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="e.g., Blue-A12"
+                      placeholder="e.g., Blue-A12, or right thumb pink"
                       {...field}
                       value={field.value || ''}
                     />
@@ -1361,23 +1367,6 @@ export function AddAnimalDialog({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="microchipNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Microchip number</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., 982000123456789"
-                      {...field}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Rescue Address Details */}
             <div className="space-y-4">
@@ -1440,17 +1429,6 @@ export function AddAnimalDialog({
               })()}
             </div>
 
-            <LocationPicker
-              onLocationChange={setLocationData}
-              initialLocation={isEditMode ? (() => {
-                const rc = animalToEdit?.rescueCoordinates as { lat?: number; lng?: number } | null;
-                return {
-                  lat: rc?.lat ?? -35.2809,
-                  lng: rc?.lng ?? 149.1300,
-                  address: animalToEdit?.rescueLocation || 'Canberra ACT, Australia'
-                }
-              })() : undefined}
-            />
             
             {/* Show release location fields when status is RELEASED */}
             {form.watch('status') === 'RELEASED' && (

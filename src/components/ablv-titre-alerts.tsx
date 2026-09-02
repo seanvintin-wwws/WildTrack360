@@ -42,10 +42,9 @@ function toneFor(row: CarerTitreSummary): string {
   ) {
     return 'bg-orange-100 text-orange-900 border-orange-200';
   }
-  // Amber at three months: a heads-up, deliberately milder than orange.
-  if (row.status.stage === 'due-in-3-months') {
-    return 'bg-amber-100 text-amber-900 border-amber-200';
-  }
+  // No separate three-month tier: the shelter already gets renewal reminders
+  // from Wildlife Victoria, so this stays green until a month out rather than
+  // adding another warning to ignore.
   // Green when current. Every carer is listed now, so a row with nothing wrong
   // must not look flagged - otherwise the card cries wolf and gets ignored.
   return 'bg-green-100 text-green-900 border-green-200';
