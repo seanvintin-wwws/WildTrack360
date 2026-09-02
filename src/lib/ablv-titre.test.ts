@@ -7,6 +7,7 @@ import {
   isCoveredForBatWork,
   isLapsed,
   needsAttention,
+  summariseCarerTitres,
   TITRE_INTERVAL_MONTHS,
 } from './ablv-titre';
 
@@ -139,5 +140,73 @@ describe('isCoveredForBatWork', () => {
   it('does not cover a carer with no result recorded', () => {
     expect(isCoveredForBatWork(current, null)).toBe(false);
     expect(isCoveredForBatWork(current, undefined)).toBe(false);
+  });
+});
+
+describe('summariseCarerTitres', () => {
+  const NOW = new Date(2026, 8, 2);
+  const recent = new Date(2026, 7, 1);
+  const nearlyDue = new Date(2025, 8, 20);
+  const longLapsed = new Date(2024, 0, 1);
+
+  it('flags a carer with no titre recorded as not covered', () => {
+    const [row] = summariseCarerTitres([{ id: 'a', name: 'Sean Vintin' }], NOW);
+    expect(row.status).toBeNull();
+    expect(row.covered).toBe(false);
+    expect(row.detail).toBe('No ABLV titre recorded');
+  });
+
+  it('reports a current, adequate carer as covered', () => {
+    const [row] = summariseCarerTitres(
+      [{ id: 'a', name: 'Sean', ablvTitreDate: recent, ablvTitreValue: 4 }],
+      NOW
+    );
+    expect(row.covered).toBe(true);
+    expect(row.status!.stage).toBe('ok');
+  });
+
+  it('leads with the low result rather than the reassuring date', () => {
+    const [row] = summariseCarerTitres(
+      [{ id: 'a', name: 'Sean', ablvTitreDate: recent, ablvTitreValue: 0.4 }],
+      NOW
+    );
+    expect(row.covered).toBe(false);
+    expect(row.detail).toContain('below 1.0');
+  });
+
+  it('says so when a date is recorded but no result is', () => {
+    const [row] = summariseCarerTitres(
+      [{ id: 'a', name: 'Sean', ablvTitreDate: recent }],
+      NOW
+    );
+    expect(row.covered).toBe(false);
+    expect(row.detail).toContain('no result recorded');
+  });
+
+  it('accepts ISO date strings from the API', () => {
+    const [row] = summariseCarerTitres(
+      [{ id: 'a', name: 'S', ablvTitreDate: '2026-08-01T00:00:00.000Z', ablvTitreValue: 4 }],
+      NOW
+    );
+    expect(row.status).not.toBeNull();
+    expect(row.covered).toBe(true);
+  });
+
+  it('sorts most urgent first, with unrecorded carers alongside overdue', () => {
+    const rows = summariseCarerTitres(
+      [
+        { id: 'ok', name: 'Current', ablvTitreDate: recent, ablvTitreValue: 4 },
+        { id: 'soon', name: 'Soon', ablvTitreDate: nearlyDue, ablvTitreValue: 4 },
+        { id: 'lapsed', name: 'Lapsed', ablvTitreDate: longLapsed, ablvTitreValue: 4 },
+        { id: 'none', name: 'Absent' },
+      ],
+      NOW
+    );
+    expect(rows.map((r) => r.id).slice(0, 2).sort()).toEqual(['lapsed', 'none']);
+    expect(rows[rows.length - 1].id).toBe('ok');
+  });
+
+  it('returns an empty list for no carers', () => {
+    expect(summariseCarerTitres([], NOW)).toEqual([]);
   });
 });

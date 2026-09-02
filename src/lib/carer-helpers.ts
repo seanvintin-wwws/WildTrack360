@@ -57,6 +57,14 @@ export async function getEnrichedCarers(orgId: string): Promise<EnrichedCarer[]>
         specialties: profile?.specialties ?? [],
         notes: profile?.notes ?? null,
         active: profile?.active ?? true,
+        // ABLV / rabies protection. These must be listed explicitly: this
+        // function hand-builds its result rather than spreading the profile,
+        // so a new column stays invisible to every consumer of /api/carers
+        // until it is added here.
+        ablvVaccinationDate: profile?.ablvVaccinationDate ?? null,
+        ablvTitreDate: profile?.ablvTitreDate ?? null,
+        ablvTitreValue: profile?.ablvTitreValue ?? null,
+        ablvTitreUnit: profile?.ablvTitreUnit ?? null,
         // NSW-specific
         streetAddress: profile?.streetAddress ?? null,
         suburb: profile?.suburb ?? null,

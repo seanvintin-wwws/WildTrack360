@@ -52,6 +52,7 @@ import CarerWorkloadDashboard from '@/components/carer-workload-dashboard';
 import ReleasesVsAdmissionsChart from '@/components/releases-vs-admissions-chart';
 import { QueryResultChart } from '@/components/custom-query/query-result-chart';
 import { TrainingExpiryAlerts } from '@/components/training-expiry-alerts';
+import { AblvTitreAlerts } from '@/components/ablv-titre-alerts';
 import { AdminComplianceChecklist } from '@/components/admin-compliance-checklist';
 import { FeedRosterSummaryCarer } from '@/components/feed-roster-summary-carer';
 import { NSWReportingReminderBanner } from '@/components/nsw-reporting-reminder-banner';
@@ -401,6 +402,7 @@ function AdminCoordinatorView({
       // Sheet or an Authorised Officer's inspection.
       { id: 'stats', title: 'Key Stats', node: <DashboardStats animals={animals} /> },
       { id: 'training-alerts', title: 'Training Alerts', node: <TrainingExpiryAlerts /> },
+      { id: 'ablv-titre', title: 'ABLV Titre Status', node: <AblvTitreAlerts /> },
       {
         id: 'species-distribution',
         title: 'Species Distribution',

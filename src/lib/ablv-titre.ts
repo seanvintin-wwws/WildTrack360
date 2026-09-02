@@ -137,3 +137,67 @@ export function isCoveredForBatWork(
   if (lastTitreValue === null || lastTitreValue === undefined) return false;
   return assessTitreValue(lastTitreValue) === 'adequate';
 }
+
+/** A carer as far as ABLV tracking is concerned. */
+export interface CarerTitreInput {
+  id: string;
+  name: string;
+  ablvTitreDate?: string | Date | null;
+  ablvTitreValue?: number | null;
+}
+
+export interface CarerTitreSummary {
+  id: string;
+  name: string;
+  /** Null when no titre date is recorded at all. */
+  status: TitreStatus | null;
+  covered: boolean;
+  detail: string;
+}
+
+/** Most urgent first. Carers with no record sort alongside the overdue. */
+const STAGE_ORDER: Record<TitreAlertStage, number> = {
+  overdue: 0,
+  'due-in-1-week': 1,
+  'due-in-2-weeks': 2,
+  'due-in-1-month': 3,
+  'due-in-3-months': 4,
+  ok: 5,
+};
+
+export function summariseCarerTitres(
+  carers: CarerTitreInput[],
+  asOf: Date = new Date()
+): CarerTitreSummary[] {
+  return carers
+    .map((carer) => {
+      const raw = carer.ablvTitreDate;
+      if (!raw) {
+        return {
+          id: carer.id,
+          name: carer.name,
+          status: null,
+          covered: false,
+          detail: 'No ABLV titre recorded',
+        };
+      }
+
+      const status = getTitreStatus(new Date(raw), asOf);
+      const value = carer.ablvTitreValue ?? null;
+      const covered = isCoveredForBatWork(status.stage, value);
+
+      let detail = status.message;
+      if (value !== null && assessTitreValue(value) === 'inadequate') {
+        detail = `Last titre ${value} ${TITRE_UNIT}, below ${ADEQUATE_TITRE_MINIMUM.toFixed(1)}`;
+      } else if (value === null) {
+        detail = `${status.message} (no result recorded)`;
+      }
+
+      return { id: carer.id, name: carer.name, status, covered, detail };
+    })
+    .sort((a, b) => {
+      const rank = (s: CarerTitreSummary) =>
+        s.status === null ? STAGE_ORDER.overdue : STAGE_ORDER[s.status.stage];
+      return rank(a) - rank(b) || a.name.localeCompare(b.name);
+    });
+}
