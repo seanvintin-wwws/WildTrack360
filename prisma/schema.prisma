@@ -200,6 +200,17 @@ model CarerProfile {
   memberSince                DateTime? @map("member_since")
   trainingLevel              String?   @map("training_level")
 
+  // ABLV / rabies protection. Strongly recommended by the Shelter
+  // Authorisation for anyone caring for flying-foxes or bats. Not a numbered
+  // condition, so duty of care rather than DEECA compliance.
+  //
+  // Result and unit are stored together and shown side by side rather than
+  // converted, so the number in the app matches the pathology report.
+  ablvVaccinationDate DateTime? @map("ablv_vaccination_date")
+  ablvTitreDate       DateTime? @map("ablv_titre_date")
+  ablvTitreValue      Float?    @map("ablv_titre_value")
+  ablvTitreUnit       String?   @default("IU/mL") @map("ablv_titre_unit")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

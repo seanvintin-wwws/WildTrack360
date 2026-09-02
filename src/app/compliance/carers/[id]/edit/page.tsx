@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { use } from 'react';
 import { AddressAutocomplete, type AddressDetails } from "@/components/address-autocomplete";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ADEQUATE_TITRE_MINIMUM, TITRE_UNIT } from '@/lib/ablv-titre';
 
 interface EditCarerPageProps {
   params: Promise<{ id: string }>;
@@ -41,6 +42,9 @@ export default function EditCarerPage({ params }: EditCarerPageProps) {
   const [jurisdiction, setJurisdiction] = useState("ACT");
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseExpiry, setLicenseExpiry] = useState<Date | undefined>(undefined);
+  const [ablvVaccinationDate, setAblvVaccinationDate] = useState<Date | undefined>(undefined);
+  const [ablvTitreDate, setAblvTitreDate] = useState<Date | undefined>(undefined);
+  const [ablvTitreValue, setAblvTitreValue] = useState("");
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [active, setActive] = useState(true);
@@ -77,6 +81,9 @@ export default function EditCarerPage({ params }: EditCarerPageProps) {
         setJurisdiction(data.jurisdiction || "ACT");
         setLicenseNumber(data.licenseNumber || "");
         setLicenseExpiry(data.licenseExpiry ? new Date(data.licenseExpiry) : undefined);
+        setAblvVaccinationDate(data.ablvVaccinationDate ? new Date(data.ablvVaccinationDate) : undefined);
+        setAblvTitreDate(data.ablvTitreDate ? new Date(data.ablvTitreDate) : undefined);
+        setAblvTitreValue(data.ablvTitreValue != null ? String(data.ablvTitreValue) : "");
         setSpecialties(data.specialties || []);
         setNotes(data.notes || "");
         setActive(data.active !== false);
@@ -147,6 +154,12 @@ export default function EditCarerPage({ params }: EditCarerPageProps) {
           jurisdiction: jurisdiction || null,
           licenseNumber: licenseNumber || null,
           licenseExpiry: licenseExpiry || null,
+          ablvVaccinationDate: ablvVaccinationDate || null,
+          ablvTitreDate: ablvTitreDate || null,
+          // Blank clears the result rather than storing 0, which would read as
+          // a real, failing titre.
+          ablvTitreValue: ablvTitreValue.trim() === "" ? null : Number(ablvTitreValue),
+          ablvTitreUnit: TITRE_UNIT,
           specialties,
           notes: notes || null,
           active,
@@ -307,6 +320,51 @@ export default function EditCarerPage({ params }: EditCarerPageProps) {
                     />
                   </PopoverContent>
                 </Popover>
+              </div>
+              <div className="md:col-span-2 pt-2">
+                <p className="text-sm font-medium">ABLV / rabies protection</p>
+                <p className="text-xs text-muted-foreground">
+                  Strongly recommended by the Shelter Authorisation for anyone caring for
+                  flying-foxes or bats. Titres are repeated annually and are adequate at{" "}
+                  {ADEQUATE_TITRE_MINIMUM.toFixed(1)} {TITRE_UNIT} or above.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ablvVaccinationDate">ABLV Vaccination Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !ablvVaccinationDate && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {ablvVaccinationDate ? format(ablvVaccinationDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar mode="single" selected={ablvVaccinationDate} onSelect={setAblvVaccinationDate} initialFocus />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ablvTitreDate">Last Titre Test Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !ablvTitreDate && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {ablvTitreDate ? format(ablvTitreDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar mode="single" selected={ablvTitreDate} onSelect={setAblvTitreDate} initialFocus />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ablvTitreValue">Titre Result ({TITRE_UNIT})</Label>
+                <Input id="ablvTitreValue" type="number" step="0.01" min="0" inputMode="decimal"
+                  placeholder="e.g. 4.00" value={ablvTitreValue}
+                  onChange={(e) => setAblvTitreValue(e.target.value)} />
+                <p className="text-xs text-muted-foreground">
+                  Enter the figure exactly as printed on the pathology report.
+                </p>
               </div>
             </div>
           </CardContent>
