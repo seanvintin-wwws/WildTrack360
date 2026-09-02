@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Users, Calendar, AlertTriangle, CheckCircle, Download, Mail, ArrowLeft, Home, MapPin, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import jsPDF from 'jspdf';
+import { latestTraining } from '@/lib/carer-training';
 
 interface CarerManagementClientProps {
   carers: any[];
@@ -406,7 +407,7 @@ export default function CarerManagementClient({ carers }: CarerManagementClientP
                         <div>{carer.trainings?.length || 0} courses</div>
                         {carer.trainings && carer.trainings.length > 0 && (
                           <div className="text-muted-foreground">
-                            Latest: {carer.trainings[0]?.courseName || 'Unknown'}
+                            Latest: {latestTraining(carer.trainings)?.courseName || 'Unknown'}
                           </div>
                         )}
                       </div>

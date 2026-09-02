@@ -28,7 +28,7 @@ export async function getEnrichedCarers(orgId: string): Promise<EnrichedCarer[]>
 
   const profiles = await prisma.carerProfile.findMany({
     where: { clerkOrganizationId: orgId },
-    include: { trainings: true },
+    include: { trainings: { orderBy: { date: 'desc' } } },
   });
 
   const profileMap = new Map<string, CarerProfile & { trainings?: CarerTraining[] }>();
@@ -97,7 +97,7 @@ export async function getEnrichedCarer(userId: string, orgId: string): Promise<E
     client.users.getUser(userId).catch(() => null),
     prisma.carerProfile.findFirst({
       where: { id: userId, clerkOrganizationId: orgId },
-      include: { trainings: true },
+      include: { trainings: { orderBy: { date: 'desc' } } },
     }),
   ]);
 
