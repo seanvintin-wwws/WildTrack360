@@ -29,13 +29,26 @@ const STAGE_LABEL: Record<TitreAlertStage, string> = {
 };
 
 function toneFor(row: CarerTitreSummary): string {
+  // Red: no titre recorded, lapsed, or a result below the threshold - i.e. not
+  // covered for bat work.
   if (row.status === null || row.status.stage === 'overdue' || !row.covered) {
     return 'bg-red-100 text-red-800 border-red-200';
   }
+  // Orange from one month out, when it needs booking rather than noting.
+  if (
+    row.status.stage === 'due-in-1-month' ||
+    row.status.stage === 'due-in-2-weeks' ||
+    row.status.stage === 'due-in-1-week'
+  ) {
+    return 'bg-orange-100 text-orange-900 border-orange-200';
+  }
+  // Amber at three months: a heads-up, deliberately milder than orange.
   if (row.status.stage === 'due-in-3-months') {
     return 'bg-amber-100 text-amber-900 border-amber-200';
   }
-  return 'bg-orange-100 text-orange-900 border-orange-200';
+  // Green when current. Every carer is listed now, so a row with nothing wrong
+  // must not look flagged - otherwise the card cries wolf and gets ignored.
+  return 'bg-green-100 text-green-900 border-green-200';
 }
 
 export function AblvTitreAlerts() {
