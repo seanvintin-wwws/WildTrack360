@@ -14,6 +14,7 @@ import { getUserRole } from '@/lib/rbac';
 import { isFeatureEnabled } from '@/lib/features';
 import { filterCommandItemsForRole } from '@/lib/workspace-navigation';
 import { SITE_BRANDING } from '@/lib/site-branding';
+import { clerkLocalization } from '@/lib/clerk-localization';
 
 export const metadata: Metadata = {
   title: SITE_BRANDING.organisationName,
@@ -325,7 +326,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const visibleCommandItems = filterCommandItemsForRole(commandItems, workspaceRole);
 
   return (
-    <ClerkProvider allowedRedirectOrigins={allowedRedirectOrigins}>
+    <ClerkProvider
+      allowedRedirectOrigins={allowedRedirectOrigins}
+      localization={clerkLocalization}
+    >
       <html lang="en" suppressHydrationWarning>
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
