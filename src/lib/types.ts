@@ -15,6 +15,14 @@ export interface EnrichedCarer {
   name: string;
   email: string;
   imageUrl: string;
+  // ABLV / rabies protection. Declared here so BOTH carer builders can return
+  // them - getEnrichedCarer hand-builds its result, and an omitted field comes
+  // back undefined from /api/carers/[id]. The edit form initialises from that
+  // response and writes the blanks back on save, silently erasing the data.
+  ablvVaccinationDate?: Date | string | null;
+  ablvTitreDate?: Date | string | null;
+  ablvTitreValue?: number | null;
+  ablvTitreUnit?: string | null;
   phone: string | null;
   licenseNumber: string | null;
   licenseExpiry: Date | null;

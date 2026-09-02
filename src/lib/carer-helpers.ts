@@ -116,6 +116,14 @@ export async function getEnrichedCarer(userId: string, orgId: string): Promise<E
     specialties: profile?.specialties ?? [],
     notes: profile?.notes ?? null,
     active: profile?.active ?? true,
+    // Must be listed here as well as in getEnrichedCarers: this function
+    // hand-builds its result, so an omitted column returns undefined from
+    // /api/carers/[id]. The carer edit form reads that endpoint and writes
+    // what it read back on save.
+    ablvVaccinationDate: profile?.ablvVaccinationDate ?? null,
+    ablvTitreDate: profile?.ablvTitreDate ?? null,
+    ablvTitreValue: profile?.ablvTitreValue ?? null,
+    ablvTitreUnit: profile?.ablvTitreUnit ?? null,
     streetAddress: profile?.streetAddress ?? null,
     suburb: profile?.suburb ?? null,
     state: profile?.state ?? null,

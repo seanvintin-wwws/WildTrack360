@@ -70,6 +70,10 @@ export function AblvTitreAlerts() {
   }, [organization]);
 
   const needsAction = rows.filter((r) => !r.covered || r.status?.stage !== 'ok');
+  // Every carer is listed, including those who are fine. Showing only problems
+  // means a carer with a current titre vanishes, and absent then reads the same
+  // as not recorded - the one distinction this card exists to make.
+  const ordered = [...needsAction, ...rows.filter((r) => !needsAction.includes(r))];
 
   if (loading) {
     return (
@@ -87,7 +91,7 @@ export function AblvTitreAlerts() {
     );
   }
 
-  if (rows.length > 0 && needsAction.length === 0) {
+  if (rows.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -122,7 +126,7 @@ export function AblvTitreAlerts() {
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        {needsAction.map((row) => (
+        {ordered.map((row) => (
           <div
             key={row.id}
             className={`flex flex-col gap-1 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between ${toneFor(row)}`}
