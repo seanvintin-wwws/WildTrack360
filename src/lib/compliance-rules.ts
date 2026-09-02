@@ -632,6 +632,36 @@ const NSW_COMPLIANCE_RULES: ComplianceSection[] = [
 // https://www.vic.gov.au/wildlife-rehabilitator-authorisation-guide/authorisation-conditions
 const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
   {
+    id: 'vic-scope-of-authorisation',
+    title: 'Scope of Authorisation',
+    description: 'Species excluded from the authorisation, and the standing of directions from Authorised Officers (Conditions 1-2)',
+    jurisdictions: ['VIC'],
+    rules: [
+      {
+        id: 'vic-1',
+        section: 'Condition 1',
+        title: 'Species Not Covered by the Authorisation',
+        // Verbatim species list taken from an issued Shelter Authorisation.
+        // This is the only condition in the set that can be checked
+        // mechanically at admission, so keep the list exact — an omission here
+        // silently permits an intake the authorisation forbids.
+        description: 'The authorisation does not permit acquiring, receiving, possessing, euthanasing or disposing of: whales, dolphins, seals, marine turtles, platypus, fish, deer, non-indigenous quail, pheasants and partridges.',
+        required: true,
+        jurisdictions: ['VIC'],
+        category: 'general'
+      },
+      {
+        id: 'vic-2',
+        section: 'Condition 2',
+        title: 'Directions from Authorised Officers',
+        description: 'Any verbal or written direction from a DEECA Authorised Officer relating to wildlife held under the authorisation must be followed.',
+        required: true,
+        jurisdictions: ['VIC'],
+        category: 'general'
+      }
+    ]
+  },
+  {
     id: 'vic-assessment-quarantine',
     title: 'Assessment & Quarantine',
     description: 'Health assessment and quarantine requirements (Conditions 3-6)',
@@ -678,6 +708,23 @@ const VIC_COMPLIANCE_RULES: ComplianceSection[] = [
         section: 'Condition 7',
         title: 'Advice for Unfamiliar Species Within 24 Hours',
         description: 'For any species not previously cared for, advice must be sought within 24 hours from a vet, experienced rehabilitator, or Authorised Officer.',
+        required: true,
+        jurisdictions: ['VIC'],
+        category: 'incident-management'
+      }
+    ]
+  },
+  {
+    id: 'vic-surgical-treatment',
+    title: 'Surgical Treatment & Medication',
+    description: 'Limits on surgery and on the administration of scheduled poisons (Condition 8)',
+    jurisdictions: ['VIC'],
+    rules: [
+      {
+        id: 'vic-8',
+        section: 'Condition 8',
+        title: 'No Surgery; Scheduled Medicines Only on Advice',
+        description: 'Surgical treatment must not be undertaken — only registered veterinary practitioners may do so. Schedule 4, 8 or 9 poisons may only be administered subject to Condition 3 (i.e. on veterinary or experienced-carer advice) and in accordance with the Drugs, Poisons and Controlled Substances Regulations.',
         required: true,
         jurisdictions: ['VIC'],
         category: 'incident-management'

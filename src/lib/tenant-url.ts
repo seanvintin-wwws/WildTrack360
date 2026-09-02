@@ -16,6 +16,41 @@ function rootDomain(): string {
   return process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? 'localhost:3000';
 }
 
+/**
+ * Returns an explanatory message when NEXT_PUBLIC_ROOT_DOMAIN is missing on a
+ * deployed environment, or null when the configuration is usable.
+ *
+ * WHY THIS EXISTS
+ * With the variable unset, every URL this module builds falls back to
+ * http://localhost:3000. For a rendered page that is merely wrong. For an
+ * invitation it is worse: Clerk emails the link, the recipient's browser tries
+ * to reach a server on their own device, and the invite is dead. An email
+ * cannot be recalled, so the failure has to happen before it is sent.
+ *
+ * WHY THIS RETURNS RATHER THAN THROWS, AND IS NOT CALLED AT MODULE LOAD
+ * NEXT_PUBLIC_ROOT_DOMAIN is read in roughly a dozen places, including the
+ * middleware and the root layout. If this threw on import, an unset variable
+ * would take the entire site down rather than disabling one feature. Callers
+ * opt in, and only where a bad URL escapes to somebody else.
+ */
+export function rootDomainConfigError(): string | null {
+  if ((process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? '').trim() !== '') return null;
+
+  // NODE_ENV is 'test' under vitest and 'development' under `next dev`, where
+  // the localhost fallback is the correct behaviour.
+  const deployed =
+    process.env.VERCEL_ENV === 'production' ||
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.NODE_ENV === 'production';
+  if (!deployed) return null;
+
+  return (
+    'NEXT_PUBLIC_ROOT_DOMAIN is not set on this deployment, so links would ' +
+    'point at localhost and would not work for the recipient. Set it in the ' +
+    'hosting environment and redeploy, then try again.'
+  );
+}
+
 function protocolFor(host: string): 'http' | 'https' {
   return host.startsWith('localhost') || host.startsWith('127.0.0.1') ? 'http' : 'https';
 }

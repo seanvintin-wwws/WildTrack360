@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { PawPrint, Shield, BarChart3, Users, CheckCircle, LogIn } from "lucide-react";
+import { SITE_BRANDING } from "@/lib/site-branding";
 
 export default function LandingPage() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -26,9 +27,14 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
               <PawPrint className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold font-headline text-primary">
-                WildTrack360
-              </h1>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold font-headline text-primary leading-tight">
+                  {SITE_BRANDING.organisationShortName}
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  Wildlife Shelter Authorisation {SITE_BRANDING.authorisationNumber}
+                </p>
+              </div>
             </div>
             <Link href="/sign-in">
               <Button size="lg">
@@ -45,8 +51,8 @@ export default function LandingPage() {
           <div className="flex justify-center px-4">
             <div className="relative h-36 w-72 sm:h-48 sm:w-96">
               <Image
-                src="/Brandmark-Text-Vert.svg"
-                alt="WildTrack360 wildlife tracking"
+                src={SITE_BRANDING.logoPath}
+                alt={SITE_BRANDING.organisationName}
                 fill
                 className="object-contain"
                 priority
@@ -56,15 +62,15 @@ export default function LandingPage() {
           
           <div className="max-w-4xl mx-auto space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold text-primary">
-              Wildlife rehabilitation management software
+              {SITE_BRANDING.organisationName}
               <span className="block text-3xl lg:text-4xl mt-2 text-muted-foreground">
-                Animal tracking for Australian care organisations
+                Licensed wildlife rehabilitation in the Macedon Ranges
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              WildTrack360 is wildlife management software for rehabilitation teams.
-              Keep a wildlife tracking system in one place, from intake to release,
-              with the records Australian carers actually need.
+              We care for sick, injured and orphaned native wildlife under a
+              Victorian shelter authorisation. This site is where our carers
+              record the animals in their care, from intake through to release.
             </p>
           </div>
           
@@ -150,7 +156,17 @@ export default function LandingPage() {
       
       <footer className="text-center py-8 text-muted-foreground border-t mt-16">
         <div className="container mx-auto px-4">
-          <p>&copy; {new Date().getFullYear()} WildTrack360. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} {SITE_BRANDING.organisationName}
+            {' '}({SITE_BRANDING.registrationNumber})
+          </p>
+          <p className="text-sm mt-1">
+            Wildlife Shelter Authorisation {SITE_BRANDING.authorisationNumber},
+            issued under the Wildlife Act 1975 (Vic).
+          </p>
+          <p className="text-sm mt-3">
+            Running on {SITE_BRANDING.productName}.
+          </p>
         </div>
       </footer>
     </div>

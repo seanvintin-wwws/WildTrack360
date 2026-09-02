@@ -3,8 +3,7 @@ import { auth, clerkClient } from '@/lib/clerk-server';
 import { getUserRole } from '@/lib/rbac';
 import { route } from '@/lib/openapi/route';
 import { inviteUserContract } from '../openapi';
-
-const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? 'localhost:3000';
+import { rootDomainConfigError, tenantBaseUrlFromSlug } from '@/lib/tenant-url';
 
 function clerkErrorStatus(error: unknown): number | null {
   if (!error || typeof error !== 'object') return null;
@@ -22,16 +21,19 @@ export const POST = route(inviteUserContract, async ({ body }) => {
   const { emailAddress } = body;
   if (!emailAddress) return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
 
+  // Checked before the Clerk call: once Clerk sends the email, a bad link
+  // cannot be recalled and the recipient just sees a connection error.
+  const configError = rootDomainConfigError();
+  if (configError) {
+    return NextResponse.json({ error: configError }, { status: 500 });
+  }
+
   try {
     const clerk = await clerkClient();
     const org = await clerk.organizations.getOrganization({ organizationId: orgId });
     const orgUrl = (org.publicMetadata as Record<string, unknown>)?.org_url as string | undefined;
 
-    const protocol = ROOT_DOMAIN.startsWith('localhost') ? 'http' : 'https';
-    const safeHostname = orgUrl && /^[a-zA-Z0-9-]+$/.test(orgUrl);
-    const redirectUrl = safeHostname
-      ? `${protocol}://${orgUrl}.${ROOT_DOMAIN}/sign-up`
-      : `${protocol}://${ROOT_DOMAIN}/sign-up`;
+    const redirectUrl = `${tenantBaseUrlFromSlug(orgUrl)}/sign-up`;
 
     const invitation = await clerk.organizations.createOrganizationInvitation({
       organizationId: orgId,

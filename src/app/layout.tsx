@@ -13,10 +13,14 @@ import { WorkspaceShell } from '@/components/workspace-shell';
 import { getUserRole } from '@/lib/rbac';
 import { isFeatureEnabled } from '@/lib/features';
 import { filterCommandItemsForRole } from '@/lib/workspace-navigation';
+import { SITE_BRANDING } from '@/lib/site-branding';
 
 export const metadata: Metadata = {
-  title: 'WildTrack360',
-  description: 'Wildlife Career Management App',
+  title: SITE_BRANDING.organisationName,
+  description:
+    'Wildlife rehabilitation records for ' +
+    `${SITE_BRANDING.organisationName}, operating under Victorian ` +
+    `Wildlife Shelter Authorisation ${SITE_BRANDING.authorisationNumber}.`,
 };
 
 const staticNavigationItems: CommandItem[] = [

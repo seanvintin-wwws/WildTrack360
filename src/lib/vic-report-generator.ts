@@ -43,11 +43,17 @@ export interface VicReportData {
     endDate: Date;
   };
   organization: {
-    name: string;
-    authorisationNumber: string;
-    contactName: string;
-    contactEmail: string;
-    contactPhone: string;
+    /** Legal name of the authorisation holder (OrganisationSettings.legalName). */
+    name?: string | null;
+    /**
+     * DEECA shelter authorisation number (OrganisationSettings.licenseNumber).
+     * Stored in the shared licenceNumber field so the ACT and NSW exports can
+     * use the same column for their equivalent identifiers.
+     */
+    authorisationNumber?: string | null;
+    contactName?: string | null;
+    contactEmail?: string | null;
+    contactPhone?: string | null;
   };
   records: VicShelterRecordRow[];
 }
@@ -113,6 +119,37 @@ export class VicReportGenerator {
     return wb;
   }
 
+  /**
+   * Renders a cover-sheet value, or a visible placeholder when it is missing.
+   *
+   * These fields identify the shelter on a document that is produced to a
+   * Conservation Regulator Authorised Officer on request. A blank line reads
+   * as an oversight and gives the shelter no clue that anything is wrong; an
+   * explicit NOT SET marker says what is missing and where to fix it. Do not
+   * replace this with a plausible-looking default — a wrong authorisation
+   * holder is worse than an obviously absent one.
+   */
+  private static coverValue(
+    value: string | null | undefined,
+    whatToSet: string
+  ): string {
+    const trimmed = (value ?? '').trim();
+    return trimmed !== ''
+      ? trimmed
+      : `[NOT SET - add ${whatToSet} in organisation settings]`;
+  }
+
+  private contactLine(): string {
+    const { contactName, contactEmail, contactPhone } = this.data.organization;
+    const parts = [contactName, contactEmail, contactPhone]
+      .map((part) => (part ?? '').trim())
+      .filter((part) => part !== '');
+
+    return parts.length > 0
+      ? parts.join(', ')
+      : '[NOT SET - add contact details in organisation settings]';
+  }
+
   private addCoverSheet(wb: ExcelJS.Workbook) {
     const sheetData = [
       ['Wildlife Shelter Record Sheet Export'],
@@ -126,9 +163,19 @@ export class VicReportGenerator {
         'Officer on request, and must be retained for at least 3 years.',
       ],
       [],
-      [`Organisation: ${this.data.organization.name}`],
-      [`Authorisation number: ${this.data.organization.authorisationNumber}`],
-      [`Contact: ${this.data.organization.contactName} (${this.data.organization.contactEmail}, ${this.data.organization.contactPhone})`],
+      [
+        `Authorisation holder: ${VicReportGenerator.coverValue(
+          this.data.organization.name,
+          'the legal name'
+        )}`,
+      ],
+      [
+        `Authorisation number: ${VicReportGenerator.coverValue(
+          this.data.organization.authorisationNumber,
+          'the authorisation number'
+        )}`,
+      ],
+      [`Contact: ${this.contactLine()}`],
       [`Export generated: ${format(new Date(), 'dd/MM/yyyy')}`],
     ];
     const ws = wb.addWorksheet('Cover');

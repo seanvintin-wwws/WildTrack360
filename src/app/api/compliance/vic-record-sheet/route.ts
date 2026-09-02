@@ -69,16 +69,17 @@ export const GET = async (request: Request) => {
 
     const generator = new VicReportGenerator({
       reportingPeriod: { startDate, endDate },
+      // These map onto OrganisationSettings as it actually exists. The previous
+      // version read `organizationName` and `authorisationNumber`, neither of
+      // which are columns on that model, through an `as` cast that suppressed
+      // the type error — so both always resolved to undefined and the cover
+      // sheet went out blank. If you add fields here, check schema.prisma
+      // first and do not reintroduce a cast.
       organization: {
-        name:
-          (organization as { organizationName?: string } | null)?.organizationName ??
-          'Wildlife Shelter',
-        authorisationNumber:
-          (organization as { authorisationNumber?: string } | null)
-            ?.authorisationNumber ?? '',
-        contactName: '',
-        contactEmail: '',
-        contactPhone: '',
+        name: organization?.legalName,
+        authorisationNumber: organization?.licenseNumber,
+        contactEmail: organization?.contactEmail,
+        contactPhone: organization?.contactPhone,
       },
       records: VicReportGenerator.rowsFromAnimals(animals),
     })

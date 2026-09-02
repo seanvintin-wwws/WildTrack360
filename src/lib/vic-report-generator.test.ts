@@ -157,3 +157,105 @@ describe('VicReportGenerator.rowsFromAnimals', () => {
     expect(row.foundGpsOrMelways).toBeUndefined();
   });
 });
+
+// The cover sheet identifies the shelter on a document produced to a
+// Conservation Regulator Authorised Officer under Condition 23.
+//
+// These tests exist because the header previously read two fields
+// (`organizationName`, `authorisationNumber`) that are not columns on
+// OrganisationSettings, through an `as` cast that suppressed the type error.
+// The export went out with a blank authorisation number and an empty contact
+// line. Nothing threw, so nothing surfaced it. Every test above this point
+// exercised rowsFromAnimals without ever rendering the workbook.
+const PERIOD = {
+  startDate: new Date('2026-07-01'),
+  endDate: new Date('2026-08-31'),
+};
+
+function coverText(
+  organization: ConstructorParameters<
+    typeof VicReportGenerator
+  >[0]['organization']
+): string {
+  const wb = new VicReportGenerator({
+    reportingPeriod: PERIOD,
+    organization,
+    records: [],
+  }).generateReport();
+
+  const ws = wb.getWorksheet('Cover');
+  expect(ws).toBeDefined();
+
+  const lines: string[] = [];
+  ws!.eachRow((row) => lines.push(String(row.getCell(1).value ?? '')));
+  return lines.join('\n');
+}
+
+describe('VicReportGenerator cover sheet', () => {
+  it('prints the authorisation holder, number and contact details', () => {
+    const text = coverText({
+      name: 'Sean A Vintin',
+      authorisationNumber: '15528618',
+      contactEmail: 'shelter@example.com',
+      contactPhone: '0400 000 000',
+    });
+
+    expect(text).toContain('Authorisation holder: Sean A Vintin');
+    expect(text).toContain('Authorisation number: 15528618');
+    expect(text).toContain('shelter@example.com');
+    expect(text).toContain('0400 000 000');
+    expect(text).not.toContain('NOT SET');
+  });
+
+  it('marks missing fields as NOT SET rather than leaving them blank', () => {
+    const text = coverText({});
+
+    expect(text).toContain('Authorisation holder: [NOT SET');
+    expect(text).toContain('Authorisation number: [NOT SET');
+    expect(text).toContain('Contact: [NOT SET');
+  });
+
+  it('treats empty and whitespace-only values as missing', () => {
+    const text = coverText({
+      name: '   ',
+      authorisationNumber: '',
+      contactEmail: null,
+      contactPhone: undefined,
+    });
+
+    expect(text).toContain('Authorisation holder: [NOT SET');
+    expect(text).toContain('Authorisation number: [NOT SET');
+    expect(text).toContain('Contact: [NOT SET');
+  });
+
+  it('does not invent a shelter name when none is stored', () => {
+    // A plausible-looking default on a regulator-facing document is worse
+    // than a visible gap: it reads as a real, verified answer.
+    const text = coverText({ authorisationNumber: '15528618' });
+
+    expect(text).toContain('Authorisation holder: [NOT SET');
+    expect(text).not.toContain('Wildlife Shelter\n');
+  });
+
+  it('builds a partial contact line from whichever details exist', () => {
+    const text = coverText({
+      name: 'Sean A Vintin',
+      authorisationNumber: '15528618',
+      contactPhone: '0400 000 000',
+    });
+
+    expect(text).toContain('Contact: 0400 000 000');
+    expect(text).not.toContain('Contact: [NOT SET');
+  });
+
+  it('still produces both worksheets', () => {
+    const wb = new VicReportGenerator({
+      reportingPeriod: PERIOD,
+      organization: { name: 'Sean A Vintin', authorisationNumber: '15528618' },
+      records: [],
+    }).generateReport();
+
+    expect(wb.getWorksheet('Cover')).toBeDefined();
+    expect(wb.getWorksheet('Wildlife Shelter Record Sheet')).toBeDefined();
+  });
+});

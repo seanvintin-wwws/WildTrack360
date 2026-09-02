@@ -106,6 +106,7 @@ import {
   validateNswLocation,
 } from '@/lib/nsw-reference-data'
 import { SPECIES_NOT_LISTED, composeNotesForSpecies, isAggregateRiskIntake } from '@/lib/nsw-species'
+import { SpeciesCombobox } from '@/components/species-combobox'
 
 // When editing an animal whose stored value is not in the current NSW
 // picklist (e.g. legacy en-dash values), render it as a disabled option so
@@ -194,6 +195,12 @@ interface AddAnimalDialogProps {
   onAnimalAdd: (animalData: CreateAnimalData) => Promise<void>
   animalToEdit?: Animal | null;
   species?: any[];
+  /**
+   * Species already admitted by this organisation, most recent first. Used to
+   * float the handful a shelter actually sees to the top of the picker. Purely
+   * an ordering hint — it never changes which species can be selected.
+   */
+  recentSpecies?: string[];
   carers?: any[];
 }
 
@@ -203,6 +210,7 @@ export function AddAnimalDialog({
   onAnimalAdd,
   animalToEdit,
   species,
+  recentSpecies = [],
   carers
 }: AddAnimalDialogProps) {
   const { toast } = useToast()
@@ -841,25 +849,31 @@ export function AddAnimalDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Species</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a species" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {species && species.length > 0 ? (
-                        species.map(s => (
-                          <SelectItem key={s.value || s} value={s.value || s}>
-                            {s.label || s.value || s}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="Other">Other</SelectItem>
-                      )}
-                      <SelectItem value={SPECIES_NOT_LISTED}>{SPECIES_NOT_LISTED}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <SpeciesCombobox
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Select a species"
+                    species={
+                      species && species.length > 0
+                        ? species.map((s: any) =>
+                            typeof s === 'string'
+                              ? { name: s }
+                              : {
+                                  name: s.value || s.label,
+                                  scientificName: s.scientificName ?? null,
+                                  type: s.type ?? null,
+                                }
+                          )
+                        : [{ name: 'Other' }]
+                    }
+                    extraOptions={[
+                      { value: SPECIES_NOT_LISTED, label: SPECIES_NOT_LISTED },
+                    ]}
+                    recentSpecies={recentSpecies}
+                    // Condition 1 exclusions are Victorian, so this only
+                    // applies under the VIC jurisdiction.
+                    excludeUnauthorised={isVIC}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
