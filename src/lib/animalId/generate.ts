@@ -43,10 +43,23 @@ export async function peekAnimalId(
     where: { clerkOrganisationId_year: { clerkOrganisationId: orgId, year } },
   });
 
+  // Preview must agree with what commitAnimalId will actually assign, which
+  // reconciles the counter against IDs already in use. Read-only here: showing
+  // a number the save then contradicts invites a manual override that would
+  // itself collide. See ./highest-used.ts.
+  const previewExisting = await prisma.animal.findMany({
+    where: { clerkOrganizationId: orgId, orgAnimalId: { not: null } },
+    select: { orgAnimalId: true },
+  });
+  const previewSeq = reconciledNextValue(
+    seqRow?.nextValue ?? 1,
+    highestSequenceUsed(previewExisting.map((a: { orgAnimalId: string | null }) => a.orgAnimalId))
+  );
+
   const ctx: TemplateContext = {
     orgShortCode,
     year,
-    seq: seqRow?.nextValue ?? 1,
+    seq: previewSeq,
     species,
   };
 
