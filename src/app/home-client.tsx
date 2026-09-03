@@ -72,6 +72,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { getJurisdictionFromOrg } from '@/lib/config';
 import { getCarerDisplayLabel } from '@/lib/carer-display';
+import { VicRecordSheetExport } from '@/components/vic-record-sheet-export';
 
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -479,6 +480,15 @@ function AdminCoordinatorView({
             </Button>
           </Link>
         </div>
+
+        {/* Condition 23 record sheet. Beside Add New Animal because the moment
+            it is needed - an Authorised Officer asking - is not a moment to go
+            looking for it. VIC only; other jurisdictions have own reports. */}
+        {jurisdiction === 'VIC' && (
+          <div>
+            <VicRecordSheetExport variant="button" />
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <Button

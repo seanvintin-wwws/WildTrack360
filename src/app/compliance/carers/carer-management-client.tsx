@@ -348,7 +348,7 @@ export default function CarerManagementClient({ carers }: CarerManagementClientP
                           if (!carer.licenseExpiry) return 'No license recorded';
                           const d = new Date(carer.licenseExpiry);
                           if (isNaN(d.getTime())) return 'No license recorded';
-                          return new Intl.DateTimeFormat(undefined, { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' }).format(d);
+                          return new Intl.DateTimeFormat(undefined, { timeZone: 'Australia/Melbourne', year: 'numeric', month: 'short', day: 'numeric' }).format(d);
                         })()}</div>
                         {expiryStatus !== 'valid' && expiryStatus !== 'no-license' && daysUntil !== null && (
                           <div className="text-sm text-muted-foreground">
@@ -456,7 +456,7 @@ export default function CarerManagementClient({ carers }: CarerManagementClientP
                           if (!carer.licenseExpiry) return '?';
                           const d = new Date(carer.licenseExpiry);
                           if (isNaN(d.getTime())) return '?';
-                          return new Intl.DateTimeFormat(undefined, { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' }).format(d);
+                          return new Intl.DateTimeFormat(undefined, { timeZone: 'Australia/Melbourne', year: 'numeric', month: 'short', day: 'numeric' }).format(d);
                         })()} ({getDaysUntilExpiry(carer.licenseExpiry)} days)
                       </span>
                     </div>
@@ -484,10 +484,8 @@ export default function CarerManagementClient({ carers }: CarerManagementClientP
             <div>
               <h4 className="font-semibold mb-2">Licence Requirements</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Valid wildlife carer licence from ACT Government</li>
+                <li>• Valid shelter or foster carer authorisation issued by DEECA under s28A of the Wildlife Act 1975</li>
                 <li>• Licence must be renewed before expiry</li>
-                <li>• 30-day reminder notifications</li>
-                <li>• Automatic suspension of expired licences</li>
                 <li>• Record of all licence renewals</li>
               </ul>
             </div>

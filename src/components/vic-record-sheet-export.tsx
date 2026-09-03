@@ -13,7 +13,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * include. They press one button and get the document DEECA asks for, covering
  * the full three-year retention window by default.
  */
-export function VicRecordSheetExport() {
+interface VicRecordSheetExportProps {
+  /**
+   * 'card' is the full explanation for a compliance page. 'button' is a bare
+   * control for the dashboard action bar, where the surrounding text would be
+   * noise. Both run exactly the same export.
+   */
+  variant?: 'card' | 'button';
+}
+
+export function VicRecordSheetExport({ variant = 'card' }: VicRecordSheetExportProps = {}) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +52,22 @@ export function VicRecordSheetExport() {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (variant === 'button') {
+    return (
+      <div className="flex flex-col gap-1">
+        <Button onClick={handleExport} disabled={busy} variant="outline" className="w-full sm:w-auto">
+          {busy ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="mr-2 h-4 w-4" />
+          )}
+          {busy ? 'Preparing…' : 'DEECA Record Sheet'}
+        </Button>
+        {error && <p className="text-xs text-destructive">{error}</p>}
+      </div>
+    );
   }
 
   return (
