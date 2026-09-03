@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { renderAnimalIdTemplate, type TemplateContext } from "./template";
 import { allocateNextSequenceValue } from "./sequence";
+import { highestSequenceUsed, reconciledNextValue } from "./highest-used";
 import type { Prisma, PrismaClient } from "@prisma/client";
 
 type TransactionClient = Omit<
@@ -68,6 +69,30 @@ export async function commitAnimalId(
   const template = settings?.animalIdTemplate ?? "{ORG_SHORT}-{YYYY}-{seq:4}";
   const orgShortCode = settings?.orgShortCode ?? "ORG";
   const year = yearFromDate(intakeDate);
+
+  // Reconcile the counter with IDs already in use before claiming. Manual
+  // renumbering (e.g. aligning with the DEECA intake spreadsheet) leaves the
+  // counter behind, and the next animal would otherwise collide with an ID
+  // already on the record sheet. See ./highest-used.ts.
+  const existing = await tx.animal.findMany({
+    where: { clerkOrganizationId: orgId, orgAnimalId: { not: null } },
+    select: { orgAnimalId: true },
+  });
+  const highestUsed = highestSequenceUsed(existing.map((a: { orgAnimalId: string | null }) => a.orgAnimalId));
+  const seqRow = await tx.animalIdSequence.findUnique({
+    where: { clerkOrganisationId_year: { clerkOrganisationId: orgId, year } },
+  });
+  const reconciled = reconciledNextValue(seqRow?.nextValue ?? 1, highestUsed);
+  if (seqRow && reconciled !== seqRow.nextValue) {
+    await tx.animalIdSequence.update({
+      where: { clerkOrganisationId_year: { clerkOrganisationId: orgId, year } },
+      data: { nextValue: reconciled },
+    });
+  } else if (!seqRow && reconciled > 1) {
+    await tx.animalIdSequence.create({
+      data: { clerkOrganisationId: orgId, year, nextValue: reconciled },
+    });
+  }
 
   const claimedValue = await allocateNextSequenceValue(tx, orgId, year);
 

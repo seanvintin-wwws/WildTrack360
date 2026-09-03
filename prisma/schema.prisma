@@ -82,6 +82,10 @@ model Animal {
   vicInjuryCode String? @map("vic_injury_code") // Single letter, most serious injury
   vicCauseCode  String? @map("vic_cause_code") // Two-digit cause of injury
   vicFateCode   String? @map("vic_fate_code") // Two-digit fate/status (died/released/transferred)
+  // Wildlife Victoria case reference. Most animals arrive through WV, which
+  // tracks them by this number, so it is the reference that matters across
+  // organisations - unlike a vet chain's own patient number.
+  wildlifeVictoriaRef String? @map("wildlife_victoria_ref")
   vicFoundRef   String? @map("vic_found_ref") // GPS coords or Melways map reference for FOUND column
 
   createdAt DateTime @default(now())

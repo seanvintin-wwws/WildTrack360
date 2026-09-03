@@ -37,6 +37,7 @@ const ANIMAL_SAFE_FIELDS = [
 	// silently dropped on save - the API returned 200 and the value never
 	// persisted, so the export column came out blank.
 	'vicAgeCode', 'vicInjuryCode', 'vicCauseCode', 'vicFateCode', 'vicFoundRef',
+	'wildlifeVictoriaRef',
 ] as const;
 
 function pickAnimalFields(data: Record<string, unknown>): Record<string, unknown> {
