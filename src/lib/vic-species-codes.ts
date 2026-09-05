@@ -21,7 +21,7 @@ export interface VicSpeciesCodeEntry {
 }
 
 export const VIC_SPECIES_CODES: VicSpeciesCodeEntry[] = [
-  // ─── Mammals: Monotremes ──────────────────────────────────────────────
+  // ─── Mammals: Monotremes ─────────────────────────────────────────────
   { commonName: 'Platypus', code: '1001', group: 'mammal' },
   { commonName: 'Short-beaked Echidna', code: '1003', group: 'mammal' },
 
@@ -42,7 +42,7 @@ export const VIC_SPECIES_CODES: VicSpeciesCodeEntry[] = [
   { commonName: 'Unidentified Sminthopsis', code: '1800', group: 'mammal' },
   { commonName: 'Unidentified Quoll', code: '1824', group: 'mammal' },
 
-  // ─── Mammals: Bandicoots ──────────────────────────────────────────────
+  // ─── Mammals: Bandicoots ───────────────────────────────────────────
   { commonName: 'Eastern Barred Bandicoot', code: '1098', group: 'mammal' },
   { commonName: 'Southern Brown Bandicoot', code: '1092', group: 'mammal' },
   { commonName: 'Long-nosed Bandicoot', code: '1097', group: 'mammal' },
@@ -330,16 +330,52 @@ export const VIC_SPECIES_CODES: VicSpeciesCodeEntry[] = [
   { commonName: 'Loggerhead Turtle', code: '2004', group: 'reptile-amphibian' },
 ];
 
-const codeByName = new Map(
-  VIC_SPECIES_CODES.map((entry) => [entry.commonName.toLowerCase(), entry.code])
-);
+/**
+ * WildTrack360's species master list and this Code Book transcription were
+ * built independently and don't always agree on the order of a "Primary
+ * Name (Alternate Name)" pair - e.g. this file's "Australian Wood Duck
+ * (Maned Duck)" vs. the seeded species master's "Maned duck (Australian
+ * wood duck)". A plain lowercase-string lookup then fails to match despite
+ * both names referring to the same DEECA code, and the code is silently
+ * left off the record sheet. To guard against that, every "A (B)" name is
+ * also indexed under its swapped form "B (A)" so either ordering matches.
+ */
+function parenthesesSwapped(name: string): string | null {
+  const match = name.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
+  if (!match) return null;
+  const [, primary, alternate] = match;
+  return `${alternate.trim()} (${primary.trim()})`;
+}
+
+function nameKeyVariants(name: string): string[] {
+  const trimmed = name.trim().toLowerCase();
+  const swapped = parenthesesSwapped(name.trim());
+  return swapped ? [trimmed, swapped.toLowerCase()] : [trimmed];
+}
+
+const codeByName = new Map<string, string>();
+for (const entry of VIC_SPECIES_CODES) {
+  for (const key of nameKeyVariants(entry.commonName)) {
+    // First entry for a given key wins, so earlier/canonical entries in the
+    // list above are never shadowed by a later swapped-name collision.
+    if (!codeByName.has(key)) {
+      codeByName.set(key, entry.code);
+    }
+  }
+}
 
 /**
  * Look up the DEECA species code for a WildTrack360 species common name.
- * Returns undefined if not found - per the Wildlife Code Book's own guidance,
- * leave the Species Code field blank on the record sheet in that case and
- * use the common name with a "sp." qualifier if identification is uncertain.
+ * Matches regardless of "Primary (Alternate)" vs. "Alternate (Primary)"
+ * ordering (see nameKeyVariants above). Returns undefined if not found -
+ * per the Wildlife Code Book's own guidance, leave the Species Code field
+ * blank on the record sheet in that case and use the common name with a
+ * "sp." qualifier if identification is uncertain.
  */
 export function lookupVicSpeciesCode(commonName: string): string | undefined {
-  return codeByName.get(commonName.trim().toLowerCase());
+  for (const key of nameKeyVariants(commonName)) {
+    const code = codeByName.get(key);
+    if (code) return code;
+  }
+  return undefined;
 }

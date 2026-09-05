@@ -52,6 +52,22 @@ describe('VIC species codes', () => {
   it('returns undefined for species not in the code book', () => {
     expect(lookupVicSpeciesCode('Bilby')).toBeUndefined();
   });
+
+  it('matches "Primary (Alternate)" names regardless of which name WildTrack360 seeded as primary', () => {
+    // The Code Book transcription below lists this as
+    // 'Australian Wood Duck (Maned Duck)', but the org's seeded species
+    // master stores it the other way round as 'Maned duck (Australian
+    // wood duck)'. Both must resolve to the same DEECA code (202) instead
+    // of silently leaving the Species Code column blank on the record
+    // sheet - see the Wood Duck intake case where this was first noticed.
+    expect(lookupVicSpeciesCode('Australian Wood Duck (Maned Duck)')).toBe('202');
+    expect(lookupVicSpeciesCode('Maned duck (Australian wood duck)')).toBe('202');
+    expect(lookupVicSpeciesCode('maned duck (australian wood duck)')).toBe('202');
+
+    // Same pattern affects other Code Book entries with an alternate name.
+    expect(lookupVicSpeciesCode('Australian White Ibis (Sacred Ibis)')).toBe('179');
+    expect(lookupVicSpeciesCode('Sacred Ibis (Australian White Ibis)')).toBe('179');
+  });
 });
 
 describe('VIC picklists', () => {
