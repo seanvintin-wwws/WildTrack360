@@ -275,3 +275,81 @@ describe('VicReportGenerator cover sheet', () => {
     expect(wb.getWorksheet('Wildlife Shelter Record Sheet')).toBeDefined();
   });
 });
+
+describe('VicReportGenerator record sheet formatting', () => {
+  // These tests exist because a previous version buried DEECA's plain column
+  // names inside parenthetical hints (e.g. "FOUND (location, incl. GPS/...")
+  // - readable, but not what the printed record sheet is actually meant to
+  // say, and not something an Authorised Officer expecting the standard
+  // wording would recognise at a glance.
+  it('uses DEECA\'s exact column headers, not paraphrased ones', () => {
+    const wb = new VicReportGenerator({
+      reportingPeriod: PERIOD,
+      organization: { name: 'Sean A Vintin', authorisationNumber: '15528618' },
+      records: VicReportGenerator.rowsFromAnimals([animal()]),
+    }).generateReport();
+
+    const ws = wb.getWorksheet('Wildlife Shelter Record Sheet')!;
+    const headerRow = ws.getRow(6).values as unknown[];
+    expect(headerRow.slice(1)).toEqual([
+      'CASE NUMBER',
+      'COMMON NAME',
+      'SPECIES CODE',
+      'DATE IN',
+      'SEX',
+      'AGE',
+      'INJURY',
+      'CAUSE',
+      'FOUND',
+      'DATE OUT',
+      'STATUS',
+      'NOTES',
+    ]);
+  });
+
+  it('prints the authorisation holder and number on the record sheet itself, not only on Cover', () => {
+    const wb = new VicReportGenerator({
+      reportingPeriod: PERIOD,
+      organization: { name: 'Sean A Vintin', authorisationNumber: '15528618' },
+      records: [],
+    }).generateReport();
+
+    const ws = wb.getWorksheet('Wildlife Shelter Record Sheet')!;
+    expect(String(ws.getCell('A2').value)).toContain('Sean A Vintin');
+    expect(String(ws.getCell('G2').value)).toContain('15528618');
+  });
+
+  it('puts the data row directly below the header row with no gap', () => {
+    const wb = new VicReportGenerator({
+      reportingPeriod: PERIOD,
+      organization: { name: 'Sean A Vintin', authorisationNumber: '15528618' },
+      records: VicReportGenerator.rowsFromAnimals([animal()]),
+    }).generateReport();
+
+    const ws = wb.getWorksheet('Wildlife Shelter Record Sheet')!;
+    const dataRow = ws.getRow(7).values as unknown[];
+    expect(dataRow[1]).toBe('26/001');
+    expect(dataRow[2]).toBe('Eastern Grey Kangaroo');
+  });
+
+  it('adds a Code Reference sheet with the age, injury, cause and fate tables', () => {
+    const wb = new VicReportGenerator({
+      reportingPeriod: PERIOD,
+      organization: { name: 'Sean A Vintin', authorisationNumber: '15528618' },
+      records: [],
+    }).generateReport();
+
+    const ws = wb.getWorksheet('Code Reference');
+    expect(ws).toBeDefined();
+
+    const text: string[] = [];
+    ws!.eachRow((row) => text.push(String(row.getCell(1).value ?? '')));
+    const joined = text.join('\n');
+
+    expect(joined).toContain('AGE - Birds');
+    expect(joined).toContain('AGE - Mammals');
+    expect(joined).toContain('INJURY');
+    expect(joined).toContain('CAUSE');
+    expect(joined).toContain('STATUS (fate)');
+  });
+});
