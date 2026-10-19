@@ -29,19 +29,42 @@ import {
   type FlyingFoxFormula,
   type FlyingFoxSpecies,
 } from "@/lib/feed-calculators/flyingFox";
+import {
+  CHART_FORMULAS,
+  calculateChartFeed,
+  isChartFormula,
+  littleRedAdLibPerFeedMl,
+  type ChartFormula,
+} from "@/lib/feed-calculators/flyingFoxChart";
 
 type InputMode = "age" | "forearm";
 
 export function FlyingFoxCalculator() {
   const [species, setSpecies] = useState<FlyingFoxSpecies>("grey-headed");
-  const [formula, setFormula] = useState<FlyingFoxFormula>(
-    "wombaroo-flying-fox"
+  const [formula, setFormula] = useState<FlyingFoxFormula | ChartFormula>(
+    "biolac-flying-fox"
   );
+  const [weightG, setWeightG] = useState<string>("");
   const [mode, setMode] = useState<InputMode>("age");
   const [ageDays, setAgeDays] = useState<string>("");
   const [forearmMm, setForearmMm] = useState<string>("");
 
+  const chartPlan = useMemo(() => {
+    if (!isChartFormula(formula) || species !== "grey-headed") return null;
+    const raw = mode === "age" ? ageDays : forearmMm;
+    if (raw === "") return null;
+    const n = Number(raw);
+    if (!Number.isFinite(n) || n < 0) return null;
+    return calculateChartFeed({ formula, by: mode, value: n });
+  }, [formula, species, mode, ageDays, forearmMm]);
+
+  const littleRedAdLib = useMemo(() => {
+    if (!isChartFormula(formula) || species !== "little-red") return null;
+    return weightG === "" ? null : littleRedAdLibPerFeedMl(Number(weightG));
+  }, [formula, species, weightG]);
+
   const result = useMemo(() => {
+    if (isChartFormula(formula)) return null;
     const ageNum = ageDays === "" ? undefined : Number(ageDays);
     const forearmNum = forearmMm === "" ? undefined : Number(forearmMm);
     const validAge =
@@ -60,7 +83,7 @@ export function FlyingFoxCalculator() {
     try {
       return calculateFlyingFoxFeed({
         species,
-        formula,
+        formula: formula as FlyingFoxFormula,
         ageDays: validAge ? ageNum : undefined,
         forearmMm: validForearm ? forearmNum : undefined,
       });
@@ -120,12 +143,17 @@ export function FlyingFoxCalculator() {
               <Label>Milk Formula</Label>
               <Select
                 value={formula}
-                onValueChange={(v) => setFormula(v as FlyingFoxFormula)}
+                onValueChange={(v) => setFormula(v as FlyingFoxFormula | ChartFormula)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  {CHART_FORMULAS.map((f) => (
+                    <SelectItem key={f.value} value={f.value}>
+                      {f.label}
+                    </SelectItem>
+                  ))}
                   {FLYING_FOX_FORMULAS.map((f) => (
                     <SelectItem key={f.value} value={f.value}>
                       {f.label}
@@ -187,8 +215,132 @@ export function FlyingFoxCalculator() {
               />
             </div>
           )}
+
+          {isChartFormula(formula) && species === "little-red" && (
+            <div className="space-y-2">
+              <Label htmlFor="ffWeight">Current weight (g)</Label>
+              <Input
+                id="ffWeight"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                placeholder="e.g. 60"
+                value={weightG}
+                onChange={(e) => setWeightG(e.target.value)}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {isChartFormula(formula) && species === "little-red" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Little Red Flying-fox</CardTitle>
+            <CardDescription>No published feeding chart</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p className="text-muted-foreground">
+              The Biolac guide was developed on grey-headed flying-foxes and no chart
+              exists for little reds. Several sources suggest ad lib feeding of up to
+              10% of body weight per feed: offer it, never force it.
+            </p>
+            {littleRedAdLib != null && (
+              <StatTile
+                label="Offer per feed (up to)"
+                value={`${littleRedAdLib} ml`}
+                sub={`10% of ${weightG} g`}
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {chartPlan && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Feed Plan</CardTitle>
+            <CardDescription>
+              {CHART_FORMULAS.find((f) => f.value === formula)?.label} · chart day{" "}
+              {chartPlan.point.ageDays} · forearm {chartPlan.point.forearmMm} mm
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {chartPlan.warnings.map((w, i) => (
+              <Alert key={i} variant="default" className="border-amber-300 bg-amber-50">
+                <AlertTriangle className="h-4 w-4 text-amber-700" />
+                <AlertDescription className="text-amber-900 text-sm">{w}</AlertDescription>
+              </Alert>
+            ))}
+
+            {chartPlan.dailyMl == null ? (
+              <p className="text-sm">Weaned on the chart: no milk listed from 12 weeks.</p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <StatTile
+                  label="Chart weight"
+                  value={`${chartPlan.point.chartWeightGrams} g`}
+                  sub="Biolac guide, for this forearm/age"
+                />
+                <StatTile
+                  label="Total daily milk"
+                  value={`${chartPlan.dailyMl} ml`}
+                  sub={chartPlan.volumeIsDerived ? "derived, see note below" : "Biolac feeding guide"}
+                />
+                <StatTile
+                  label="Feeds per day"
+                  value={
+                    chartPlan.point.feedsMin === chartPlan.point.feedsMax
+                      ? `${chartPlan.point.feedsMin}`
+                      : `${chartPlan.point.feedsMin}–${chartPlan.point.feedsMax}`
+                  }
+                  sub={
+                    chartPlan.perFeedMinMl === chartPlan.perFeedMaxMl
+                      ? `${chartPlan.perFeedMinMl} ml per feed`
+                      : `${chartPlan.perFeedMinMl}–${chartPlan.perFeedMaxMl} ml per feed`
+                  }
+                />
+              </div>
+            )}
+
+            {chartPlan.powderGrams != null && (
+              <p className="text-sm">
+                <span className="font-medium">For today:</span> {chartPlan.powderGrams} g powder
+                made up to {chartPlan.dailyMl} ml.
+              </p>
+            )}
+            {chartPlan.goatsMilk && (
+              <p className="text-sm">
+                <span className="font-medium">For today:</span> {chartPlan.goatsMilk.milkMl} ml
+                goat&apos;s milk + {chartPlan.goatsMilk.glucoseGrams} g Glucodin +{" "}
+                {chartPlan.goatsMilk.calciumSyrupMl} ml calcium syrup.
+              </p>
+            )}
+
+            <div className="space-y-2 rounded-md bg-muted/50 p-3 text-sm">
+              <Badge variant="secondary">Mixing</Badge>
+              <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+                {chartPlan.mixing.map((m, i) => (
+                  <li key={i}>{m}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="space-y-2 rounded-md bg-muted/50 p-3 text-sm">
+              <Badge variant="secondary">Notes</Badge>
+              <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+                {chartPlan.notes.map((m, i) => (
+                  <li key={i}>{m}</li>
+                ))}
+              </ul>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Source: Biolac Flying Fox feeding guide (biolac.com.au), weekly values with
+              intermediate days interpolated. Goat&apos;s milk recipe: The Flying-fox Manual
+              s3.021. Feed milk-for-age, with age from forearm on intake.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {result && (
         <Card>
