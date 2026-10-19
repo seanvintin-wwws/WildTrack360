@@ -53,6 +53,7 @@ import {
   wombarooChartAppliesTo,
   wombarooReference,
 } from "@/lib/wombaroo-ghff-chart";
+import { PINSON_CHART_SOURCE, pinsonReference } from "@/lib/pinson-ghff-chart";
 
 /**
  * Distinct, colour-blind-friendly hues (same set as the cohort chart), kept
@@ -71,6 +72,7 @@ const SERIES_COLOURS = [
 ];
 const EXPECTED_COLOUR = "#6b7280";
 const WOMBAROO_COLOUR = "#111827";
+const PINSON_COLOUR = "#78350f";
 
 const STATUS_BADGE: Record<GrowthStatus, { label: string; variant: "success" | "warning" | "destructive" | "outline" }> = {
   normal: { label: "On track", variant: "success" },
@@ -119,6 +121,7 @@ export default function GrowthComparisonClient({
   const [metric, setMetric] = useState<ComparisonMetric>("weightGrams");
   const [showExpected, setShowExpected] = useState(true);
   const [showWombaroo, setShowWombaroo] = useState(true);
+  const [showPinson, setShowPinson] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(() => {
     const initial = defaultSpecies ? animalsBySpecies[defaultSpecies] ?? [] : [];
     const inCare = initial.filter((a) => a.status === "IN_CARE");
@@ -198,12 +201,19 @@ export default function GrowthComparisonClient({
       }
     }
 
+    if (showPinson && wombarooChartAppliesTo(species)) {
+      keys.push({ key: "pinson", name: "Pinson chart", colour: PINSON_COLOUR, dash: "10 3 2 3" });
+      for (const point of buildExpectedCurve(pinsonReference(), metric, maxAge)) {
+        at(point.ageDays).pinson = point.value;
+      }
+    }
+
     return {
       rows: Array.from(byAge.values()).sort((a, b) => a.ageDays - b.ageDays),
       plotted: visible,
       expectedKeys: keys,
     };
-  }, [prepared, selected, metric, showExpected, showWombaroo, species, referenceRows, oneCurve]);
+  }, [prepared, selected, metric, showExpected, showWombaroo, showPinson, species, referenceRows, oneCurve]);
 
   const unit = COMPARISON_METRICS[metric].unit;
   const referenceSource = referenceRows.find((r) => r.reference)?.reference ?? null;
@@ -269,6 +279,12 @@ export default function GrowthComparisonClient({
               <Label htmlFor="show-wombaroo">Wombaroo chart</Label>
             </div>
           )}
+          {wombarooChartAppliesTo(species) && (
+            <div className="flex items-center gap-2">
+              <Switch id="show-pinson" checked={showPinson} onCheckedChange={setShowPinson} />
+              <Label htmlFor="show-pinson">Pinson chart</Label>
+            </div>
+          )}
         </div>
       </div>
 
@@ -283,6 +299,9 @@ export default function GrowthComparisonClient({
             )}
             {showWombaroo && wombarooChartAppliesTo(species) && (
               <CardDescription>Wombaroo chart (dark dots): {WOMBAROO_CHART_SOURCE}</CardDescription>
+            )}
+            {showPinson && wombarooChartAppliesTo(species) && (
+              <CardDescription>Pinson chart (brown dash-dot): {PINSON_CHART_SOURCE}</CardDescription>
             )}
           </CardHeader>
           <CardContent>
