@@ -205,6 +205,53 @@ export interface MetricComparison {
   percent: number;
 }
 
+/**
+ * GPD (grams per day): average daily weight gain, as defined in the Bat Rescue
+ * orphan training manual, i.e. weight gained over a period divided by its days.
+ * Measured over the most recent week where possible: from the earliest weight
+ * taken within 7 days before the latest one, else from the previous weight.
+ * The expected figure is the reference curve's gain over the same ages.
+ */
+export interface GramsPerDay {
+  actual: number;
+  expected: number | null;
+  days: number;
+  fromDate: string;
+  toDate: string;
+}
+
+export function calculateGPD(
+  measurements: ComparisonMeasurement[],
+  birth: Date | null,
+  reference: GrowthReferencePoint[]
+): GramsPerDay | null {
+  const weights = measurements
+    .filter((m) => m.weightGrams != null)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  if (weights.length < 2) return null;
+  const latest = weights[weights.length - 1];
+  const latestTime = new Date(latest.date).getTime();
+  const earlier = weights.slice(0, -1);
+  const withinWeek = earlier.filter(
+    (m) => latestTime - new Date(m.date).getTime() <= 7 * DAY_MS
+  );
+  const from = withinWeek.length > 0 ? withinWeek[0] : earlier[earlier.length - 1];
+  const days = daysBetween(new Date(from.date), new Date(latest.date));
+  if (days <= 0) return null;
+  const actual =
+    Math.round((((latest.weightGrams as number) - (from.weightGrams as number)) / days) * 10) / 10;
+
+  let expected: number | null = null;
+  if (birth) {
+    const a0 = daysBetween(birth, new Date(from.date));
+    const a1 = daysBetween(birth, new Date(latest.date));
+    const w0 = interpolateValue(reference, 'weightGrams', a0);
+    const w1 = interpolateValue(reference, 'weightGrams', a1);
+    if (w0 != null && w1 != null) expected = Math.round(((w1 - w0) / days) * 10) / 10;
+  }
+  return { actual, expected, days, fromDate: from.date, toDate: latest.date };
+}
+
 export interface AnimalGrowthSummary {
   animalId: string;
   birth: ResolvedBirthDate | null;
@@ -213,6 +260,9 @@ export interface AnimalGrowthSummary {
   latestAgeDays: number | null;
   weight: MetricComparison | null;
   forearm: MetricComparison | null;
+  /** WFA (weight for age): actual weight minus expected weight for that age, in grams. */
+  wfaGrams: number | null;
+  gpd: GramsPerDay | null;
   /** Based on weight, using the app's existing weight-for-age thresholds (>10% below = warning, >20% = danger). */
   status: GrowthStatus;
 }
@@ -245,6 +295,8 @@ export function summariseAnimal(
     latestAgeDays: null,
     weight: null,
     forearm: null,
+    wfaGrams: null,
+    gpd: null,
     status: 'unknown',
   };
   if (!birth) return empty;
@@ -289,6 +341,8 @@ export function summariseAnimal(
     latestAgeDays,
     weight,
     forearm,
+    wfaGrams: weight ? Math.round(weight.difference) || 0 : null,
+    gpd: calculateGPD(animal.measurements, birth.date, reference),
     status,
   };
 }

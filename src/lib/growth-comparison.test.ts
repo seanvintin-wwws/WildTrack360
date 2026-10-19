@@ -5,6 +5,7 @@ import {
   type ReferenceRow,
   buildExpectedCurve,
   buildSeries,
+  calculateGPD,
   referenceForSex,
   resolveBirthDate,
   sexCurvesIdentical,
@@ -136,5 +137,39 @@ describe('summariseAnimal', () => {
 
   it('reports unknown when an animal cannot be aged', () => {
     expect(summariseAnimal({ ...squeak, measurements: [] }, ghff, today).status).toBe('unknown');
+  });
+});
+
+describe('WFA and GPD', () => {
+  const today = new Date('2026-10-19T08:00:00.000Z');
+
+  it('gives WFA as actual minus expected, in whole grams', () => {
+    // 93 - 106.7 = -13.7 -> -14 g
+    expect(summariseAnimal(bubbles, ghff, today).wfaGrams).toBe(-14);
+    expect(summariseAnimal(squeak, ghff, today).wfaGrams).toBe(0);
+  });
+
+  it('gives GPD as weight gained divided by days', () => {
+    // 85 g -> 93 g over 6 days = 1.3 g/day. DEECA day 4 -> day 10: 93 -> 106.7 g = 2.3 g/day.
+    const gpd = summariseAnimal(bubbles, ghff, today).gpd!;
+    expect(gpd.days).toBe(6);
+    expect(gpd.actual).toBe(1.3);
+    expect(gpd.expected).toBe(2.3);
+  });
+
+  it('needs at least two weights', () => {
+    expect(summariseAnimal(squeak, ghff, today).gpd).toBeNull();
+  });
+
+  it('uses the past week where there is one, not the whole history', () => {
+    const m = [
+      { date: '2026-10-01T13:00:00.000Z', weightGrams: 80, armLengthMm: null },
+      { date: '2026-10-12T13:00:00.000Z', weightGrams: 100, armLengthMm: null },
+      { date: '2026-10-19T13:00:00.000Z', weightGrams: 114, armLengthMm: null },
+    ];
+    const gpd = calculateGPD(m, null, ghff)!;
+    expect(gpd.days).toBe(7);
+    expect(gpd.actual).toBe(2);
+    expect(gpd.expected).toBeNull();
   });
 });

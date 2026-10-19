@@ -371,7 +371,9 @@ export default function GrowthComparisonClient({
           <CardDescription>
             Status uses weight, with the app&apos;s usual thresholds: more than 10% below
             expected is flagged, more than 20% is flagged red. A guide only — always read it
-            alongside how the animal is feeding and behaving.
+            alongside how the animal is feeding and behaving. WFA (weight for age) is
+            actual weight minus expected weight for that age. GPD (grams per day) is the
+            average daily weight gain over the most recent week of weigh-ins.
           </CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
@@ -383,6 +385,8 @@ export default function GrowthComparisonClient({
                 <TableHead>Last measured</TableHead>
                 <TableHead>Weight vs expected</TableHead>
                 <TableHead>Forearm vs expected</TableHead>
+                <TableHead>WFA</TableHead>
+                <TableHead>GPD</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -423,6 +427,24 @@ export default function GrowthComparisonClient({
                       </TableCell>
                       <TableCell>{formatComparison(summary.weight, "g")}</TableCell>
                       <TableCell>{formatComparison(summary.forearm, "mm")}</TableCell>
+                      <TableCell className="whitespace-nowrap font-medium">
+                        {summary.wfaGrams == null
+                          ? "—"
+                          : `${summary.wfaGrams > 0 ? "+" : ""}${summary.wfaGrams} g`}
+                      </TableCell>
+                      <TableCell>
+                        {summary.gpd ? (
+                          <>
+                            <span className="whitespace-nowrap">{summary.gpd.actual} g/day</span>
+                            <span className="block text-xs text-muted-foreground">
+                              {summary.gpd.expected != null && `expected ${summary.gpd.expected} · `}
+                              over {summary.gpd.days} {summary.gpd.days === 1 ? "day" : "days"}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground">needs 2 weights</span>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Badge variant={badge.variant}>{badge.label}</Badge>
                       </TableCell>
