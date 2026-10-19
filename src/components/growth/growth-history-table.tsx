@@ -16,6 +16,7 @@ import {
   type GrowthReferencePoint,
   calculatePredictedWeight,
   getWFAStatus,
+  gramsPerDaySincePrevious,
 } from "@/lib/growth-utils";
 import type { GrowthMeasurement } from "@prisma/client";
 
@@ -39,6 +40,7 @@ export function GrowthHistoryTable({
   onDelete,
 }: GrowthHistoryTableProps) {
   const rows = useMemo(() => {
+    const gpdById = gramsPerDaySincePrevious(measurements);
     return measurements.map((m) => {
       const dob = dateOfBirth ? new Date(dateOfBirth) : null;
       const ageDays = dob ? differenceInDays(new Date(m.date), dob) : null;
@@ -51,7 +53,7 @@ export function GrowthHistoryTable({
       const wfaStatus =
         wfa != null && predicted != null ? getWFAStatus(wfa, predicted) : "normal";
 
-      return { ...m, ageDays, predicted, wfa, wfaStatus };
+      return { ...m, ageDays, predicted, wfa, wfaStatus, gpd: gpdById.get(m.id) ?? null };
     });
   }, [measurements, referenceData, dateOfBirth]);
 
@@ -72,6 +74,9 @@ export function GrowthHistoryTable({
             <TableHead>Age</TableHead>
             <TableHead className="text-right">Weight (g)</TableHead>
             <TableHead className="text-right">WFA</TableHead>
+            <TableHead className="text-right" title="Grams per day gained since the previous weigh-in">
+              GPD
+            </TableHead>
             <TableHead className="text-right">Foot (mm)</TableHead>
             <TableHead className="text-right">Arm (mm)</TableHead>
             <TableHead>Notes</TableHead>
@@ -94,6 +99,9 @@ export function GrowthHistoryTable({
                 {row.wfa != null
                   ? `${row.wfa > 0 ? "+" : ""}${row.wfa}g`
                   : "—"}
+              </TableCell>
+              <TableCell className="text-right whitespace-nowrap">
+                {row.gpd != null ? `${row.gpd > 0 ? "+" : ""}${row.gpd}g/d` : "—"}
               </TableCell>
               <TableCell className="text-right">
                 {row.footLengthMm ?? "—"}

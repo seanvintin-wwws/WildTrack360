@@ -233,3 +233,20 @@ describe('getRelevantFields', () => {
     expect(fields).not.toContain('wingLengthMm');
   });
 });
+
+import { gramsPerDaySincePrevious } from './growth-utils';
+
+describe('gramsPerDaySincePrevious', () => {
+  it('divides weight gained since the previous weigh-in by the days between', () => {
+    const m = gramsPerDaySincePrevious([
+      { id: 'b', date: '2026-10-18T13:00:00.000Z', weightGrams: 93 },
+      { id: 'a', date: '2026-10-12T13:00:00.000Z', weightGrams: 85 },
+      { id: 'c', date: '2026-10-19T13:00:00.000Z', weightGrams: null },
+      { id: 'd', date: '2026-10-20T13:00:00.000Z', weightGrams: 91 },
+    ]);
+    expect(m.get('a')).toBeNull();
+    expect(m.get('b')).toBe(1.3);
+    expect(m.get('c')).toBeNull();
+    expect(m.get('d')).toBe(-1); // 93 -> 91 over 2 days
+  });
+});

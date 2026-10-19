@@ -243,3 +243,38 @@ export function getWFAStatus(
   if (percentBelow > 10) return 'warning';
   return 'normal';
 }
+
+/**
+ * GPD (grams per day) for each measurement: weight gained since the previous
+ * weigh-in, divided by the days between them (Bat Rescue orphan training
+ * manual). Returns a map of measurement id to GPD, or null where there is no
+ * earlier weight or the two were taken on the same day.
+ */
+export function gramsPerDaySincePrevious(
+  measurements: { id: string; date: Date | string; weightGrams: number | null }[]
+): Map<string, number | null> {
+  const sorted = [...measurements].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+  const out = new Map<string, number | null>();
+  let prev: { date: Date | string; weightGrams: number } | null = null;
+  for (const m of sorted) {
+    if (m.weightGrams == null) {
+      out.set(m.id, null);
+      continue;
+    }
+    if (prev) {
+      const days = Math.round(
+        (new Date(m.date).getTime() - new Date(prev.date).getTime()) / 86400000
+      );
+      out.set(
+        m.id,
+        days > 0 ? Math.round(((m.weightGrams - prev.weightGrams) / days) * 10) / 10 : null
+      );
+    } else {
+      out.set(m.id, null);
+    }
+    prev = { date: m.date, weightGrams: m.weightGrams };
+  }
+  return out;
+}
