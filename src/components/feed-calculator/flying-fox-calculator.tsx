@@ -33,7 +33,6 @@ import {
   CHART_FORMULAS,
   calculateChartFeed,
   isChartFormula,
-  littleRedAdLibPerFeedMl,
   type ChartFormula,
 } from "@/lib/feed-calculators/flyingFoxChart";
 
@@ -50,17 +49,8 @@ export function FlyingFoxCalculator() {
   const [forearmMm, setForearmMm] = useState<string>("");
 
   const chartPlan = useMemo(() => {
-    if (!isChartFormula(formula) || species !== "grey-headed") return null;
-    const raw = mode === "age" ? ageDays : forearmMm;
-    if (raw === "") return null;
-    const n = Number(raw);
-    if (!Number.isFinite(n) || n < 0) return null;
-    return calculateChartFeed({ formula, by: mode, value: n });
-  }, [formula, species, mode, ageDays, forearmMm]);
-
-  const littleRedAdLib = useMemo(() => {
-    if (!isChartFormula(formula) || species !== "little-red") return null;
-    return weightG === "" ? null : littleRedAdLibPerFeedMl(Number(weightG));
+    if (!isChartFormula(formula) || weightG === "") return null;
+    return calculateChartFeed({ formula, bodyWeightGrams: Number(weightG), species });
   }, [formula, species, weightG]);
 
   const result = useMemo(() => {
@@ -164,154 +154,127 @@ export function FlyingFoxCalculator() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Measurement</Label>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant={mode === "age" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMode("age")}
-              >
-                Age (days)
-              </Button>
-              <Button
-                type="button"
-                variant={mode === "forearm" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMode("forearm")}
-              >
-                Forearm (mm)
-              </Button>
-            </div>
-          </div>
-
-          {mode === "age" ? (
+          {isChartFormula(formula) ? (
             <div className="space-y-2">
-              <Label htmlFor="ffAge">Age in days</Label>
-              <Input
-                id="ffAge"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={365}
-                placeholder="e.g. 21"
-                value={ageDays}
-                onChange={(e) => setAgeDays(e.target.value)}
-              />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="ffForearm">Forearm length (mm)</Label>
-              <Input
-                id="ffForearm"
-                type="number"
-                inputMode="decimal"
-                min={0}
-                max={250}
-                placeholder="e.g. 90"
-                value={forearmMm}
-                onChange={(e) => setForearmMm(e.target.value)}
-              />
-            </div>
-          )}
-
-          {isChartFormula(formula) && species === "little-red" && (
-            <div className="space-y-2">
-              <Label htmlFor="ffWeight">Current weight (g)</Label>
+              <Label htmlFor="ffWeight">Body weight (g)</Label>
               <Input
                 id="ffWeight"
                 type="number"
                 inputMode="decimal"
                 min={0}
-                placeholder="e.g. 60"
+                placeholder="e.g. 93"
                 value={weightG}
                 onChange={(e) => setWeightG(e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">
+                {formula === "goats-milk"
+                  ? "Goat's milk volume is derived from the Biolac rate (see notes)."
+                  : "Biolac publish their feeding rate as a percentage of body weight, not by age or forearm."}
+              </p>
             </div>
+          ) : (
+            <>
+          <div className="space-y-2">
+              <Label>Measurement</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={mode === "age" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMode("age")}
+                >
+                  Age (days)
+                </Button>
+                <Button
+                  type="button"
+                  variant={mode === "forearm" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMode("forearm")}
+                >
+                  Forearm (mm)
+                </Button>
+              </div>
+            </div>
+  
+            {mode === "age" ? (
+              <div className="space-y-2">
+                <Label htmlFor="ffAge">Age in days</Label>
+                <Input
+                  id="ffAge"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={365}
+                  placeholder="e.g. 21"
+                  value={ageDays}
+                  onChange={(e) => setAgeDays(e.target.value)}
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="ffForearm">Forearm length (mm)</Label>
+                <Input
+                  id="ffForearm"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  max={250}
+                  placeholder="e.g. 90"
+                  value={forearmMm}
+                  onChange={(e) => setForearmMm(e.target.value)}
+                />
+              </div>
+            )}
+            </>
           )}
         </CardContent>
       </Card>
-
-      {isChartFormula(formula) && species === "little-red" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Little Red Flying-fox</CardTitle>
-            <CardDescription>No published feeding chart</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <p className="text-muted-foreground">
-              The Biolac guide was developed on grey-headed flying-foxes and no chart
-              exists for little reds. Several sources suggest ad lib feeding of up to
-              10% of body weight per feed: offer it, never force it.
-            </p>
-            {littleRedAdLib != null && (
-              <StatTile
-                label="Offer per feed (up to)"
-                value={`${littleRedAdLib} ml`}
-                sub={`10% of ${weightG} g`}
-              />
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {chartPlan && (
         <Card>
           <CardHeader>
             <CardTitle>Feed Plan</CardTitle>
             <CardDescription>
-              {CHART_FORMULAS.find((f) => f.value === formula)?.label} · chart day{" "}
-              {chartPlan.point.ageDays} · forearm {chartPlan.point.forearmMm} mm
+              {CHART_FORMULAS.find((f) => f.value === formula)?.label} · {chartPlan.bodyWeightGrams} g pup ·{" "}
+              {chartPlan.percentMin}–{chartPlan.percentMax}% of body weight per day
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {chartPlan.warnings.map((w, i) => (
-              <Alert key={i} variant="default" className="border-amber-300 bg-amber-50">
+            {chartPlan.volumeIsDerived && (
+              <Alert variant="default" className="border-amber-300 bg-amber-50">
                 <AlertTriangle className="h-4 w-4 text-amber-700" />
-                <AlertDescription className="text-amber-900 text-sm">{w}</AlertDescription>
+                <AlertDescription className="text-amber-900 text-sm">
+                  Derived volume, not a published figure. Check against the Flying-fox Manual&apos;s printed cow&apos;s milk chart.
+                </AlertDescription>
               </Alert>
-            ))}
-
-            {chartPlan.dailyMl == null ? (
-              <p className="text-sm">Weaned on the chart: no milk listed from 12 weeks.</p>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-3">
-                <StatTile
-                  label="Chart weight"
-                  value={`${chartPlan.point.chartWeightGrams} g`}
-                  sub="Biolac guide, for this forearm/age"
-                />
-                <StatTile
-                  label="Total daily milk"
-                  value={`${chartPlan.dailyMl} ml`}
-                  sub={chartPlan.volumeIsDerived ? "derived, see note below" : "Biolac feeding guide"}
-                />
-                <StatTile
-                  label="Feeds per day"
-                  value={
-                    chartPlan.point.feedsMin === chartPlan.point.feedsMax
-                      ? `${chartPlan.point.feedsMin}`
-                      : `${chartPlan.point.feedsMin}–${chartPlan.point.feedsMax}`
-                  }
-                  sub={
-                    chartPlan.perFeedMinMl === chartPlan.perFeedMaxMl
-                      ? `${chartPlan.perFeedMinMl} ml per feed`
-                      : `${chartPlan.perFeedMinMl}–${chartPlan.perFeedMaxMl} ml per feed`
-                  }
-                />
-              </div>
             )}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <StatTile
+                label="Total daily milk"
+                value={`${chartPlan.dailyMinMl}–${chartPlan.dailyMaxMl} ml`}
+                sub={`${chartPlan.percentMin}–${chartPlan.percentMax}% of ${chartPlan.bodyWeightGrams} g`}
+              />
+              <StatTile
+                label="Feeds per day"
+                value={`${chartPlan.feedsMin}–${chartPlan.feedsMax}`}
+                sub="depending on age and development"
+              />
+              <StatTile
+                label="Per feed"
+                value={`${chartPlan.perFeedMinMl}–${chartPlan.perFeedMaxMl} ml`}
+                sub="daily total split across the feeds"
+              />
+            </div>
 
             {chartPlan.powderGrams != null && (
               <p className="text-sm">
-                <span className="font-medium">For today:</span> {chartPlan.powderGrams} g powder
-                made up to {chartPlan.dailyMl} ml.
+                <span className="font-medium">For the day (at 25%):</span> {chartPlan.powderGrams} g powder
+                made up to {chartPlan.dailyMaxMl} ml.
               </p>
             )}
             {chartPlan.goatsMilk && (
               <p className="text-sm">
-                <span className="font-medium">For today:</span> {chartPlan.goatsMilk.milkMl} ml
+                <span className="font-medium">For the day (upper figure):</span> {chartPlan.goatsMilk.milkMl} ml
                 goat&apos;s milk + {chartPlan.goatsMilk.glucoseGrams} g Glucodin +{" "}
                 {chartPlan.goatsMilk.calciumSyrupMl} ml calcium syrup.
               </p>
@@ -334,9 +297,9 @@ export function FlyingFoxCalculator() {
               </ul>
             </div>
             <p className="text-xs text-muted-foreground">
-              Source: Biolac Flying Fox feeding guide (biolac.com.au), weekly values with
-              intermediate days interpolated. Goat&apos;s milk recipe: The Flying-fox Manual
-              s3.021. Feed milk-for-age, with age from forearm on intake.
+              Source: Biolac Flying Fox and Flying Fox Plus product pages (biolac.com.au): 20–25% of
+              body weight daily in 4–5 feeds, 14 g made up to 70 mL. Goat&apos;s milk recipe: The
+              Flying-fox Manual s3.021.
             </p>
           </CardContent>
         </Card>
@@ -349,6 +312,14 @@ export function FlyingFoxCalculator() {
             <CardDescription>{result.stage.label}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Alert variant="default" className="border-amber-300 bg-amber-50">
+              <AlertTriangle className="h-4 w-4 text-amber-700" />
+              <AlertDescription className="text-amber-900 text-sm">
+                These volumes come from a general stage table, not from Wombaroo or Di-Vetelact, and
+                are the same whichever of these three formulas is chosen. Check them against the
+                manufacturer&apos;s feeding chart.
+              </AlertDescription>
+            </Alert>
             {result.warnings.map((w, i) => (
               <Alert key={i} variant="default" className="border-amber-300 bg-amber-50">
                 <AlertTriangle className="h-4 w-4 text-amber-700" />
