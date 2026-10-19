@@ -326,7 +326,7 @@ export default function GrowthComparisonClient({
                     formatter={(value: number, name: string) => [`${value} ${unit}`, name]}
                     labelFormatter={(age) => `Day ${age}`}
                   />
-                  <Legend verticalAlign="top" height={36} />
+                  <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 8 }} />
                   {expectedKeys.map(({ key, name, colour, dash }) => (
                     <Line
                       key={key}
