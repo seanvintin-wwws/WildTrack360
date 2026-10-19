@@ -48,6 +48,11 @@ import {
   sexCurvesIdentical,
   summariseAnimal,
 } from "@/lib/growth-comparison";
+import {
+  WOMBAROO_CHART_SOURCE,
+  wombarooChartAppliesTo,
+  wombarooReference,
+} from "@/lib/wombaroo-ghff-chart";
 
 /**
  * Distinct, colour-blind-friendly hues (same set as the cohort chart), kept
@@ -65,6 +70,7 @@ const SERIES_COLOURS = [
   "#bcbd22",
 ];
 const EXPECTED_COLOUR = "#6b7280";
+const WOMBAROO_COLOUR = "#111827";
 
 const STATUS_BADGE: Record<GrowthStatus, { label: string; variant: "success" | "warning" | "destructive" | "outline" }> = {
   normal: { label: "On track", variant: "success" },
@@ -112,6 +118,7 @@ export default function GrowthComparisonClient({
   const [species, setSpecies] = useState<string | null>(defaultSpecies);
   const [metric, setMetric] = useState<ComparisonMetric>("weightGrams");
   const [showExpected, setShowExpected] = useState(true);
+  const [showWombaroo, setShowWombaroo] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(() => {
     const initial = defaultSpecies ? animalsBySpecies[defaultSpecies] ?? [] : [];
     const inCare = initial.filter((a) => a.status === "IN_CARE");
@@ -165,17 +172,29 @@ export default function GrowthComparisonClient({
       }
     }
 
-    const keys: { key: string; name: string }[] = [];
+    const keys: { key: string; name: string; colour: string; dash: string }[] = [];
     if (showExpected && referenceRows.length > 0) {
       const sexes = oneCurve
         ? [null]
         : Array.from(new Set(visible.map((p) => (p.animal.sex === "Male" || p.animal.sex === "Female" ? p.animal.sex : null))));
       for (const sex of sexes.length ? sexes : [null]) {
         const key = `expected_${sex ?? "all"}`;
-        keys.push({ key, name: sex ? `Expected (${sex.toLowerCase()})` : "Expected" });
+        keys.push({
+          key,
+          name: sex ? `DEECA expected (${sex.toLowerCase()})` : "DEECA expected",
+          colour: EXPECTED_COLOUR,
+          dash: "6 4",
+        });
         for (const point of buildExpectedCurve(referenceForSex(referenceRows, sex), metric, maxAge)) {
           at(point.ageDays)[key] = point.value;
         }
+      }
+    }
+
+    if (showWombaroo && wombarooChartAppliesTo(species)) {
+      keys.push({ key: "wombaroo", name: "Wombaroo chart", colour: WOMBAROO_COLOUR, dash: "2 3" });
+      for (const point of buildExpectedCurve(wombarooReference(), metric, maxAge)) {
+        at(point.ageDays).wombaroo = point.value;
       }
     }
 
@@ -184,7 +203,7 @@ export default function GrowthComparisonClient({
       plotted: visible,
       expectedKeys: keys,
     };
-  }, [prepared, selected, metric, showExpected, referenceRows, oneCurve]);
+  }, [prepared, selected, metric, showExpected, showWombaroo, species, referenceRows, oneCurve]);
 
   const unit = COMPARISON_METRICS[metric].unit;
   const referenceSource = referenceRows.find((r) => r.reference)?.reference ?? null;
@@ -242,8 +261,14 @@ export default function GrowthComparisonClient({
           </Tabs>
           <div className="flex items-center gap-2">
             <Switch id="show-expected" checked={showExpected} onCheckedChange={setShowExpected} />
-            <Label htmlFor="show-expected">Expected curve</Label>
+            <Label htmlFor="show-expected">DEECA expected</Label>
           </div>
+          {wombarooChartAppliesTo(species) && (
+            <div className="flex items-center gap-2">
+              <Switch id="show-wombaroo" checked={showWombaroo} onCheckedChange={setShowWombaroo} />
+              <Label htmlFor="show-wombaroo">Wombaroo chart</Label>
+            </div>
+          )}
         </div>
       </div>
 
@@ -254,11 +279,14 @@ export default function GrowthComparisonClient({
               {COMPARISON_METRICS[metric].label} for age — {species}
             </CardTitle>
             {referenceSource && showExpected && (
-              <CardDescription>Expected curve: {referenceSource}</CardDescription>
+              <CardDescription>DEECA expected (grey dashes): {referenceSource}</CardDescription>
+            )}
+            {showWombaroo && wombarooChartAppliesTo(species) && (
+              <CardDescription>Wombaroo chart (dark dots): {WOMBAROO_CHART_SOURCE}</CardDescription>
             )}
           </CardHeader>
           <CardContent>
-            {plotted.length === 0 && !showExpected ? (
+            {plotted.length === 0 && expectedKeys.length === 0 ? (
               <p className="text-sm text-muted-foreground">Tick at least one animal to plot it.</p>
             ) : (
               <ResponsiveContainer width="100%" height={400}>
@@ -280,14 +308,14 @@ export default function GrowthComparisonClient({
                     labelFormatter={(age) => `Day ${age}`}
                   />
                   <Legend verticalAlign="top" height={36} />
-                  {expectedKeys.map(({ key, name }) => (
+                  {expectedKeys.map(({ key, name, colour, dash }) => (
                     <Line
                       key={key}
                       type="monotone"
                       dataKey={key}
                       name={name}
-                      stroke={EXPECTED_COLOUR}
-                      strokeDasharray="5 4"
+                      stroke={colour}
+                      strokeDasharray={dash}
                       strokeWidth={2}
                       dot={false}
                       connectNulls
@@ -369,7 +397,7 @@ export default function GrowthComparisonClient({
         <CardHeader>
           <CardTitle className="text-base">Latest measurement vs expected</CardTitle>
           <CardDescription>
-            Status uses weight, with the app&apos;s usual thresholds: more than 10% below
+            Expected values, WFA, GPD and status use the DEECA curve. Status uses weight, with the app&apos;s usual thresholds: more than 10% below
             expected is flagged, more than 20% is flagged red. A guide only — always read it
             alongside how the animal is feeding and behaving. WFA (weight for age) is
             actual weight minus expected weight for that age. GPD (grams per day) is the
