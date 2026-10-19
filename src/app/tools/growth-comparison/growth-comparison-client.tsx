@@ -70,9 +70,9 @@ const SERIES_COLOURS = [
   "#2ca02c",
   "#bcbd22",
 ];
-const EXPECTED_COLOUR = "#6b7280";
-const WOMBAROO_COLOUR = "#111827";
-const PINSON_COLOUR = "#78350f";
+const EXPECTED_COLOUR = "#8b938d";
+const WOMBAROO_COLOUR = "#5f9a6e";
+const PINSON_COLOUR = "#b07a3f";
 
 const STATUS_BADGE: Record<GrowthStatus, { label: string; variant: "success" | "warning" | "destructive" | "outline" }> = {
   normal: { label: "On track", variant: "success" },
@@ -298,7 +298,7 @@ export default function GrowthComparisonClient({
               <CardDescription>DEECA expected (grey dashes): {referenceSource}</CardDescription>
             )}
             {showWombaroo && wombarooChartAppliesTo(species) && (
-              <CardDescription>Wombaroo chart (dark dots): {WOMBAROO_CHART_SOURCE}</CardDescription>
+              <CardDescription>Wombaroo chart (green dots): {WOMBAROO_CHART_SOURCE}</CardDescription>
             )}
             {showPinson && wombarooChartAppliesTo(species) && (
               <CardDescription>Pinson chart (brown dash-dot): {PINSON_CHART_SOURCE}</CardDescription>
