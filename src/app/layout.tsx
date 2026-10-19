@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { OrgRole } from '@prisma/client';
 import './globals.css';
 import { ClerkProvider } from '@/lib/clerk-client';
@@ -15,6 +15,15 @@ import { isFeatureEnabled } from '@/lib/features';
 import { filterCommandItemsForRole } from '@/lib/workspace-navigation';
 import { SITE_BRANDING } from '@/lib/site-branding';
 import { clerkLocalization } from '@/lib/clerk-localization';
+
+// Declares the app's own light and dark themes so phones don't auto-darken it.
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#171c19' },
+  ],
+};
 
 export const metadata: Metadata = {
   title: SITE_BRANDING.organisationName,

@@ -4,25 +4,26 @@
 
 @layer base {
   :root {
-    --background: 60 56% 91%;
-    --foreground: 20 10% 20%;
-    --card: 60 56% 93%;
-    --card-foreground: 20 10% 20%;
-    --popover: 60 56% 93%;
-    --popover-foreground: 20 10% 20%;
-    --primary: 141 28% 34%;
-    --primary-foreground: 60 56% 98%;
-    --secondary: 141 15% 75%;
-    --secondary-foreground: 141 28% 24%;
-    --muted: 141 15% 85%;
-    --muted-foreground: 141 10% 45%;
-    --accent: 25 76% 31%;
-    --accent-foreground: 25 70% 95%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 141 15% 80%;
-    --input: 141 15% 85%;
-    --ring: 141 28% 34%;
+    color-scheme: light;
+    --background: 96 15% 94%;
+    --foreground: 135 12% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 135 12% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 135 12% 13%;
+    --primary: 151 40% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 132 20% 90%;
+    --secondary-foreground: 153 43% 21%;
+    --muted: 103 15% 91%;
+    --muted-foreground: 133 7% 39%;
+    --accent: 132 20% 90%;
+    --accent-foreground: 153 43% 21%;
+    --destructive: 0 64% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 104 14% 85%;
+    --input: 106 13% 80%;
+    --ring: 151 40% 30%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -31,32 +32,35 @@
     --chart-5: 27 87% 67%;
   }
 
-  .dark {
-    --background: 20 10% 12%;
-    --foreground: 60 56% 91%;
-    --card: 20 10% 15%;
-    --card-foreground: 60 56% 91%;
-    --popover: 20 10% 15%;
-    --popover-foreground: 60 56% 91%;
-    --primary: 141 30% 50%;
-    --primary-foreground: 141 20% 95%;
-    --secondary: 20 5% 25%;
-    --secondary-foreground: 60 56% 91%;
-    --muted: 20 5% 25%;
-    --muted-foreground: 60 20% 70%;
-    --accent: 25 70% 45%;
-    --accent-foreground: 25 70% 95%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 20 5% 25%;
-    --input: 20 5% 25%;
-    --ring: 141 30% 50%;
+  @media (prefers-color-scheme: dark) {
+  :root {
+    --background: 150 10% 8%;
+    --foreground: 132 12% 92%;
+    --card: 140 10% 12%;
+    --card-foreground: 132 12% 92%;
+    --popover: 140 10% 12%;
+    --popover-foreground: 132 12% 92%;
+    --primary: 149 35% 54%;
+    --primary-foreground: 143 33% 8%;
+    --secondary: 144 12% 17%;
+    --secondary-foreground: 132 12% 92%;
+    --muted: 142 10% 15%;
+    --muted-foreground: 137 7% 63%;
+    --accent: 144 12% 17%;
+    --accent-foreground: 132 12% 92%;
+    --destructive: 0 64% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 144 10% 20%;
+    --input: 140 9% 25%;
+    --ring: 149 35% 54%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+      color-scheme: dark;
   }
+}
 }
 
 @layer base {
@@ -87,4 +91,102 @@
     [data-wally-assistant]:not([data-wally-fullscreen]) {
     bottom: calc(5rem + env(safe-area-inset-bottom));
   }
+}
+
+/* Dark mode for hard-coded light tints (138 panels have no dark: variant).
+   Tones them to dark backgrounds carrying a hint of their hue, with light text. */
+@media (prefers-color-scheme: dark) {
+  :root .bg-amber-50 { background-color: rgb(245 158 11 / 0.1); }
+  :root .bg-amber-100 { background-color: rgb(245 158 11 / 0.16); }
+  :root .bg-amber-200 { background-color: rgb(245 158 11 / 0.24); }
+  :root .text-amber-600, :root .text-amber-700 { color: #fcd34d; }
+  :root .text-amber-800, :root .text-amber-900, :root .text-amber-950 { color: #fde68a; }
+  :root .border-amber-100, :root .border-amber-200, :root .border-amber-300 { border-color: rgb(245 158 11 / 0.35); }
+  :root .bg-yellow-50 { background-color: rgb(234 179 8 / 0.1); }
+  :root .bg-yellow-100 { background-color: rgb(234 179 8 / 0.16); }
+  :root .bg-yellow-200 { background-color: rgb(234 179 8 / 0.24); }
+  :root .text-yellow-600, :root .text-yellow-700 { color: #fde047; }
+  :root .text-yellow-800, :root .text-yellow-900, :root .text-yellow-950 { color: #fef08a; }
+  :root .border-yellow-100, :root .border-yellow-200, :root .border-yellow-300 { border-color: rgb(234 179 8 / 0.35); }
+  :root .bg-green-50 { background-color: rgb(34 197 94 / 0.1); }
+  :root .bg-green-100 { background-color: rgb(34 197 94 / 0.16); }
+  :root .bg-green-200 { background-color: rgb(34 197 94 / 0.24); }
+  :root .text-green-600, :root .text-green-700 { color: #86efac; }
+  :root .text-green-800, :root .text-green-900, :root .text-green-950 { color: #bbf7d0; }
+  :root .border-green-100, :root .border-green-200, :root .border-green-300 { border-color: rgb(34 197 94 / 0.35); }
+  :root .bg-emerald-50 { background-color: rgb(16 185 129 / 0.1); }
+  :root .bg-emerald-100 { background-color: rgb(16 185 129 / 0.16); }
+  :root .bg-emerald-200 { background-color: rgb(16 185 129 / 0.24); }
+  :root .text-emerald-600, :root .text-emerald-700 { color: #6ee7b7; }
+  :root .text-emerald-800, :root .text-emerald-900, :root .text-emerald-950 { color: #a7f3d0; }
+  :root .border-emerald-100, :root .border-emerald-200, :root .border-emerald-300 { border-color: rgb(16 185 129 / 0.35); }
+  :root .bg-red-50 { background-color: rgb(239 68 68 / 0.1); }
+  :root .bg-red-100 { background-color: rgb(239 68 68 / 0.16); }
+  :root .bg-red-200 { background-color: rgb(239 68 68 / 0.24); }
+  :root .text-red-600, :root .text-red-700 { color: #fca5a5; }
+  :root .text-red-800, :root .text-red-900, :root .text-red-950 { color: #fecaca; }
+  :root .border-red-100, :root .border-red-200, :root .border-red-300 { border-color: rgb(239 68 68 / 0.35); }
+  :root .bg-orange-50 { background-color: rgb(249 115 22 / 0.1); }
+  :root .bg-orange-100 { background-color: rgb(249 115 22 / 0.16); }
+  :root .bg-orange-200 { background-color: rgb(249 115 22 / 0.24); }
+  :root .text-orange-600, :root .text-orange-700 { color: #fdba74; }
+  :root .text-orange-800, :root .text-orange-900, :root .text-orange-950 { color: #fed7aa; }
+  :root .border-orange-100, :root .border-orange-200, :root .border-orange-300 { border-color: rgb(249 115 22 / 0.35); }
+  :root .bg-blue-50 { background-color: rgb(59 130 246 / 0.1); }
+  :root .bg-blue-100 { background-color: rgb(59 130 246 / 0.16); }
+  :root .bg-blue-200 { background-color: rgb(59 130 246 / 0.24); }
+  :root .text-blue-600, :root .text-blue-700 { color: #93c5fd; }
+  :root .text-blue-800, :root .text-blue-900, :root .text-blue-950 { color: #bfdbfe; }
+  :root .border-blue-100, :root .border-blue-200, :root .border-blue-300 { border-color: rgb(59 130 246 / 0.35); }
+  :root .bg-sky-50 { background-color: rgb(14 165 233 / 0.1); }
+  :root .bg-sky-100 { background-color: rgb(14 165 233 / 0.16); }
+  :root .bg-sky-200 { background-color: rgb(14 165 233 / 0.24); }
+  :root .text-sky-600, :root .text-sky-700 { color: #7dd3fc; }
+  :root .text-sky-800, :root .text-sky-900, :root .text-sky-950 { color: #bae6fd; }
+  :root .border-sky-100, :root .border-sky-200, :root .border-sky-300 { border-color: rgb(14 165 233 / 0.35); }
+  :root .bg-purple-50 { background-color: rgb(168 85 247 / 0.1); }
+  :root .bg-purple-100 { background-color: rgb(168 85 247 / 0.16); }
+  :root .bg-purple-200 { background-color: rgb(168 85 247 / 0.24); }
+  :root .text-purple-600, :root .text-purple-700 { color: #d8b4fe; }
+  :root .text-purple-800, :root .text-purple-900, :root .text-purple-950 { color: #e9d5ff; }
+  :root .border-purple-100, :root .border-purple-200, :root .border-purple-300 { border-color: rgb(168 85 247 / 0.35); }
+  :root .bg-rose-50 { background-color: rgb(244 63 94 / 0.1); }
+  :root .bg-rose-100 { background-color: rgb(244 63 94 / 0.16); }
+  :root .bg-rose-200 { background-color: rgb(244 63 94 / 0.24); }
+  :root .text-rose-600, :root .text-rose-700 { color: #fda4af; }
+  :root .text-rose-800, :root .text-rose-900, :root .text-rose-950 { color: #fecdd3; }
+  :root .border-rose-100, :root .border-rose-200, :root .border-rose-300 { border-color: rgb(244 63 94 / 0.35); }
+  :root .bg-teal-50 { background-color: rgb(20 184 166 / 0.1); }
+  :root .bg-teal-100 { background-color: rgb(20 184 166 / 0.16); }
+  :root .bg-teal-200 { background-color: rgb(20 184 166 / 0.24); }
+  :root .text-teal-600, :root .text-teal-700 { color: #5eead4; }
+  :root .text-teal-800, :root .text-teal-900, :root .text-teal-950 { color: #99f6e4; }
+  :root .border-teal-100, :root .border-teal-200, :root .border-teal-300 { border-color: rgb(20 184 166 / 0.35); }
+  :root .bg-lime-50 { background-color: rgb(132 204 22 / 0.1); }
+  :root .bg-lime-100 { background-color: rgb(132 204 22 / 0.16); }
+  :root .bg-lime-200 { background-color: rgb(132 204 22 / 0.24); }
+  :root .text-lime-600, :root .text-lime-700 { color: #bef264; }
+  :root .text-lime-800, :root .text-lime-900, :root .text-lime-950 { color: #d9f99d; }
+  :root .border-lime-100, :root .border-lime-200, :root .border-lime-300 { border-color: rgb(132 204 22 / 0.35); }
+  :root .bg-gray-50, :root .bg-gray-100 { background-color: hsl(var(--muted)); }
+  :root .text-gray-700, :root .text-gray-800, :root .text-gray-900 { color: hsl(var(--foreground)); }
+  :root .text-gray-500, :root .text-gray-600 { color: hsl(var(--muted-foreground)); }
+  :root .border-gray-200, :root .border-gray-300 { border-color: hsl(var(--border)); }
+  :root .bg-slate-50, :root .bg-slate-100 { background-color: hsl(var(--muted)); }
+  :root .text-slate-700, :root .text-slate-800, :root .text-slate-900 { color: hsl(var(--foreground)); }
+  :root .text-slate-500, :root .text-slate-600 { color: hsl(var(--muted-foreground)); }
+  :root .border-slate-200, :root .border-slate-300 { border-color: hsl(var(--border)); }
+  :root .bg-neutral-50, :root .bg-neutral-100 { background-color: hsl(var(--muted)); }
+  :root .text-neutral-700, :root .text-neutral-800, :root .text-neutral-900 { color: hsl(var(--foreground)); }
+  :root .text-neutral-500, :root .text-neutral-600 { color: hsl(var(--muted-foreground)); }
+  :root .border-neutral-200, :root .border-neutral-300 { border-color: hsl(var(--border)); }
+  :root .bg-zinc-50, :root .bg-zinc-100 { background-color: hsl(var(--muted)); }
+  :root .text-zinc-700, :root .text-zinc-800, :root .text-zinc-900 { color: hsl(var(--foreground)); }
+  :root .text-zinc-500, :root .text-zinc-600 { color: hsl(var(--muted-foreground)); }
+  :root .border-zinc-200, :root .border-zinc-300 { border-color: hsl(var(--border)); }
+  :root .bg-stone-50, :root .bg-stone-100 { background-color: hsl(var(--muted)); }
+  :root .text-stone-700, :root .text-stone-800, :root .text-stone-900 { color: hsl(var(--foreground)); }
+  :root .text-stone-500, :root .text-stone-600 { color: hsl(var(--muted-foreground)); }
+  :root .border-stone-200, :root .border-stone-300 { border-color: hsl(var(--border)); }
+  :root .bg-white { background-color: hsl(var(--card)); }
 }

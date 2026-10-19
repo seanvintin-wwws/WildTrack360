@@ -346,7 +346,7 @@ export default function AnimalDetailClient({
 
                   <div className="flex flex-wrap gap-4 mt-6 text-foreground">
                     <div className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-accent"/>
+                      <User className="h-5 w-5 text-primary"/>
                       <span className="font-semibold" title="Current carer — appears as the Rehabilitator name on NSW annual reports">Carer:</span> {carerOptions.find(c => c.value === animal.carerId)?.label ?? '—'}
                       <Button
                         variant="outline"
@@ -362,7 +362,7 @@ export default function AnimalDetailClient({
                       </Button>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CalendarDays className="h-5 w-5 text-accent"/>
+                      <CalendarDays className="h-5 w-5 text-primary"/>
                       <span className="font-semibold">Date Found:</span> {new Date(animal.dateFound).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                   </div>
