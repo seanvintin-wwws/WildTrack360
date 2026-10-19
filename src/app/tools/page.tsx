@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bird, PawPrint, ArrowRight, Utensils, BarChart3, ArrowLeft } from 'lucide-react';
+import { Bird, PawPrint, ArrowRight, Utensils, BarChart3, ArrowLeft, TrendingUp } from 'lucide-react';
 
 export const metadata = {
   title: 'Tools — WildTrack360',
@@ -21,6 +21,13 @@ const tools = [
     description:
       "Review today's feeding schedule, identify overdue feeds, and log feeding records from one field-friendly dashboard.",
     icon: Utensils,
+  },
+  {
+    href: '/tools/growth-comparison',
+    title: 'Growth Comparison',
+    description:
+      'Plot weight or forearm for age across animals of one species. Toggle each animal on or off, compare them with each other, and against the expected growth curve.',
+    icon: TrendingUp,
   },
   {
     href: '/tools/feed-calculator/flying-fox',
