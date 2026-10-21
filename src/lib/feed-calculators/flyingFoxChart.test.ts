@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as chart from './flyingFoxChart';
-import { GOATS_MILK_VOLUME_FACTOR, calculateChartFeed } from './flyingFoxChart';
+import { calculateChartFeed, cowsChartRowForWeight } from './flyingFoxChart';
 
 /**
  * Pins the calculator to what Biolac actually publish (checked against the raw
@@ -45,18 +45,28 @@ describe('Biolac Flying Fox / Plus', () => {
   });
 });
 
-describe("goat's milk", () => {
-  it("is the Biolac rate scaled by the manual's 3,363/2,930 totals, flagged as derived", () => {
-    expect(GOATS_MILK_VOLUME_FACTOR).toBeCloseTo(1.148, 3);
-    const p = calculateChartFeed({ formula: 'goats-milk', bodyWeightGrams: 100 })!;
-    expect(p.percentMin).toBe(23);
-    expect(p.percentMax).toBe(28.7);
-    expect(p.dailyMaxMl).toBe(28.7);
-    expect(p.volumeIsDerived).toBe(true);
+describe("goat's milk: Pinson & Kerr cow's milk chart, read by weight", () => {
+  it('reads the last chart row at or below the weight (Manual 3.026 method)', () => {
+    expect(cowsChartRowForWeight(71)).toMatchObject({ chartDay: 1, dailyMl: 23, schedule: [4, 4, 5, 5, 5] });
+    expect(cowsChartRowForWeight(76)).toMatchObject({ chartDay: 6, dailyMl: 26, schedule: [5, 5, 5, 5, 6] });
+    expect(cowsChartRowForWeight(93)).toMatchObject({ chartDay: 16, dailyMl: 33, schedule: [6, 6, 7, 7, 7] });
+    expect(cowsChartRowForWeight(109)).toMatchObject({ chartDay: 23, dailyMl: 38, schedule: [7, 7, 8, 8, 8] });
+    expect(cowsChartRowForWeight(122)).toMatchObject({ chartDay: 28, dailyMl: 41, schedule: [10, 10, 10, 11] });
+  });
+
+  it('flags weights below the chart, and weaned weights', () => {
+    expect(cowsChartRowForWeight(60)).toMatchObject({ chartDay: 1, belowChart: true });
+    expect(cowsChartRowForWeight(310)).toMatchObject({ weaned: true, dailyMl: 0 });
+  });
+
+  it('calculator plan uses the chart figures, not a derived rate', () => {
+    const p = calculateChartFeed({ formula: 'goats-milk', bodyWeightGrams: 93 })!;
+    expect(p).toMatchObject({ dailyMinMl: 33, dailyMaxMl: 33, feedsMin: 5, feedsMax: 5, schedule: [6, 6, 7, 7, 7], volumeIsDerived: false });
     expect(p.powderGrams).toBeNull();
-    // Recipe per 100 mL: 3.5 g glucose, 1 mL calcium syrup.
-    expect(p.goatsMilk).toEqual({ milkMl: 29, glucoseGrams: 1, calciumSyrupMl: 0.3 });
-    expect(p.notes[0]).toMatch(/DERIVED/);
+    // 33 mL at 3.5 g Glucodin and 1 mL calcium syrup per 100 mL.
+    expect(p.goatsMilk).toEqual({ milkMl: 33, glucoseGrams: 1.2, calciumSyrupMl: 0.3 });
+    expect(p.notes.join(' ')).toMatch(/cow's milk chart/);
+    expect(p.notes.join(' ')).not.toMatch(/DERIVED/);
   });
 });
 

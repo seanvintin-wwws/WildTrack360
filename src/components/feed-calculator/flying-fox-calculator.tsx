@@ -168,7 +168,7 @@ export function FlyingFoxCalculator() {
               />
               <p className="text-xs text-muted-foreground">
                 {formula === "goats-milk"
-                  ? "Goat's milk volume is derived from the Biolac rate (see notes)."
+                  ? "Read from Pinson & Kerr's cow's milk chart by weight, as for a newly arrived pup."
                   : "Biolac publish their feeding rate as a percentage of body weight, not by age or forearm."}
               </p>
             </div>
@@ -236,7 +236,9 @@ export function FlyingFoxCalculator() {
             <CardTitle>Feed Plan</CardTitle>
             <CardDescription>
               {CHART_FORMULAS.find((f) => f.value === formula)?.label} · {chartPlan.bodyWeightGrams} g pup ·{" "}
-              {chartPlan.percentMin}–{chartPlan.percentMax}% of body weight per day
+              {chartPlan.schedule
+                ? `cow's milk chart, ${chartPlan.chartWeight} g row (chart day ${chartPlan.chartDay})`
+                : `${chartPlan.percentMin}–${chartPlan.percentMax}% of body weight per day`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -251,18 +253,18 @@ export function FlyingFoxCalculator() {
             <div className="grid gap-3 sm:grid-cols-3">
               <StatTile
                 label="Total daily milk"
-                value={`${chartPlan.dailyMinMl}–${chartPlan.dailyMaxMl} ml`}
-                sub={`${chartPlan.percentMin}–${chartPlan.percentMax}% of ${chartPlan.bodyWeightGrams} g`}
+                value={chartPlan.dailyMinMl === chartPlan.dailyMaxMl ? `${chartPlan.dailyMaxMl} ml` : `${chartPlan.dailyMinMl}–${chartPlan.dailyMaxMl} ml`}
+                sub={chartPlan.schedule ? `${chartPlan.percentMax}% of ${chartPlan.bodyWeightGrams} g` : `${chartPlan.percentMin}–${chartPlan.percentMax}% of ${chartPlan.bodyWeightGrams} g`}
               />
               <StatTile
                 label="Feeds per day"
-                value={`${chartPlan.feedsMin}–${chartPlan.feedsMax}`}
-                sub="depending on age and development"
+                value={chartPlan.feedsMin === chartPlan.feedsMax ? `${chartPlan.feedsMax}` : `${chartPlan.feedsMin}–${chartPlan.feedsMax}`}
+                sub={chartPlan.schedule ? (chartPlan.feedsMax === 5 ? '7am, 11am, 3pm, 7pm, 11pm' : chartPlan.feedsMax === 4 ? '7am, 12pm, 5pm, 10pm' : 'as on the chart') : 'depending on age and development'}
               />
               <StatTile
                 label="Per feed"
-                value={`${chartPlan.perFeedMinMl}–${chartPlan.perFeedMaxMl} ml`}
-                sub="daily total split across the feeds"
+                value={chartPlan.schedule ? `${chartPlan.schedule.join(' / ')} ml` : `${chartPlan.perFeedMinMl}–${chartPlan.perFeedMaxMl} ml`}
+                sub={chartPlan.schedule ? 'earliest feed first, as on the chart' : 'daily total split across the feeds'}
               />
             </div>
 

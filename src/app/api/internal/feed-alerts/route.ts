@@ -24,10 +24,16 @@ async function buildForConfig(config: (typeof FEED_ALERT_CONFIGS)[number], now: 
       status: 'IN_CARE',
       OR: config.species.map((s) => ({ species: { equals: s, mode: 'insensitive' as const } })),
     },
-    select: { name: true, orgAnimalId: true, dateOfBirth: true },
+    select: {
+      name: true,
+      orgAnimalId: true,
+      dateOfBirth: true,
+      growthMeasurements: { select: { date: true, armLengthMm: true }, orderBy: { date: 'asc' } },
+    },
     orderBy: { orgAnimalId: 'asc' },
   });
-  return { animals, alert: buildFeedAlert(animals, now, config.formula) };
+  const alertAnimals = animals.map((a) => ({ ...a, measurements: a.growthMeasurements }));
+  return { animals, alert: buildFeedAlert(alertAnimals, now, config.formula) };
 }
 
 export async function GET(request: Request) {

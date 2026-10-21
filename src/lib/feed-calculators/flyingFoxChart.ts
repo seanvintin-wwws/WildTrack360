@@ -15,17 +15,21 @@
  *   primary source you have read yourself.
  * - Goat's milk recipe: Pinson, The Flying-fox Manual s3.021
  *   (ff-manual-milk-recipes.ts).
- * - Goat's milk volume: no published percentage exists. The manual feeds goat's
- *   milk from its cow's milk chart (an image only) and publishes the totals: a
- *   pup raised from day 1 to weaning takes about 2,930 mL of Biolac against
- *   3,363 mL on the cow's milk chart. Goat's milk here is the Biolac rate scaled
- *   by that ratio (x1.148), and is labelled as derived.
+ * - Goat's milk volume: Pinson & Kerr's cow's milk chart (updated 1 Feb 2019),
+ *   which the Flying-fox Manual s3.024 uses for goat's milk, read by WEIGHT:
+ *   "All orphaned flying-foxes on receipt are fed volume of milk for their
+ *   WEIGHT (not age)" (chart heading; Manual s3.026 worked example: find the
+ *   pup's weight in the weight column and read the volume on that row).
+ *   An earlier version scaled the Biolac rate by x1.148; that under-fed by up
+ *   to 21% in the first month and was removed.
  *
  * Every output is a starting guide, read against the pup's appetite, condition
  * and weight gain.
  */
 
 import { getRecipe, LITTLE_RED_AD_LIB_PERCENT_PER_FEED } from '../ff-manual-milk-recipes';
+import { PINSON_COWS_FEED_CHART, WEANED_FROM_DAY } from '../feed-alerts';
+import { PINSON_GHFF_CHART } from '../pinson-ghff-chart';
 
 export type ChartFormula = 'biolac-flying-fox' | 'biolac-flying-fox-plus' | 'goats-milk';
 
@@ -47,10 +51,33 @@ export const BIOLAC_FEEDS_PER_DAY_MAX = 5;
 export const BIOLAC_POWDER_GRAMS = 14;
 export const BIOLAC_MADE_UP_TO_ML = 70;
 
-/** Manual s3.021 totals, day 1 to weaning: cow's milk chart vs Biolac chart. */
-export const COWS_CHART_TOTAL_ML = 3363;
-export const BIOLAC_CHART_TOTAL_ML = 2930;
-export const GOATS_MILK_VOLUME_FACTOR = COWS_CHART_TOTAL_ML / BIOLAC_CHART_TOTAL_ML;
+/**
+ * Cow's milk chart row for a pup's weight: the last chart day whose weight is
+ * at or below the pup's weight (Manual s3.026: "going back up to 76 gram in
+ * the weight column - and then reading the feeding volume next to it").
+ */
+export function cowsChartRowForWeight(weightGrams: number): {
+  chartDay: number;
+  chartWeight: number;
+  dailyMl: number;
+  schedule: number[];
+  belowChart: boolean;
+  weaned: boolean;
+} | null {
+  if (!Number.isFinite(weightGrams) || weightGrams <= 0) return null;
+  const first = PINSON_GHFF_CHART[0];
+  let row = first;
+  for (const r of PINSON_GHFF_CHART) {
+    if (r[2] <= weightGrams) row = r;
+    else break;
+  }
+  const [chartDay, , chartWeight] = row;
+  if (chartDay >= WEANED_FROM_DAY) {
+    return { chartDay, chartWeight, dailyMl: 0, schedule: [], belowChart: false, weaned: true };
+  }
+  const feed = PINSON_COWS_FEED_CHART.find((f) => f[0] === chartDay)!;
+  return { chartDay, chartWeight, dailyMl: feed[1], schedule: [...feed[2]], belowChart: weightGrams < first[2], weaned: false };
+}
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
@@ -71,6 +98,12 @@ export interface ChartFeedPlan {
   powderGrams: number | null;
   /** Goat's milk ingredients for the day's maximum. */
   goatsMilk: { milkMl: number; glucoseGrams: number; calciumSyrupMl: number } | null;
+  /** Per-feed amounts, earliest feed first, when read from a chart. */
+  schedule: number[] | null;
+  /** The chart row used (goat's milk only). */
+  chartDay: number | null;
+  chartWeight: number | null;
+  weaned: boolean;
   volumeIsDerived: boolean;
   mixing: string[];
   notes: string[];
@@ -85,11 +118,11 @@ export function calculateChartFeed(input: {
   if (!Number.isFinite(w) || w <= 0) return null;
 
   const isGoat = input.formula === 'goats-milk';
-  const factor = isGoat ? GOATS_MILK_VOLUME_FACTOR : 1;
-  const percentMin = round1(BIOLAC_PERCENT_BODY_WEIGHT_MIN * factor);
-  const percentMax = round1(BIOLAC_PERCENT_BODY_WEIGHT_MAX * factor);
-  const dailyMin = (w * BIOLAC_PERCENT_BODY_WEIGHT_MIN * factor) / 100;
-  const dailyMax = (w * BIOLAC_PERCENT_BODY_WEIGHT_MAX * factor) / 100;
+  const goatRow = isGoat ? cowsChartRowForWeight(w) : null;
+  const dailyMin = goatRow ? goatRow.dailyMl : (w * BIOLAC_PERCENT_BODY_WEIGHT_MIN) / 100;
+  const dailyMax = goatRow ? goatRow.dailyMl : (w * BIOLAC_PERCENT_BODY_WEIGHT_MAX) / 100;
+  const percentMin = goatRow ? round1((goatRow.dailyMl / w) * 100) : BIOLAC_PERCENT_BODY_WEIGHT_MIN;
+  const percentMax = goatRow ? percentMin : BIOLAC_PERCENT_BODY_WEIGHT_MAX;
 
   const recipe = getRecipe('goats-milk');
   const mixing: string[] = [];
@@ -99,9 +132,11 @@ export function calculateChartFeed(input: {
     mixing.push(...(recipe?.ingredients ?? []));
     if (recipe?.storage) mixing.push(recipe.storage);
     notes.push(
-      "Volume is DERIVED, not published. The Flying-fox Manual feeds goat's milk from its cow's milk chart (an image only). This is Biolac's 20-25% of body weight scaled by the manual's published totals, 3,363 mL vs 2,930 mL from day 1 to weaning (about 15% more). Check against the printed cow's milk chart.",
+      `Volume for WEIGHT from Pinson & Kerr's cow's milk chart (the chart the Flying-fox Manual uses for goat's milk): ${w} g reads the ${goatRow!.chartWeight} g row (chart day ${goatRow!.chartDay}). This is the on-arrival volume. Once settled, move to milk-for-age from the intake forearm; all pups should be on milk-for-age by the end of their second week in care (Manual 3.026).`,
       'Use only soluble calcium syrup (Troy or Novartis, 22 mg/mL). Powdered calcium is mostly insoluble and passes straight through.'
     );
+    if (goatRow!.belowChart) notes.unshift(`Weight is below the chart's lightest row (${goatRow!.chartWeight} g), so the day 1 volume is shown. Talk to your coordinator.`);
+    if (goatRow!.weaned) notes.unshift('At this weight the chart has the pup weaned: no milk.');
     notes.push(...(recipe?.notes?.slice(0, 2) ?? []));
   } else {
     mixing.push(
@@ -135,19 +170,23 @@ export function calculateChartFeed(input: {
     percentMax,
     dailyMinMl: round1(dailyMin),
     dailyMaxMl: round1(dailyMax),
-    feedsMin: BIOLAC_FEEDS_PER_DAY_MIN,
-    feedsMax: BIOLAC_FEEDS_PER_DAY_MAX,
-    perFeedMinMl: round1(dailyMin / BIOLAC_FEEDS_PER_DAY_MAX),
-    perFeedMaxMl: round1(dailyMax / BIOLAC_FEEDS_PER_DAY_MIN),
+    feedsMin: goatRow ? goatRow.schedule.length : BIOLAC_FEEDS_PER_DAY_MIN,
+    feedsMax: goatRow ? goatRow.schedule.length : BIOLAC_FEEDS_PER_DAY_MAX,
+    perFeedMinMl: goatRow ? (goatRow.schedule.length ? Math.min(...goatRow.schedule) : 0) : round1(dailyMin / BIOLAC_FEEDS_PER_DAY_MAX),
+    perFeedMaxMl: goatRow ? (goatRow.schedule.length ? Math.max(...goatRow.schedule) : 0) : round1(dailyMax / BIOLAC_FEEDS_PER_DAY_MIN),
     powderGrams: isGoat ? null : round1((dailyMax / BIOLAC_MADE_UP_TO_ML) * BIOLAC_POWDER_GRAMS),
-    goatsMilk: isGoat
+    goatsMilk: isGoat && dailyMax > 0
       ? {
           milkMl: Math.round(dailyMax),
           glucoseGrams: round1((dailyMax / 100) * 3.5),
           calciumSyrupMl: round1(dailyMax / 100),
         }
       : null,
-    volumeIsDerived: isGoat,
+    schedule: goatRow ? goatRow.schedule : null,
+    chartDay: goatRow ? goatRow.chartDay : null,
+    chartWeight: goatRow ? goatRow.chartWeight : null,
+    weaned: goatRow ? goatRow.weaned : false,
+    volumeIsDerived: false,
     mixing,
     notes,
   };
