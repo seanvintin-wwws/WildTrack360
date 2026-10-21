@@ -379,7 +379,7 @@ function fmtDate(iso: string): string {
 function goatRecipeFor(ml: number): string {
   const glucose = Math.round(((ml * 3.5) / 100) * 10) / 10;
   const syrup = Math.round((ml / 100) * 10) / 10;
-  return `${ml} mL goat's milk + ${glucose} g Glucodin + ${syrup} mL Troy/Novartis calcium syrup`;
+  return `${ml} mL goat's milk + ${glucose} g Glucodin + ${syrup} mL Troy/Vetsense calcium syrup`;
 }
 
 export function buildFeedAlert(

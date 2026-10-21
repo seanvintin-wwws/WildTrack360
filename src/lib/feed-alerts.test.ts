@@ -169,7 +169,7 @@ describe('buildFeedAlert', () => {
   it("scales the goat's milk recipe to the day's total", () => {
     const a = buildFeedAlert([bubble, squeak], now, 'goats-milk');
     // 31 + 33 = 64 mL: 3.5 g Glucodin and 1 mL calcium syrup per 100 mL.
-    expect(a.text).toMatch(/64 mL goat's milk \+ 2\.2 g Glucodin \+ 0\.6 mL Troy\/Novartis calcium syrup/);
+    expect(a.text).toMatch(/64 mL goat's milk \+ 2\.2 g Glucodin \+ 0\.6 mL Troy\/Vetsense calcium syrup/);
   });
 
   it('copes with a pup with no forearm or date of birth', () => {

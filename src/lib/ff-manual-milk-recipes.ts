@@ -29,11 +29,11 @@
 
 /** Soluble calcium syrups the manual specifies by name. */
 export const CALCIUM_SYRUP = {
-  /** Both Troy and Novartis carry the same soluble calcium concentration. */
+  /** Troy and Vetsense carry the same soluble calcium concentration (22 mg/mL). Novartis (Calcium Sandoz) is discontinued. */
   mgCalciumPerMl: 22,
   /** The syrup is also 24% pure glucose, which is why the powdered cow's milk recipe adds no separate glucose. */
   glucosePercent: 24,
-  brands: ['Troy Calcium Syrup', 'Novartis Calcium Syrup (for animal use)'],
+  brands: ['Troy Calcium Syrup', 'Vetsense Calcium Syrup'],
   note: 'Only fully soluble calcium is usable — calcium glubionate, gluconate, borogluconate or lactobionate. Many powdered calcium forms are insoluble, pass straight through the animal, and leave it deficient while appearing to be supplemented.',
 } as const;
 
@@ -85,7 +85,7 @@ export const MILK_RECIPES: MilkRecipe[] = [
     ingredients: [
       "100 mL full cream goat's milk",
       '3.5 g (1 level teaspoon) Glucodin powdered glucose',
-      '1 mL Troy or Novartis calcium syrup',
+      '1 mL Troy or Vetsense calcium syrup',
     ],
     yieldMl: 100,
     storage: 'Store made up in the fridge until required. Draw up, warm and feed.',
@@ -101,7 +101,7 @@ export const MILK_RECIPES: MilkRecipe[] = [
     ingredients: [
       "100 mL fresh full cream cow's milk",
       '1/2 level teaspoon Glucodin powdered glucose',
-      '2 mL Troy or Novartis calcium syrup',
+      '2 mL Troy or Vetsense calcium syrup',
     ],
     yieldMl: 100,
     storage:
@@ -116,7 +116,7 @@ export const MILK_RECIPES: MilkRecipe[] = [
     ingredients: [
       '1 level tablespoon Diploma full cream powdered milk (or similar)',
       '3 level tablespoons cooled pre-boiled water',
-      '1.5 mL Troy or Novartis calcium syrup',
+      '1.5 mL Troy or Vetsense calcium syrup',
     ],
     yieldMl: 60,
     storage:

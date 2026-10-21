@@ -133,7 +133,7 @@ export function calculateChartFeed(input: {
     if (recipe?.storage) mixing.push(recipe.storage);
     notes.push(
       `Volume for WEIGHT from Pinson & Kerr's cow's milk chart (the chart the Flying-fox Manual uses for goat's milk): ${w} g reads the ${goatRow!.chartWeight} g row (chart day ${goatRow!.chartDay}). This is the on-arrival volume. Once settled, move to milk-for-age from the intake forearm; all pups should be on milk-for-age by the end of their second week in care (Manual 3.026).`,
-      'Use only soluble calcium syrup (Troy or Novartis, 22 mg/mL). Powdered calcium is mostly insoluble and passes straight through.'
+      'Use only soluble calcium syrup (Troy or Vetsense, 22 mg/mL). Powdered calcium is mostly insoluble and passes straight through.'
     );
     if (goatRow!.belowChart) notes.unshift(`Weight is below the chart's lightest row (${goatRow!.chartWeight} g), so the day 1 volume is shown. Talk to your coordinator.`);
     if (goatRow!.weaned) notes.unshift('At this weight the chart has the pup weaned: no milk.');
