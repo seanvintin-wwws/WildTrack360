@@ -54,6 +54,7 @@ import {
   wombarooReference,
 } from "@/lib/wombaroo-ghff-chart";
 import { PINSON_CHART_SOURCE, pinsonReference } from "@/lib/pinson-ghff-chart";
+import { interpolateValue, type GrowthReferencePoint } from "@/lib/growth-utils";
 
 /**
  * Distinct, colour-blind-friendly hues (same set as the cohort chart), kept
@@ -224,6 +225,31 @@ export default function GrowthComparisonClient({
       keys.push({ key: "pinson", name: "Pinson chart", colour: PINSON_COLOUR, dash: "10 3 2 3" });
       for (const point of buildExpectedCurve(pinsonReference(), metric, maxAge)) {
         at(point.ageDays).pinson = point.value;
+      }
+    }
+
+    // Fill every expected curve at every plotted age inside that chart's own
+    // range, so hovering any day shows all the switched-on charts (Wombaroo
+    // prints only every few days). Nothing is filled outside a chart's range.
+    const curveRefs: { key: string; ref: GrowthReferencePoint[] }[] = keys.map(({ key }) => ({
+      key,
+      ref:
+        key === "wombaroo"
+          ? wombarooReference()
+          : key === "pinson"
+            ? pinsonReference()
+            : referenceForSex(referenceRows, key === "expected_all" ? null : key.replace("expected_", "")),
+    }));
+    for (const { key, ref } of curveRefs) {
+      const ages = ref.filter((p) => p[metric] != null).map((p) => p.ageDays);
+      if (ages.length < 2) continue;
+      const lo = Math.min(...ages);
+      const hi = Math.max(...ages);
+      for (const row of byAge.values()) {
+        if (row[key] == null && row.ageDays >= lo && row.ageDays <= hi) {
+          const v = interpolateValue(ref, metric, row.ageDays);
+          if (v != null) row[key] = v;
+        }
       }
     }
 
