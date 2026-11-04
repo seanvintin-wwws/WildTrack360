@@ -195,12 +195,24 @@ export const PINSON_FEED_CHART: FeedRow[] = [
 /** Weaned from day 79 on the chart. */
 export const WEANED_FROM_DAY = 79;
 
+/**
+ * Start offering soft apple at a forearm of 105 mm (Wombaroo's table puts its
+ * apple step at 105 mm / day 44). Wombaroo says "pureed"; the shelter's
+ * practice (Sean Vintin, 4 Nov 2026) is apple steamed or microwaved until soft
+ * and left to cool, NOT pureed. The email day is wherever 105 mm falls on
+ * Pinson's chart, the chart the emails age pups on (day 45).
+ */
+export const STEAMED_APPLE_FOREARM_MM = 105;
+export const STEAMED_APPLE_NOTE =
+  'Forearm about 105 mm: start offering apple, steamed or microwaved until soft and then left to cool (not pureed).';
+
 /** Each chart's own stage notes, keyed by the day they appear. */
 export const CHART_MILESTONES: Record<AlertFormula, Record<number, string>> = {
   'goats-milk': {
     14: 'Start the transition to feeding for age.',
     21: 'All orphans should now be drinking the volume of milk for their age.',
     28: 'Reduce from 5 feeds a day to 4.',
+    [ageForForearm(STEAMED_APPLE_FOREARM_MM).ageDays]: STEAMED_APPLE_NOTE,
     49: 'Introduce fruit.',
     70: 'Start adding powder to fruit.',
     79: 'All orphans should now be weaned and eating appropriately sized fruit, ready for crèche.',
@@ -210,6 +222,7 @@ export const CHART_MILESTONES: Record<AlertFormula, Record<number, string>> = {
     14: 'Start the transition to feeding for age.',
     21: 'All orphans should now be drinking the volume of milk for their age.',
     28: 'Reduce from 5 feeds a day to 4.',
+    [ageForForearm(STEAMED_APPLE_FOREARM_MM).ageDays]: STEAMED_APPLE_NOTE,
     49: 'Introduce fruit (apple only).',
     62: 'Maximum volume per feed reached: 15 mL.',
     70: 'Weaning: start adding powder to fruit.',

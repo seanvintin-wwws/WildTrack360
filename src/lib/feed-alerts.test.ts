@@ -172,6 +172,27 @@ describe('buildFeedAlert', () => {
     expect(a.text).toMatch(/64 mL goat's milk \+ 2\.2 g Glucodin \+ 0\.6 mL Troy\/Vetsense calcium syrup/);
   });
 
+  it('tells carers to start soft (steamed, not pureed) apple when the forearm reaches about 105 mm', () => {
+    // 105 mm is day 45 on Pinson's chart (Wombaroo prints its apple step at 105 mm).
+    expect(ageForForearm(105).ageDays).toBe(45);
+    expect(feedPlanForAge(45, 'goats-milk').milestone).toMatch(/steamed or microwaved until soft.*cool.*not pureed/);
+    expect(feedPlanForAge(45, 'biolac').milestone).toMatch(/steamed or microwaved until soft/);
+    // Intake 82 mm on 4 Nov = day 21, so day 45 falls on 28 Nov.
+    const bendigo = {
+      name: 'Bendigo BG GHFF',
+      orgAnimalId: 'ORG-2026-0098',
+      dateOfBirth: null,
+      measurements: [{ date: new Date('2026-11-04T03:45:00.000Z'), armLengthMm: 82 }],
+    };
+    const on = buildFeedAlert([bendigo], new Date('2026-11-27T20:00:00.000Z'), 'goats-milk');
+    expect(on.lines[0].today?.ageDays).toBe(45);
+    expect(on.lines[0].changed).toBe(true); // the note alone triggers the email
+    expect(on.text).toMatch(/Chart note: Forearm about 105 mm: start offering apple, steamed or microwaved/);
+    expect(on.html).toMatch(/steamed or microwaved until soft/);
+    const dayBefore = buildFeedAlert([bendigo], new Date('2026-11-26T20:00:00.000Z'), 'goats-milk');
+    expect(dayBefore.text).not.toMatch(/apple/);
+  });
+
   it('copes with a pup with no forearm or date of birth', () => {
     const a = buildFeedAlert([{ name: 'X', orgAnimalId: null, dateOfBirth: null }], now, 'goats-milk');
     expect(a.lines[0].today).toBeNull();
