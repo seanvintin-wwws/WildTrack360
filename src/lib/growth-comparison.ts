@@ -56,8 +56,24 @@ export interface ReferenceRow extends GrowthReferencePoint {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** Calendar date (YYYY-MM-DD) in Sydney, the shelter's local time. */
+function sydneyDay(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Sydney',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
+/**
+ * Whole days between two instants, counted on Sydney calendar dates (as the
+ * feed emails do), so an afternoon weigh-in isn't rounded up to the next day.
+ */
 function daysBetween(from: Date, to: Date): number {
-  return Math.round((to.getTime() - from.getTime()) / DAY_MS);
+  return Math.round(
+    (Date.parse(sydneyDay(to) + 'T00:00:00Z') - Date.parse(sydneyDay(from) + 'T00:00:00Z')) / DAY_MS
+  );
 }
 
 /** Reference rows for one sex, falling back to whichever sex is present. */

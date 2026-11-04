@@ -117,7 +117,9 @@ describe('summariseAnimal', () => {
   it('flags Bubbles as behind on weight at day 10', () => {
     const s = summariseAnimal(bubbles, ghff, today);
     expect(s.latestAgeDays).toBe(10);
-    expect(s.ageTodayDays).toBe(11);
+    // Latest weigh-in and "today" fall on the same Sydney calendar day (19/10),
+    // so the age is the same; days are counted on calendar dates, not rounded hours.
+    expect(s.ageTodayDays).toBe(10);
     // DEECA day 10 = 99 + (117-99) * 3/7 = 106.7 g
     expect(s.weight?.expected).toBe(106.7);
     expect(s.weight?.difference).toBe(-13.7);
