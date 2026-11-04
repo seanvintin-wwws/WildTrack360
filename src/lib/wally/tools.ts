@@ -13,6 +13,7 @@ import { logAudit } from '@/lib/audit';
 import { canPreviewReports } from '@/lib/custom-query/access';
 import { evaluateCustomQueries, type QueryablePrisma } from '@/lib/custom-query/evaluator';
 import { getReportCarerNamesById } from '@/lib/custom-query/carer-names';
+import { birthDateReference } from '@/lib/pinson-ghff-chart';
 import {
   estimateBirthDate,
   calculatePredictedWeight,
@@ -680,7 +681,7 @@ export function buildWallyTools(context: WallyToolContext): ToolSet {
             throw new WallyToolError('measurementDate is required when measurements are provided');
           }
           const estimation = estimateBirthDate(
-            referenceData,
+            birthDateReference(args.speciesName, referenceData),
             args.measurements as Partial<Record<MeasurementField, number>>,
             parseDateInput(args.measurementDate, 'measurement date')
           );

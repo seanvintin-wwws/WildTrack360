@@ -151,3 +151,24 @@ export function pinsonReference(): GrowthReferencePoint[] {
     wingLengthMm: null,
   }));
 }
+
+/** Species whose birth dates are estimated from Pinson's chart (matched case-insensitively). */
+const PINSON_AGEING_SPECIES = ['grey-headed flying fox', 'grey-headed flying-fox'];
+
+export function pinsonAgesSpecies(species: string | null | undefined): boolean {
+  return !!species && PINSON_AGEING_SPECIES.includes(species.toLowerCase());
+}
+
+/**
+ * Reference used by the Birth Date Estimator. Grey-headed flying-foxes are aged
+ * on Pinson's chart, the same chart the feed emails use to work out age from
+ * forearm (feed-alerts ageForForearm), so the recorded date of birth and the
+ * feed volumes agree. Pinson's chart has forearm and weight only. Every other
+ * species keeps its stored growth reference.
+ */
+export function birthDateReference<T extends GrowthReferencePoint>(
+  species: string | null | undefined,
+  storedReference: T[]
+): GrowthReferencePoint[] {
+  return pinsonAgesSpecies(species) ? pinsonReference() : storedReference;
+}

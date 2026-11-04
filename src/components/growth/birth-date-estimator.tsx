@@ -23,6 +23,7 @@ import {
   estimateBirthDate,
 } from "@/lib/growth-utils";
 import type { Animal } from "@/lib/types";
+import { birthDateReference, pinsonAgesSpecies } from "@/lib/pinson-ghff-chart";
 
 interface BirthDateEstimatorProps {
   animal: Animal;
@@ -68,7 +69,11 @@ export function BirthDateEstimator({
       return;
     }
 
-    const estimation = estimateBirthDate(referenceData, measurements, measurementDate);
+    const estimation = estimateBirthDate(
+      birthDateReference(animal.species, referenceData),
+      measurements,
+      measurementDate
+    );
 
     if (!estimation.medianEstimatedBirthDate) {
       toast({
@@ -130,7 +135,9 @@ export function BirthDateEstimator({
         </CardTitle>
         <CardDescription className="text-amber-700 dark:text-amber-300">
           This animal has no date of birth. Enter measurements to estimate it
-          using {animal.species} growth reference data.
+          {pinsonAgesSpecies(animal.species)
+            ? " using Pinson's chart (Flying-fox Manual v4), the same chart the feed emails use. Only forearm and weight are used."
+            : ` using ${animal.species} growth reference data.`}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
