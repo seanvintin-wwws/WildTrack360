@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Info } from "lucide-react";
 import {
   LineChart,
@@ -13,18 +13,29 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type GrowthReferencePoint, calculatePredictedWeight } from "@/lib/growth-utils";
+import { type GrowthReferencePoint, interpolateWithinRange } from "@/lib/growth-utils";
 import type { GrowthMeasurement } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 
-interface GrowthReferenceWithMeta extends GrowthReferencePoint {
-  reference?: string | null;
-}
+export type GrowthChartMetric = "weightGrams" | "armLengthMm";
+
+const METRIC_META: Record<GrowthChartMetric, { label: string; unit: string; noun: string }> = {
+  weightGrams: { label: "Weight (g)", unit: "g", noun: "weight" },
+  armLengthMm: { label: "Forearm (mm)", unit: "mm", noun: "forearm" },
+};
 
 interface GrowthChartProps {
   measurements: GrowthMeasurement[];
-  referenceData: GrowthReferenceWithMeta[];
+  /** The expected curve to draw (already chosen: Pinson, Wombaroo or DEECA). */
+  referenceData: GrowthReferencePoint[];
   dateOfBirth: Date | null;
+  metric?: GrowthChartMetric;
+  /** Legend name for the expected curve, e.g. "Pinson chart". */
+  curveName?: string;
+  /** Source line shown under the chart. */
+  referenceSource?: string | null;
+  /** Switches shown in the card header. */
+  controls?: ReactNode;
 }
 
 interface ChartDataPoint {
@@ -37,68 +48,70 @@ export function GrowthChart({
   measurements,
   referenceData,
   dateOfBirth,
+  metric = "weightGrams",
+  curveName = "Expected",
+  referenceSource = null,
+  controls,
 }: GrowthChartProps) {
-  const referenceSource = useMemo(() => {
-    const sources = new Set(
-      referenceData
-        .map((r) => (r as GrowthReferenceWithMeta).reference)
-        .filter(Boolean)
-    );
-    return sources.size > 0 ? Array.from(sources).join('; ') : null;
-  }, [referenceData]);
+  const meta = METRIC_META[metric];
 
   const chartData = useMemo(() => {
     if (!dateOfBirth) return [];
 
     const dob = new Date(dateOfBirth);
     const dataMap = new Map<number, ChartDataPoint>();
+    const at = (age: number) => {
+      let p = dataMap.get(age);
+      if (!p) {
+        p = { ageDays: age };
+        dataMap.set(age, p);
+      }
+      return p;
+    };
 
-    // Add actual measurements
+    // Actual measurements
     for (const m of measurements) {
-      if (m.weightGrams == null) continue;
+      const v = m[metric];
+      if (v == null) continue;
       const ageDays = differenceInDays(new Date(m.date), dob);
       if (ageDays < 0) continue;
-      dataMap.set(ageDays, {
-        ageDays,
-        actual: m.weightGrams,
-        predicted: dataMap.get(ageDays)?.predicted,
-      });
+      at(ageDays).actual = v;
     }
 
-    // Add predicted curve from reference data
+    // Expected curve, as printed
     for (const ref of referenceData) {
-      if (ref.weightGrams == null) continue;
-      const existing = dataMap.get(ref.ageDays);
-      dataMap.set(ref.ageDays, {
-        ageDays: ref.ageDays,
-        actual: existing?.actual,
-        predicted: ref.weightGrams,
-      });
+      const v = ref[metric];
+      if (v == null) continue;
+      at(ref.ageDays).predicted = v;
     }
 
-    // Also fill predicted values at actual measurement ages
-    for (const m of measurements) {
-      if (m.weightGrams == null) continue;
-      const ageDays = differenceInDays(new Date(m.date), dob);
-      if (ageDays < 0) continue;
-      const point = dataMap.get(ageDays);
-      if (point && point.predicted == null) {
-        const predicted = calculatePredictedWeight(referenceData, ageDays);
-        if (predicted != null) {
-          point.predicted = predicted;
-        }
+    // Expected value at every other plotted age (for the hover box), only
+    // inside the chart's own range
+    for (const p of dataMap.values()) {
+      if (p.predicted == null) {
+        const v = interpolateWithinRange(referenceData, metric, p.ageDays);
+        if (v != null) p.predicted = v;
       }
     }
 
     return Array.from(dataMap.values()).sort((a, b) => a.ageDays - b.ageDays);
-  }, [measurements, referenceData, dateOfBirth]);
+  }, [measurements, referenceData, dateOfBirth, metric]);
+
+  const hasActual = chartData.some((p) => p.actual != null);
+
+  const header = (
+    <CardHeader>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <CardTitle>Growth Chart</CardTitle>
+        {controls}
+      </div>
+    </CardHeader>
+  );
 
   if (!dateOfBirth) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>Growth Chart</CardTitle>
-        </CardHeader>
+        {header}
         <CardContent>
           <p className="text-sm text-muted-foreground">
             A date of birth is required to display the growth chart. Use the
@@ -109,15 +122,13 @@ export function GrowthChart({
     );
   }
 
-  if (chartData.length === 0) {
+  if (!hasActual) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>Growth Chart</CardTitle>
-        </CardHeader>
+        {header}
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No weight measurements recorded yet. Add a growth measurement to see
+            No {meta.noun} measurements recorded yet. Add a growth measurement to see
             the chart.
           </p>
         </CardContent>
@@ -127,9 +138,7 @@ export function GrowthChart({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Growth Chart</CardTitle>
-      </CardHeader>
+      {header}
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -140,7 +149,7 @@ export function GrowthChart({
             />
             <YAxis
               label={{
-                value: "Weight (g)",
+                value: meta.label,
                 angle: -90,
                 position: "insideLeft",
                 offset: -5,
@@ -148,14 +157,14 @@ export function GrowthChart({
             />
             <Tooltip
               formatter={(value: number, name: string) => [
-                `${Math.round(value)}g`,
-                name === "actual" ? "Actual" : "Predicted",
+                `${Math.round(value * 10) / 10} ${meta.unit}`,
+                name === "actual" ? "Actual" : curveName,
               ]}
               labelFormatter={(label) => `Age: ${label} days`}
             />
             <Legend
               formatter={(value) =>
-                value === "actual" ? "Actual Weight" : "Predicted Weight"
+                value === "actual" ? `Actual ${meta.noun}` : `${curveName} (expected ${meta.noun})`
               }
             />
             <Line

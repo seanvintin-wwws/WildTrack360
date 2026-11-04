@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import {
   type GrowthReferencePoint,
-  calculatePredictedWeight,
+  interpolateWithinRange,
   getWFAStatus,
   gramsPerDaySincePrevious,
 } from "@/lib/growth-utils";
@@ -25,6 +25,8 @@ interface GrowthHistoryTableProps {
   referenceData: GrowthReferencePoint[];
   dateOfBirth: Date | null;
   onDelete: (measurementId: string) => void;
+  /** Which chart WFA is measured against, shown in the column header. */
+  wfaAgainst?: string;
 }
 
 const wfaColors = {
@@ -38,6 +40,7 @@ export function GrowthHistoryTable({
   referenceData,
   dateOfBirth,
   onDelete,
+  wfaAgainst,
 }: GrowthHistoryTableProps) {
   const rows = useMemo(() => {
     const gpdById = gramsPerDaySincePrevious(measurements);
@@ -45,7 +48,7 @@ export function GrowthHistoryTable({
       const dob = dateOfBirth ? new Date(dateOfBirth) : null;
       const ageDays = dob ? differenceInDays(new Date(m.date), dob) : null;
       const predicted =
-        ageDays != null ? calculatePredictedWeight(referenceData, ageDays) : null;
+        ageDays != null ? interpolateWithinRange(referenceData, "weightGrams", ageDays) : null;
       const wfa =
         m.weightGrams != null && predicted != null
           ? Math.round(m.weightGrams - predicted)
@@ -73,7 +76,12 @@ export function GrowthHistoryTable({
             <TableHead>Date</TableHead>
             <TableHead>Age</TableHead>
             <TableHead className="text-right">Weight (g)</TableHead>
-            <TableHead className="text-right">WFA</TableHead>
+            <TableHead className="text-right">
+              WFA
+              {wfaAgainst && (
+                <span className="block text-[10px] font-normal text-muted-foreground">vs {wfaAgainst}</span>
+              )}
+            </TableHead>
             <TableHead className="text-right" title="Grams per day gained since the previous weigh-in">
               GPD
             </TableHead>

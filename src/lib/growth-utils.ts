@@ -278,3 +278,19 @@ export function gramsPerDaySincePrevious(
   }
   return out;
 }
+
+/**
+ * Like interpolateValue, but null outside the reference's own age range for
+ * that field, so a chart that starts at day 2 or stops at day 84 is never
+ * stretched beyond what it prints.
+ */
+export function interpolateWithinRange(
+  referenceData: GrowthReferencePoint[],
+  field: MeasurementField,
+  ageDays: number
+): number | null {
+  const ages = referenceData.filter((p) => p[field] != null).map((p) => p.ageDays);
+  if (ages.length < 2) return null;
+  if (ageDays < Math.min(...ages) || ageDays > Math.max(...ages)) return null;
+  return interpolateValue(referenceData, field, ageDays);
+}
