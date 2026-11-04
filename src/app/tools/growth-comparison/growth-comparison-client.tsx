@@ -74,6 +74,14 @@ const EXPECTED_COLOUR = "#8b938d";
 const WOMBAROO_COLOUR = "#5f9a6e";
 const PINSON_COLOUR = "#b07a3f";
 
+/** Reference the summary table compares against. Default Pinson (shelter feeds goat's milk on Pinson's chart). */
+type CompareAgainst = "pinson" | "wombaroo" | "deeca";
+const COMPARE_LABEL: Record<CompareAgainst, string> = {
+  pinson: "the Pinson chart",
+  wombaroo: "the Wombaroo chart",
+  deeca: "the DEECA curve",
+};
+
 const STATUS_BADGE: Record<GrowthStatus, { label: string; variant: "success" | "warning" | "destructive" | "outline" }> = {
   normal: { label: "On track", variant: "success" },
   warning: { label: "Behind (>10%)", variant: "warning" },
@@ -122,6 +130,7 @@ export default function GrowthComparisonClient({
   const [showExpected, setShowExpected] = useState(true);
   const [showWombaroo, setShowWombaroo] = useState(true);
   const [showPinson, setShowPinson] = useState(true);
+  const [compareAgainst, setCompareAgainst] = useState<CompareAgainst>("pinson");
   const [selected, setSelected] = useState<Set<string>>(() => {
     const initial = defaultSpecies ? animalsBySpecies[defaultSpecies] ?? [] : [];
     const inCare = initial.filter((a) => a.status === "IN_CARE");
@@ -139,10 +148,20 @@ export default function GrowthComparisonClient({
   const oneCurve = sexCurvesIdentical(referenceRows);
   const todayDate = useMemo(() => new Date(today), [today]);
 
+  // Which curve the summary table (and estimated ages) compare against.
+  // Pinson and Wombaroo only cover Grey-headed; other species use DEECA.
+  const chartsApply = wombarooChartAppliesTo(species);
+  const effectiveCompare: CompareAgainst = chartsApply ? compareAgainst : "deeca";
+
   const prepared = useMemo(
     () =>
       animals.map((a, i) => {
-        const ref = referenceForSex(referenceRows, a.sex);
+        const ref =
+          effectiveCompare === "pinson"
+            ? pinsonReference()
+            : effectiveCompare === "wombaroo"
+              ? wombarooReference()
+              : referenceForSex(referenceRows, a.sex);
         const birth = resolveBirthDate(a, ref);
         return {
           animal: a,
@@ -152,7 +171,7 @@ export default function GrowthComparisonClient({
           summary: summariseAnimal(a, ref, todayDate),
         };
       }),
-    [animals, referenceRows, todayDate]
+    [animals, referenceRows, todayDate, effectiveCompare]
   );
 
   const { rows, plotted, expectedKeys } = useMemo(() => {
@@ -414,9 +433,23 @@ export default function GrowthComparisonClient({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Latest measurement vs expected</CardTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <CardTitle className="text-base">Latest measurement vs expected</CardTitle>
+            {chartsApply && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Compare against</span>
+                <Tabs value={compareAgainst} onValueChange={(v) => setCompareAgainst(v as CompareAgainst)}>
+                  <TabsList>
+                    <TabsTrigger value="pinson">Pinson</TabsTrigger>
+                    <TabsTrigger value="wombaroo">Wombaroo</TabsTrigger>
+                    <TabsTrigger value="deeca">DEECA</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+            )}
+          </div>
           <CardDescription>
-            Expected values, WFA, GPD and status use the DEECA curve. Status uses weight, with the app&apos;s usual thresholds: more than 10% below
+            Expected values, WFA, GPD and status use {COMPARE_LABEL[effectiveCompare]}. Status uses weight, with the app&apos;s usual thresholds: more than 10% below
             expected is flagged, more than 20% is flagged red. A guide only — always read it
             alongside how the animal is feeding and behaving. WFA (weight for age) is
             actual weight minus expected weight for that age. GPD (grams per day) is the
