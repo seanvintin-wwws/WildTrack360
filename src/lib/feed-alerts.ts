@@ -4,13 +4,14 @@
  * Each morning, work out every in-care grey-headed flying-fox's milk-for-age
  * and email the carers when any pup's volume or feed split changes.
  *
- * SOURCES (both charts read from the PDFs' own text layer, every value)
- * - Goat's milk: Pinson & Kerr, "Milk Replacer Chart for Grey-headed & Black
- *   Flying-foxes" (cow's milk chart), released 4 Oct 2009, updated 1 Feb 2019.
- *   The Flying-fox Manual v3 s3.024 says this chart is used for goat's milk.
- * - Biolac: Pinson & Kerr, "Biolac Flying Fox Chart v3".
- *   Both: ff-manual PDFs, Resources folder. Every schedule sums to its daily
- *   total (tested); the weekly rows are pinned in tests.
+ * SOURCES (The Flying-fox Manual v4.0.0, 2026, s3.025)
+ * - Goat's milk: Pinson, "Flying-fox Milk Replacer v3" (cow's milk chart for
+ *   Grey-headed & Black Flying-foxes), released 2 Feb 2026. The Manual says
+ *   this chart is used for goat's milk.
+ * - Biolac: Pinson, "Biolac Flying-fox Milk v4", released 2 Feb 2026.
+ *   Every day 1-78 below was checked against the FFMv4 charts on 4 Nov 2026
+ *   and is identical (the earlier 2019 charts had the same values). Every
+ *   schedule sums to its daily total (tested); weekly rows are pinned in tests.
  *
  * AGE (Flying-fox Manual v3 s3.024 and s3.027)
  * "Age is determined by forearm length on intake", then counted on day by day.
@@ -109,7 +110,7 @@ export const PINSON_COWS_FEED_CHART: FeedRow[] = [
   [78, 15, [15]],
 ];
 
-/** Biolac Flying Fox chart v3, days 1-78. Day 79 on: weaned. */
+/** Biolac Flying-fox Milk chart v4 (FFMv4 s3.025), days 1-78. Day 79 on: weaned. */
 export const PINSON_FEED_CHART: FeedRow[] = [
   [1, 18, [3, 3, 4, 4, 4]],
   [2, 18, [3, 3, 4, 4, 4]],
@@ -450,8 +451,8 @@ export function buildFeedAlert(
       : '';
   const derived =
     formula === 'goats-milk'
-      ? "Volumes: Pinson & Kerr Milk Replacer Chart (cow's milk chart, updated 1 Feb 2019), which the Flying-fox Manual (3.024) uses for goat's milk. Recipe per 100 mL from the Manual (3.021)."
-      : 'Volumes: Pinson & Kerr Biolac Flying Fox Chart v3.';
+      ? "Volumes: Pinson, Flying-fox Milk Replacer chart v3 (cow's milk, 2 Feb 2026), which the Flying-fox Manual v4 (3.025) uses for goat's milk. Recipe per 100 mL from the Manual (3.021)."
+      : 'Volumes: Pinson, Biolac Flying-fox Milk chart v4 (2 Feb 2026), Flying-fox Manual v4 (3.025).';
   const footer =
     'These are milk-for-age volumes. Newly arrived pups are fed for their weight until settled, and should be on milk-for-age by the end of their second week in care (Manual 3.026). The chart is a guide only: offer, never force.';
 

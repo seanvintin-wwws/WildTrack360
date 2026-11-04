@@ -15,8 +15,9 @@
  *   primary source you have read yourself.
  * - Goat's milk recipe: Pinson, The Flying-fox Manual s3.021
  *   (ff-manual-milk-recipes.ts).
- * - Goat's milk volume: Pinson & Kerr's cow's milk chart (updated 1 Feb 2019),
- *   which the Flying-fox Manual s3.024 uses for goat's milk, read by WEIGHT:
+ * - Goat's milk volume: Pinson's cow's milk chart (Flying-fox Milk Replacer
+ *   v3, 2 Feb 2026, FFMv4 s3.025; values unchanged from the 2019 chart),
+ *   which the Flying-fox Manual uses for goat's milk, read by WEIGHT:
  *   "All orphaned flying-foxes on receipt are fed volume of milk for their
  *   WEIGHT (not age)" (chart heading; Manual s3.026 worked example: find the
  *   pup's weight in the weight column and read the volume on that row).

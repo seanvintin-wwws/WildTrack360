@@ -1,14 +1,17 @@
 /**
- * Pinson & Kerr, "Biolac Flying-fox Milk v3" chart for Grey-headed & Black
+ * Pinson, "Biolac Flying-fox Milk v4" chart for Grey-headed & Black
  * Flying-foxes: growth columns (age, forearm, weight).
  *
- * Source: the chart as reproduced in Bat Rescue Inc's Orphan Training Manual
- * (2021), Appendix 2, pp.58-59, footer "Biolac Flying-fox Milk v3. (c) Dave
- * Pinson & Connie Kerr ... Released January 2019". The pages are images, so
- * values were read visually at high magnification, day 1 to day 112 (16
- * weeks), and are guarded by the tests in pinson-ghff-chart.test.ts.
+ * Current source: The Flying-fox Manual v4.0.0 (2026) s3.025, "Biolac
+ * Flying-fox Milk v4. (c) Dave Pinson & Connie Pinson. Released 2 February
+ * 2026". Days 1-84 (side 1) were checked against FFMv4 on 4 Nov 2026 and are
+ * identical to the values here; the same forearm/weight columns appear on the
+ * FFMv4 cow's milk chart (Flying-fox Milk Replacer v3, 2 Feb 2026).
+ * Days 85-112 (side 2) are not in the FFMv4 extract and still come from the
+ * earlier v3 chart (Bat Rescue Orphan Training Manual 2021, pp.58-59).
+ * Values are guarded by the tests in pinson-ghff-chart.test.ts.
  *
- * Method (Flying-fox Manual s3.024): graphed from 60 known-age pups, cross-
+ * Method (Flying-fox Manual s3.025): graphed from 60 known-age pups, cross-
  * referenced against 270 hand-reared orphans, 3-step polynomial regression.
  * The same forearm/weight columns are used on Pinson's cow's milk chart.
  */
@@ -16,7 +19,7 @@
 import type { GrowthReferencePoint } from './growth-utils';
 
 export const PINSON_CHART_SOURCE =
-  'Pinson & Kerr, Biolac Flying-fox Milk chart v3 (2019), via Bat Rescue Orphan Training Manual pp.58-59';
+  'Pinson, Biolac Flying-fox Milk chart v4 (2 Feb 2026), The Flying-fox Manual v4 s3.025';
 
 /** [ageDays, forearmMm, weightGrams] */
 export const PINSON_GHFF_CHART: [number, number, number][] = [
