@@ -19,7 +19,7 @@
 import type { GrowthReferencePoint } from './growth-utils';
 
 export const PINSON_CHART_SOURCE =
-  'Pinson, Biolac Flying-fox Milk chart v4 (2 Feb 2026), The Flying-fox Manual v4 s3.025';
+  "Pinson growth curve, identical on the Cow's Milk chart v3 (also used for goat's milk) and the Biolac chart v4 (both 2 Feb 2026), The Flying-fox Manual v4 s3.025";
 
 /** [ageDays, forearmMm, weightGrams] */
 export const PINSON_GHFF_CHART: [number, number, number][] = [
